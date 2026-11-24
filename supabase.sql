@@ -534,3 +534,27 @@ revoke execute on function public.resolve_reward(bigint, boolean) from public, a
 grant execute on function public.pay_order(bigint) to authenticated;
 grant execute on function public.add_points(text, numeric) to authenticated;
 grant execute on function public.resolve_reward(bigint, boolean) to authenticated;
+
+-- ---------- FOTOS DELS PRODUCTES ----------
+alter table public.menu_items add column if not exists image text;
+update public.menu_items set image = 'img/productes/' || v.slug || '.svg'
+from (values
+  ('Cubata','cubata'),('Cubata premium','cubata-premium'),('Mojito','mojito'),('Piña colada','pina-colada'),
+  ('Margarita','margarita'),('Canya','canya'),('Mitjana','mitjana'),('Galleda 6 quintos','galleda-6-quintos'),
+  ('Galleda 10 quintos','galleda-10-quintos'),('Xupito','xupito'),('Cachimba','cachimba'),
+  ('Cachimba premium','cachimba-premium'),('Refresc','refresc'),('Red Bull','red-bull'),('Aigua','aigua')
+) as v(name, slug)
+where public.menu_items.name = v.name and public.menu_items.image is null;
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('productes', 'productes', true, 5242880, array['image/jpeg','image/png','image/webp','image/svg+xml'])
+on conflict (id) do update set public = true, file_size_limit = excluded.file_size_limit, allowed_mime_types = excluded.allowed_mime_types;
+drop policy if exists productes_staff_insert on storage.objects;
+create policy productes_staff_insert on storage.objects for insert to authenticated
+  with check (bucket_id = 'productes' and public.is_staff());
+drop policy if exists productes_staff_update on storage.objects;
+create policy productes_staff_update on storage.objects for update to authenticated
+  using (bucket_id = 'productes' and public.is_staff()) with check (bucket_id = 'productes' and public.is_staff());
+drop policy if exists productes_staff_delete on storage.objects;
+create policy productes_staff_delete on storage.objects for delete to authenticated
+  using (bucket_id = 'productes' and public.is_staff());

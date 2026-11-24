@@ -145,6 +145,10 @@ footer b{font-family:Anton,sans-serif;font-weight:400;font-size:40px;letter-spac
 .item{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 14px rgba(122,20,36,.10);display:flex;flex-direction:column;transition:transform .2s}
 .item:hover{transform:translateY(-3px)}
 .item svg{display:block;width:100%;height:96px}
+.item .ph{height:132px;overflow:hidden;background:#3a0b14}
+.item .ph img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.item:hover .ph img{transform:scale(1.07)}
+.thumb{width:72px;height:50px;object-fit:cover;border-radius:8px;background:#eee;display:block}
 .item svg .dr{animation:bob 3.5s ease-in-out infinite;transform-origin:center}
 .item .meta{padding:10px 12px;display:flex;justify-content:space-between;gap:6px;font-size:15px;flex:1}
 .item strong{white-space:nowrap;color:var(--acc)}
@@ -315,7 +319,8 @@ function startApp(){
   async function loadPublic(){
     if (!ok) { // vista prèvia amb dades d'exemple fins que connectis la base de dades
       const M = [['Copes','Cubata',7,'glass','#7A3412'],['Copes','Mojito',7,'cocktail','#4f8a3c'],['Copes','Piña colada',7.5,'cocktail','#c9a55a'],['Copes','Cubata premium',10,'glass','#5a2208'],['Cervesa','Canya',2.3,'beer','#d49a2a'],['Cervesa','Galleda 6 quintos',10,'bucket','#b8954e'],['Cachimbes','Cachimba',12,'hookah','#7A1424'],['Cachimbes','Cachimba premium',18,'hookah','#C9A55A'],['Sense alcohol','Refresc',2.5,'soda','#3e6db5']];
-      S.menu = M.map((m, i) => ({ id: i + 1, category: m[0], name: m[1], price: m[2], icon: m[3], color: m[4] }));
+      const IMG = { 'Cubata': 'cubata', 'Mojito': 'mojito', 'Piña colada': 'pina-colada', 'Cubata premium': 'cubata-premium', 'Canya': 'canya', 'Galleda 6 quintos': 'galleda-6-quintos', 'Cachimba': 'cachimba', 'Cachimba premium': 'cachimba-premium', 'Refresc': 'refresc' };
+      S.menu = M.map((m, i) => ({ id: i + 1, category: m[0], name: m[1], price: m[2], icon: m[3], color: m[4], image: IMG[m[1]] ? 'img/productes/' + IMG[m[1]] + '.svg' : null }));
       S.rewards = [{ id: 1, name: 'Refresc o xupito', cost: 30 }, { id: 2, name: 'Cubata de regal', cost: 60 }, { id: 3, name: 'Cachimba sense nicotina de regal', cost: 120 }];
       S.offers = [{ id: 1, title: 'Doble punts els dijous', body: 'Jaleo Universitari · membres JCC' }];
       return;
@@ -336,7 +341,7 @@ function startApp(){
   const go = s => { S.screen = s; S.err = ''; S.msg = ''; render(); window.scrollTo({ top: 0 }); };
   const head = r => `<div class="brand"><a href="#" data-a="go" data-v="web">${esc(C.nom)}</a><span>${r}</span></div>`;
   const msgs = () => (S.err ? `<div class="err" role="alert">${esc(S.err)}</div>` : '') + (S.msg ? `<div class="okmsg" role="status">${esc(S.msg)}</div>` : '');
-  const itemCard = i => `<div class="item">${pic(i.icon, i.color)}<div class="meta"><span>${esc(i.name)}</span><strong>${eur(i.price)}</strong></div>${mesa ? `<button class="add ${S.cart[i.id] ? 'on' : ''} ${S.bumped == i.id ? 'pop' : ''}" data-a="add" data-v="${i.id}" aria-label="Afegir ${esc(i.name)}">${S.cart[i.id] ? S.cart[i.id] + ' a la comanda · +' : '+ Afegir'}</button>` : ''}</div>`;
+  const itemCard = i => `<div class="item">${i.image ? `<div class="ph"><img src="${esc(i.image)}" alt="${esc(i.name)}" loading="lazy"></div>` : pic(i.icon, i.color)}<div class="meta"><span>${esc(i.name)}</span><strong>${eur(i.price)}</strong></div>${mesa ? `<button class="add ${S.cart[i.id] ? 'on' : ''} ${S.bumped == i.id ? 'pop' : ''}" data-a="add" data-v="${i.id}" aria-label="Afegir ${esc(i.name)}">${S.cart[i.id] ? S.cart[i.id] + ' a la comanda · +' : '+ Afegir'}</button>` : ''}</div>`;
 
   // ---------- la web (portada) ----------
   function vWeb(){
@@ -596,8 +601,8 @@ function startPanel(){
     <div class="box mini">${t ? `<b>${esc(t.name)}</b><label class="f" for="tn">Nom</label><input id="tn" data-k="name" value="${esc(t.name)}"><div class="f2"><div><label class="f" for="ts">Places</label><input id="ts" data-k="seats" type="number" min="0" max="40" value="${t.seats}"></div><div><label class="f" for="tsh">Forma</label><select id="tsh" data-k="shape">${[['round', 'Rodona'], ['rect', 'Rectangular'], ['sofa', 'Sofà'], ['bar', 'Barra / no reservable']].map(([v, l]) => `<option value="${v}" ${t.shape === v ? 'selected' : ''}>${l}</option>`).join('')}</select></div><div><label class="f" for="tw">Amplada %</label><input id="tw" data-k="w" type="number" min="3" max="60" value="${t.w}"></div><div><label class="f" for="th">Alçada %</label><input id="th" data-k="h" type="number" min="3" max="90" value="${t.h}"></div></div><label class="chk"><input type="checkbox" id="tbk" data-k="bookable" ${t.bookable ? 'checked' : ''}>Es pot reservar</label><div class="row"><button class="sbtn ghost" data-p="deltable">Esborrar taula</button></div>` : '<p class="small">Toca una taula per editar-la.</p>'}</div></div>`;
   }
   function vCarta(){
-    const row = (i, k) => `<tr><td><input data-t="${k}" data-id="${i.id}" data-k="${k === 'offers' ? 'title' : 'name'}" value="${esc(k === 'offers' ? i.title : i.name)}"></td>${k === 'menu_items' ? `<td><input data-t="${k}" data-id="${i.id}" data-k="category" value="${esc(i.category)}"></td><td><input data-t="${k}" data-id="${i.id}" data-k="price" type="number" step="0.1" min="0" value="${i.price}" style="max-width:100px"></td>` : k === 'rewards' ? `<td><input data-t="${k}" data-id="${i.id}" data-k="cost" type="number" min="1" value="${i.cost}" style="max-width:100px"></td>` : `<td><input data-t="${k}" data-id="${i.id}" data-k="body" value="${esc(i.body)}"></td>`}<td><label class="chk" style="margin:0"><input type="checkbox" data-t="${k}" data-id="${i.id}" data-k="active" ${i.active ? 'checked' : ''}>Visible</label></td></tr>`;
-    return `<p class="small">Els canvis es desen sols en sortir de cada camp.</p><h3 style="margin:16px 0 8px;font-size:22px">Carta</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Producte</th><th>Categoria</th><th>Preu €</th><th>Visible</th></tr></thead><tbody>${S.menu.map(i => row(i, 'menu_items')).join('')}</tbody></table></div>
+    const row = (i, k) => `<tr>${k === 'menu_items' ? `<td><div style="display:flex;gap:8px;align-items:center">${i.image ? `<img class="thumb" src="${esc(i.image)}" alt="">` : '<span class="thumb"></span>'}<label class="sbtn ghost" style="display:inline-flex;align-items:center;cursor:pointer;white-space:nowrap">${S.uploading == i.id ? 'Pujant…' : 'Canviar foto'}<input type="file" accept="image/*" data-up="${i.id}" hidden></label></div></td>` : ''}<td><input data-t="${k}" data-id="${i.id}" data-k="${k === 'offers' ? 'title' : 'name'}" value="${esc(k === 'offers' ? i.title : i.name)}"></td>${k === 'menu_items' ? `<td><input data-t="${k}" data-id="${i.id}" data-k="category" value="${esc(i.category)}"></td><td><input data-t="${k}" data-id="${i.id}" data-k="price" type="number" step="0.1" min="0" value="${i.price}" style="max-width:100px"></td>` : k === 'rewards' ? `<td><input data-t="${k}" data-id="${i.id}" data-k="cost" type="number" min="1" value="${i.cost}" style="max-width:100px"></td>` : `<td><input data-t="${k}" data-id="${i.id}" data-k="body" value="${esc(i.body)}"></td>`}<td><label class="chk" style="margin:0"><input type="checkbox" data-t="${k}" data-id="${i.id}" data-k="active" ${i.active ? 'checked' : ''}>Visible</label></td></tr>`;
+    return `<p class="small">Els canvis es desen sols en sortir de cada camp. Per posar una foto real, toca «Canviar foto» i tria-la de la galeria (es redueix sola).</p><h3 style="margin:16px 0 8px;font-size:22px">Carta</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Foto</th><th>Producte</th><th>Categoria</th><th>Preu €</th><th>Visible</th></tr></thead><tbody>${S.menu.map(i => row(i, 'menu_items')).join('')}</tbody></table></div>
     <div class="row mini"><input id="nn" placeholder="Nou producte" style="max-width:200px"><input id="nc" placeholder="Categoria" style="max-width:160px"><input id="np" type="number" step="0.1" placeholder="Preu" style="max-width:100px"><select id="ni" style="max-width:150px">${['glass', 'cocktail', 'beer', 'bucket', 'shot', 'hookah', 'soda', 'food'].map(x => `<option>${x}</option>`).join('')}</select><button class="sbtn" data-p="additem">Afegir</button></div>
     <h3 style="margin:22px 0 8px;font-size:22px">Recompenses</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Premi</th><th>Punts</th><th>Visible</th></tr></thead><tbody>${S.rewards.map(i => row(i, 'rewards')).join('')}</tbody></table></div><div class="row mini"><input id="rwn" placeholder="Nou premi" style="max-width:240px"><input id="rwc" type="number" min="1" placeholder="Punts" style="max-width:110px"><button class="sbtn" data-p="addrw">Afegir</button></div>
     <h3 style="margin:22px 0 8px;font-size:22px">Ofertes de membres</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Títol</th><th>Text</th><th>Visible</th></tr></thead><tbody>${S.offers.map(i => row(i, 'offers')).join('')}</tbody></table></div><div class="row mini"><input id="ofn" placeholder="Títol" style="max-width:240px"><input id="ofb" placeholder="Text" style="max-width:300px"><button class="sbtn" data-p="addof">Afegir</button></div>`;
@@ -614,6 +619,7 @@ function startPanel(){
     if (S.tab === 'planol') bindDrag();
   }
   const flash = m => { S.msg = m; render(); setTimeout(() => { if (S.msg === m) { S.msg = ''; render(); } }, 4000); };
+  const shrink = file => new Promise((res, rej) => { const img = new Image(); img.onload = () => { const m = 1200, k = Math.min(1, m / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); c.toBlob(b => b ? res(b) : rej(new Error('imatge')), 'image/jpeg', .82); URL.revokeObjectURL(img.src); }; img.onerror = () => rej(new Error('format no vàlid')); img.src = URL.createObjectURL(file); });
   const busyTyping = () => { const a = document.activeElement; return a && ['INPUT', 'TEXTAREA', 'SELECT'].includes(a.tagName); };
   function bindDrag(){
     const map = $('#map'); if (!map) return;
@@ -651,6 +657,20 @@ function startPanel(){
   document.addEventListener('input', e => { if (e.target.id === 'cq') { S.q = e.target.value; render(); } });
   document.addEventListener('change', async e => {
     const el = e.target;
+    if (el.dataset.up && el.files && el.files[0]) {
+      const id = el.dataset.up; S.uploading = id; render();
+      try {
+        const blob = await shrink(el.files[0]);
+        const path = 'producte-' + id + '-' + Date.now() + '.jpg';
+        const up = await sb.storage.from('productes').upload(path, blob, { contentType: 'image/jpeg', upsert: true });
+        if (up.error) throw up.error;
+        const url = sb.storage.from('productes').getPublicUrl(path).data.publicUrl;
+        const { error } = await sb.from('menu_items').update({ image: url }).eq('id', id);
+        if (error) throw error;
+        S.uploading = null; await load(); flash('Foto actualitzada');
+      } catch (err) { S.uploading = null; flash('No s’ha pogut pujar la foto: ' + (err.message || err)); }
+      return;
+    }
     if (el.dataset.t) { const val = el.type === 'checkbox' ? el.checked : el.type === 'number' ? Number(el.value) : el.value; const { error } = await sb.from(el.dataset.t).update({ [el.dataset.k]: val }).eq('id', el.dataset.id); flash(error ? 'Error: ' + error.message : 'Desat'); await load(); return; }
     if (S.tab === 'planol' && el.dataset.k && S.selTable) { const t = S.tables.find(x => x.id === S.selTable), k = el.dataset.k; t[k] = el.type === 'checkbox' ? el.checked : el.type === 'number' ? Number(el.value) : el.value; if (k === 'shape' && el.value === 'bar') t.bookable = false; S.dirty.add(t.id); render(); }
   });
