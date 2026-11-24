@@ -768,13 +768,14 @@ function startPanel(){
     if (a === 'addrw') { const r = { name: $('#rwn').value.trim(), cost: Number($('#rwc').value) }; if (!r.name || !(r.cost > 0)) return flash('Posa nom i punts.'); await run(sb.from('rewards').insert(r), 'Premi afegit'); }
     if (a === 'addof') { const r = { title: $('#ofn').value.trim(), body: $('#ofb').value.trim(), perk: $('#ofp').value.trim() }; if (!r.title) return flash('Posa un títol.'); await run(sb.from('offers').insert(r), 'Oferta afegida'); }
     if (a === 'addnotice') {
-      const r = { title: $('#nt').value.trim(), body: $('#nb').value.trim() }, push = $('#npush') && $('#npush').checked;
+      const push = !!($('#npush') && $('#npush').checked), r = { title: $('#nt').value.trim(), body: $('#nb').value.trim(), push };
       if (!r.title || !r.body) return flash('Omple títol i text.');
       b.disabled = true;
-      const { error } = await sb.from('notices').insert(r); if (error) { b.disabled = false; return flash('Error: ' + error.message); }
-      let m = 'Avís publicat';
-      if (push) { const { data, error: pe } = await sb.functions.invoke('send-push', { body: r }); m += pe ? ' (però la notificació ha fallat: ' + (pe.message || pe) + ')' : ` i enviat a ${data.sent} mòbil${data.sent === 1 ? '' : 's'}`; }
-      S.msg = m; await load(); render();
+      const { data, error } = await sb.from('notices').insert(r).select('id').single(); if (error) { b.disabled = false; return flash('Error: ' + error.message); }
+      S.msg = push ? 'Avís publicat. Enviant la notificació…' : 'Avís publicat'; await load(); render();
+      if (push) { // el servidor envia la notificació sol; aquí només mirem el resultat
+        for (let i = 0; i < 8; i++) { await new Promise(res => setTimeout(res, 1500)); const q = await sb.from('notices').select('push_result').eq('id', data.id).single(); const pr = q.data && q.data.push_result; if (pr) { S.msg = pr.error ? 'Avís publicat, però la notificació ha fallat.' : `Avís publicat i enviat a ${pr.sent} mòbil${pr.sent === 1 ? '' : 's'}.`; render(); break; } }
+      }
     }
     if (a === 'ocl') await run(sb.from('offer_claims').update({ status: v }).eq('id', id), v === 'entregat' ? 'Marcat com a portat' : 'Marcat com a no disponible');
     if (a === 'delof') { if (!confirm('Esborrar aquesta oferta?')) return; await run(sb.from('offers').delete().eq('id', id), 'Oferta esborrada'); }
