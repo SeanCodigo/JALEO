@@ -603,3 +603,8 @@ returns boolean language sql security definer set search_path = public as $$
 $$;
 revoke all on function public.save_push(text,text,text,text), public.drop_push(text) from public;
 grant execute on function public.save_push(text,text,text,text), public.drop_push(text) to anon, authenticated;
+
+-- =====================================================================
+-- RECUPERAR LA TARGETA: mateix email + mateix nom = es torna la targeta existent
+-- (versió actualitzada de create_card aplicada a Supabase)
+-- =====================================================================

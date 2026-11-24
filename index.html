@@ -322,7 +322,7 @@ async function pushOff(){
 const STAR = (s, c) => `<svg width="${s}" height="${s}" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 2l6 24 24 6-24 6-6 24-6-24-24-6 24-6z" fill="${c}"/></svg>`;
 let tt; const toast = t => { $('#fx').insertAdjacentHTML('beforeend', `<div class="toast" role="status"><div class="ic">J</div><div><b>${esc(C.nom)}</b><div style="font-size:14px">${esc(t)}</div></div></div>`); clearTimeout(tt); tt = setTimeout(() => document.querySelectorAll('.toast').forEach(x => x.remove()), 4500); };
 const confetti = () => { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; const cols = ['#A3202F', '#D0394A', '#C9A55A', '#F2D9B0', '#7A1424']; let h = '<div class="confetti">'; for (let i = 0; i < 70; i++) h += `<i style="left:${Math.random() * 100}%;background:${cols[i % 5]};animation-duration:${2 + Math.random() * 2.5}s;animation-delay:${Math.random() * .6}s;transform:rotate(${Math.random() * 360}deg)"></i>`; $('#fx').insertAdjacentHTML('beforeend', h + '</div>'); setTimeout(() => document.querySelectorAll('.confetti').forEach(x => x.remove()), 5500); };
-const ERR = { EMAIL_EXISTS: 'Aquest email ja té targeta. Si has canviat de mòbil, demana a la barra que te la recuperin.', BAD_EMAIL: 'Revisa l’email.', BAD_NAME: 'Escriu el teu nom.', ADULT_REQUIRED: 'Has de ser major de 18 anys.', TOO_MANY: 'Massa peticions seguides. Espera uns minuts.', NOT_ENOUGH: 'Encara no tens prou punts.', ALREADY_PENDING: 'Ja tens un premi demanat. Espera que te’l portin.', TABLE_TAKEN: 'Aquesta taula ja està reservada aquest dia.', BAD_DAY: 'Tria un dia d’avui als propers 60 dies.', BAD_ITEM: 'Algun producte ja no està disponible.', NO_CARD: 'No trobem la teva targeta.' };
+const ERR = { EMAIL_EXISTS: 'Aquest email ja té una targeta amb un altre nom. Escriu el nom tal com el vas posar el primer cop, o demana a la barra que te la recuperin.', BAD_EMAIL: 'Revisa l’email.', BAD_NAME: 'Escriu el teu nom.', ADULT_REQUIRED: 'Has de ser major de 18 anys.', TOO_MANY: 'Massa peticions seguides. Espera uns minuts.', NOT_ENOUGH: 'Encara no tens prou punts.', ALREADY_PENDING: 'Ja tens un premi demanat. Espera que te’l portin.', TABLE_TAKEN: 'Aquesta taula ja està reservada aquest dia.', BAD_DAY: 'Tria un dia d’avui als propers 60 dies.', BAD_ITEM: 'Algun producte ja no està disponible.', NO_CARD: 'No trobem la teva targeta.' };
 const errMsg = e => { const m = (e && (e.message || e.details)) || ''; const k = Object.keys(ERR).find(k => m.includes(k)); return k ? ERR[k] : 'Hi ha hagut un error. Torna-ho a provar.'; };
 
 function pic(kind, col){
@@ -361,7 +361,7 @@ function startApp(){
     const { data, error } = await sb.rpc('get_card', { p_secret: S.secret });
     if (error) return;
     if (!data) { store.set('jaleo_secret', null); S.secret = null; S.card = null; return; }
-    S.card = data;
+    S.card = data; if (data.name) store.set('jaleo_name', data.name); if (data.email) store.set('jaleo_email', data.email);
   }
   const price = id => (S.menu.find(x => x.id == id) || {}).price || 0;
   const cartN = () => Object.values(S.cart).reduce((a, b) => a + b, 0);
@@ -449,8 +449,9 @@ function startApp(){
   function vRegistre(){
     const ref = store.get('jaleo_ref');
     return head('Club') + `<h2 style="font-size:40px">Fes-te la targeta</h2><p class="serif" style="font-size:26px;margin:4px 0 0;color:var(--acc)">i t’emportes punts de regal.</p>
+    <div class="sheet"><b>Ja tens targeta?</b> Posa el mateix nom i email que la primera vegada i la recuperaràs amb tots els punts.</div>
     ${ref ? `<div class="sheet">T’ha convidat un amic: quan gastis els primers euros us endureu punts tots dos.</div>` : ''}
-    <form id="reg"><label class="f" for="rn">Nom</label><input id="rn" required maxlength="60" autocomplete="given-name"><label class="f" for="re">Email</label><input id="re" type="email" required maxlength="120" autocomplete="email">
+    <form id="reg"><label class="f" for="rn">Nom</label><input id="rn" required maxlength="60" autocomplete="given-name" value="${esc(store.get('jaleo_name') || '')}"><label class="f" for="re">Email</label><input id="re" type="email" required maxlength="120" autocomplete="email" value="${esc(store.get('jaleo_email') || '')}">
     <label class="chk"><input type="checkbox" id="r18" required>Confirmo que soc major de 18 anys.</label><label class="chk"><input type="checkbox" id="rmk">Vull rebre ofertes i avisos de ${esc(C.nom)}. Me’n puc donar de baixa quan vulgui.</label>
     <p class="small">Fem servir el teu nom i email només per al programa de punts i, si ho acceptes, per enviar-te ofertes. Pots demanar que els esborrem a la barra o per Instagram @${esc(C.instagram)}.</p>${msgs()}
     <button class="btn pri" type="submit" ${S.busy || !ok ? 'disabled' : ''}>Crear la meva targeta</button></form>`;
@@ -577,7 +578,10 @@ function startApp(){
       S.busy = false;
       if (error) { S.err = errMsg(error); render(); $('#rn').value = vals.n; $('#re').value = vals.m; return; }
       S.secret = data.secret; store.set('jaleo_secret', data.secret); store.set('jaleo_ref', null);
-      await loadCard(); go(cartN() ? 'cistella' : 'hola'); confetti();
+      store.set('jaleo_name', vals.n.trim()); store.set('jaleo_email', vals.m.trim().toLowerCase());
+      await loadCard();
+      if (data.existing) { go(cartN() ? 'cistella' : 'targeta'); S.msg = 'Benvingut/da de nou, ' + S.card.name + '! Hem recuperat la teva targeta.'; render(); }
+      else { go(cartN() ? 'cistella' : 'hola'); confetti(); }
     }
     if (e.target.id === 'res') {
       const p = { p_secret: S.secret, p_day: $('#rd').value, p_time: $('#rh').value, p_people: Number($('#rp').value), p_note: $('#rnote').value || null, p_table_id: S.resTable };
