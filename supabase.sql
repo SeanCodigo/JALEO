@@ -4,11 +4,12 @@
 -- Es pot tornar a executar: no esborra dades si les taules ja existeixen.
 -- =====================================================================
 
-create extension if not exists pgcrypto;
+create schema if not exists extensions;
+create extension if not exists pgcrypto with schema extensions;
 
 -- ---------- REGLES DEL PROGRAMA (canvia-les aquí si cal) ----------
 create or replace function public.rules() returns jsonb
-language sql immutable as $$
+language sql immutable set search_path = public as $$
   select jsonb_build_object(
     'welcome_points', 10,   -- punts en crear la targeta
     'ref_points', 10,       -- punts per a cadascú quan un amic convidat gasta el mínim
@@ -154,11 +155,11 @@ create policy public_read on public.notices for select to anon using (true);
 
 -- ---------- FUNCIONS INTERNES ----------
 create or replace function public.new_code() returns text
-language plpgsql as $$
+language plpgsql set search_path = public, extensions as $$
 declare c text;
 begin
   loop
-    c := 'J' || upper(substr(encode(gen_random_bytes(4), 'hex'), 1, 6));
+    c := 'J' || upper(substr(encode(extensions.gen_random_bytes(4), 'hex'), 1, 6));
     exit when not exists (select 1 from public.customers where code = c);
   end loop;
   return c;
@@ -211,7 +212,7 @@ begin
     select id into v_ref from public.customers where code = upper(p_ref);
   end if;
   v_code := public.new_code();
-  v_secret := encode(gen_random_bytes(18), 'hex');
+  v_secret := encode(extensions.gen_random_bytes(18), 'hex');
   insert into public.customers(code, secret, name, email, marketing, points, referred_by)
   values (v_code, v_secret, trim(p_name), v_email, coalesce(p_marketing,false), (r->>'welcome_points')::int, v_ref)
   returning id into v_id;
