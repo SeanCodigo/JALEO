@@ -637,3 +637,14 @@ begin
   insert into public.points_log(customer_id, delta, reason) values (v_id, (r->>'welcome_points')::int, 'Benvinguda');
   return jsonb_build_object('code', v_code, 'secret', v_secret, 'existing', false);
 end $$;
+
+-- =====================================================================
+-- JCC, OFERTES DE MEMBRES I NOTIFICACIONS AUTOMÀTIQUES
+-- Aplicat a Supabase amb les migracions: jaleo_push_trigger, jaleo_service_role_grants,
+-- jaleo_jcc_and_member_offers i jaleo_fix_join_jcc (Supabase → Database → Migrations).
+--  · customers.jcc / jcc_since · join_jcc(secret, codi) · jcc_code() · new_jcc_code()
+--  · award_spend(): punts x2 els dijous (dia de servei fins a les 6 h) per als JCC
+--  · offers: emoji, perk, days int[] (1=dl … 7=dg), from_time, claimable, jcc_only, sort
+--  · offer_claims + claim_offer(secret, offer_id, taula) + my_offers(secret)
+--  · notices.push: en publicar un avís, un trigger crida la funció Edge send-push
+-- =====================================================================

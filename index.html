@@ -23,6 +23,7 @@ window.JALEO = {
   nom: "JALEO",
   adreca: "Pl. Catalunya, 6 · Reus",
   instagram: "jaleoreus",   // sense @
+  whatsapp: "https://chat.whatsapp.com/KkpSgTEjIj0FrZcAy5UCFQ", // comunitat JCC
   telefon: "616 562 597",
   mapa: "https://maps.google.com/?q=Pla%C3%A7a+Catalunya+6+Reus",
   nits: [
@@ -141,6 +142,13 @@ footer b{font-family:Anton,sans-serif;font-weight:400;font-size:40px;letter-spac
 .offer{position:relative;border-radius:20px;padding:16px 18px;margin-bottom:10px;color:#fff;background:linear-gradient(135deg,#D0394A,#A3202F);overflow:hidden}
 .offer:after{content:"";position:absolute;inset:-60%;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.25) 50%,transparent 58%);animation:shine 5s ease-in-out infinite}
 .offer h3{font-size:24px;position:relative}.offer p{margin:2px 0 0;font-size:14px;color:#fde9e4;position:relative}
+.offer.full{padding:18px 18px 16px}.offer .oe{font-size:34px;line-height:1;position:relative}.offer .perk{font-family:Anton,sans-serif;font-size:20px;color:#FFE3A6;position:relative;margin-top:2px}
+.offer .odays{position:relative;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:#f6c9c3;margin-top:8px}.offer .ofoot{position:relative;margin-top:10px}
+.otag{position:absolute;top:14px;right:14px;background:#FFE3A6;color:#7A1424;font-weight:700;font-size:12px;border-radius:999px;padding:3px 10px}
+.ochip{display:inline-block;background:rgba(255,255,255,.16);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:600}.ochip.dim{opacity:.85;font-weight:500}
+.sbtn.light{background:#F7F0E6;color:#7A1424;text-decoration:none;display:inline-flex;align-items:center}
+.offerbtn{display:flex;align-items:center;gap:12px;width:100%;text-align:left;border:0;border-radius:20px;padding:16px 18px;margin:6px 0 14px;color:#fff;background:linear-gradient(135deg,#D0394A,#A3202F);cursor:pointer;font:inherit}
+.offerbtn span{font-size:30px}.offerbtn b{display:block;font-family:Anton,sans-serif;font-weight:400;font-size:22px}.offerbtn small{display:block;color:#fde9e4;font-size:14px}.offerbtn i{margin-left:auto;font-style:normal;font-size:26px}
 .lock{position:absolute;inset:0;z-index:2;background:rgba(122,20,36,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;gap:10px;font-weight:600}
 .lock svg{animation:wiggle 2.6s ease-in-out infinite}
 .items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
@@ -322,7 +330,7 @@ async function pushOff(){
 const STAR = (s, c) => `<svg width="${s}" height="${s}" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 2l6 24 24 6-24 6-6 24-6-24-24-6 24-6z" fill="${c}"/></svg>`;
 let tt; const toast = t => { $('#fx').insertAdjacentHTML('beforeend', `<div class="toast" role="status"><div class="ic">J</div><div><b>${esc(C.nom)}</b><div style="font-size:14px">${esc(t)}</div></div></div>`); clearTimeout(tt); tt = setTimeout(() => document.querySelectorAll('.toast').forEach(x => x.remove()), 4500); };
 const confetti = () => { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; const cols = ['#A3202F', '#D0394A', '#C9A55A', '#F2D9B0', '#7A1424']; let h = '<div class="confetti">'; for (let i = 0; i < 70; i++) h += `<i style="left:${Math.random() * 100}%;background:${cols[i % 5]};animation-duration:${2 + Math.random() * 2.5}s;animation-delay:${Math.random() * .6}s;transform:rotate(${Math.random() * 360}deg)"></i>`; $('#fx').insertAdjacentHTML('beforeend', h + '</div>'); setTimeout(() => document.querySelectorAll('.confetti').forEach(x => x.remove()), 5500); };
-const ERR = { EMAIL_EXISTS: 'Aquest email ja té una targeta amb un altre nom. Escriu el nom tal com el vas posar el primer cop, o demana a la barra que te la recuperin.', BAD_EMAIL: 'Revisa l’email.', BAD_NAME: 'Escriu el teu nom.', ADULT_REQUIRED: 'Has de ser major de 18 anys.', TOO_MANY: 'Massa peticions seguides. Espera uns minuts.', NOT_ENOUGH: 'Encara no tens prou punts.', ALREADY_PENDING: 'Ja tens un premi demanat. Espera que te’l portin.', TABLE_TAKEN: 'Aquesta taula ja està reservada aquest dia.', BAD_DAY: 'Tria un dia d’avui als propers 60 dies.', BAD_ITEM: 'Algun producte ja no està disponible.', NO_CARD: 'No trobem la teva targeta.' };
+const ERR = { OFFER_CLOSED: 'Aquesta oferta encara no està oberta.', ALREADY_CLAIMED: 'Ja l’has demanada avui.', JCC_ONLY: 'Només per a membres de la comunitat JCC.', BAD_JCC: 'Aquest enllaç JCC ja no és vàlid. Agafa el nou a la comunitat de WhatsApp.', NO_CARD: 'Primer fes-te la targeta.', EMAIL_EXISTS: 'Aquest email ja té una targeta amb un altre nom. Escriu el nom tal com el vas posar el primer cop, o demana a la barra que te la recuperin.', BAD_EMAIL: 'Revisa l’email.', BAD_NAME: 'Escriu el teu nom.', ADULT_REQUIRED: 'Has de ser major de 18 anys.', TOO_MANY: 'Massa peticions seguides. Espera uns minuts.', NOT_ENOUGH: 'Encara no tens prou punts.', ALREADY_PENDING: 'Ja tens un premi demanat. Espera que te’l portin.', TABLE_TAKEN: 'Aquesta taula ja està reservada aquest dia.', BAD_DAY: 'Tria un dia d’avui als propers 60 dies.', BAD_ITEM: 'Algun producte ja no està disponible.', NO_CARD: 'No trobem la teva targeta.' };
 const errMsg = e => { const m = (e && (e.message || e.details)) || ''; const k = Object.keys(ERR).find(k => m.includes(k)); return k ? ERR[k] : 'Hi ha hagut un error. Torna-ho a provar.'; };
 
 function pic(kind, col){
@@ -339,9 +347,10 @@ function startApp(){
   if (params.get('mesa')) { try { sessionStorage.setItem('jaleo_mesa', params.get('mesa').slice(0, 10)); } catch(_) {} }
   if (params.get('ref')) store.set('jaleo_ref', params.get('ref').slice(0, 12));
   if (params.get('card')) store.set('jaleo_secret', params.get('card').slice(0, 80));
+  if (params.get('jcc')) store.set('jaleo_jcc', params.get('jcc').slice(0, 20));
   if ([...params.keys()].length) history.replaceState(null, '', location.pathname + location.hash);
   let mesa = null; try { mesa = sessionStorage.getItem('jaleo_mesa'); } catch(_) {}
-  const S = { push: null, screen: params.get('v') === 'avisos' ? 'avisos' : mesa ? 'carta' : 'web', menu: [], rewards: [], offers: [], notices: [], tables: [], card: null, secret: store.get('jaleo_secret'), cart: {}, msg: '', err: '', taken: [], resDay: null, resTable: null, resForm: { h: '22:00', p: 4, n: '' }, busy: false, cat: null,
+  const S = { push: null, mo: null, screen: params.get('v') === 'avisos' ? 'avisos' : params.get('v') === 'ofertes' ? 'ofertes' : !store.get('jaleo_secret') ? 'registre' : mesa ? 'carta' : 'web', menu: [], rewards: [], offers: [], notices: [], tables: [], card: null, secret: store.get('jaleo_secret'), cart: {}, msg: '', err: '', taken: [], resDay: null, resTable: null, resForm: { h: '22:00', p: 4, n: '' }, busy: false, cat: null,
     lastOrder: JSON.parse(store.get('jaleo_last_order') || 'null'), order: null, bumped: null };
 
   async function loadPublic(){
@@ -362,6 +371,18 @@ function startApp(){
     if (error) return;
     if (!data) { store.set('jaleo_secret', null); S.secret = null; S.card = null; return; }
     S.card = data; if (data.name) store.set('jaleo_name', data.name); if (data.email) store.set('jaleo_email', data.email);
+    await joinJcc();
+  }
+  async function joinJcc(){
+    const code = store.get('jaleo_jcc'); if (!code || !S.card || !S.secret) return;
+    const { error } = await sb.rpc('join_jcc', { p_secret: S.secret, p_code: code });
+    store.set('jaleo_jcc', null);
+    if (error) { toast(errMsg(error)); return; }
+    if (!S.card.jcc) { S.card.jcc = true; toast('Ja ets JCC! Els dijous sumes punts x2 ⭐'); }
+  }
+  async function loadMO(){
+    if (!ok || !S.secret) { S.mo = null; return; }
+    const { data } = await sb.rpc('my_offers', { p_secret: S.secret }); S.mo = data || null;
   }
   const price = id => (S.menu.find(x => x.id == id) || {}).price || 0;
   const cartN = () => Object.values(S.cart).reduce((a, b) => a + b, 0);
@@ -397,7 +418,7 @@ function startApp(){
       <div class="reveal"><div class="eyebrow" style="color:#F2D9B0">JALEO Club</div><h2 class="st">La targeta que <span class="serif">et fa tornar</span></h2><p style="max-width:60ch;color:#e6d4c8;font-size:18px">Sense descarregar cap app. La tens al mòbil amb el nostre logo i cada euro que gastes es converteix en punts.</p></div>
       <div class="steps4">${[['Escaneja el QR', 'De la teva taula: veus la carta amb preus i pots demanar des del mòbil.'], ['Fes-te la targeta', 'Nom i email. Al moment desbloqueges les ofertes i t’emportes punts de regal.'], ['Suma punts', '1 punt per cada euro. Demana el premi des de la targeta quan hi arribis.'], ['Porta la colla', 'Convida amics amb el teu enllaç: quan gastin els primers euros, punts per a tots dos.']].map((s, i) => `<div class="step reveal" style="transition-delay:${i * .1}s"><div class="ic">${icons[i]}</div><h3>${s[0]}</h3><p>${s[1]}</p></div>`).join('')}</div>
       ${S.rewards.length ? `<div class="rwrow reveal">${S.rewards.map(r => `<span class="rwpill">${esc(r.name)} · ${r.cost} punts</span>`).join('')}</div>` : ''}
-      <div class="btns reveal" style="opacity:1;animation:none"><a class="b hot" href="#" data-a="go" data-v="${S.card ? 'targeta' : 'registre'}">${S.card ? 'Veure la meva targeta' : 'Vull la meva targeta'}</a></div></div></section>
+      <div class="btns reveal" style="opacity:1;animation:none"><a class="b hot" href="#" data-a="go" data-v="${S.card ? 'targeta' : 'registre'}">${S.card ? 'Veure la meva targeta' : 'Vull la meva targeta'}</a><a class="b cream" href="#" data-a="go" data-v="ofertes">🎁 Ofertes per a membres</a></div></div></section>
 
     <section class="s" id="carta"><div class="wrap"><div class="reveal"><div class="eyebrow">La carta</div><h2 class="st">Què et <span class="serif">vens a prendre?</span></h2><p class="small" style="font-size:15px">Per demanar des de la taula, escaneja el QR que hi ha a cada taula.</p></div>
       ${cats.length ? `<div class="tabsC reveal">${cats.map(c => `<button class="${c === cat ? 'on' : ''}" data-a="cat" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div><div class="menuGrid">${S.menu.filter(i => i.category === cat).map(itemCard).join('')}</div>` : '<p class="small">La carta apareixerà aquí quan connectis la base de dades.</p>'}
@@ -416,7 +437,7 @@ function startApp(){
     const cats = [...new Set(S.menu.map(i => i.category))];
     const lock = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F7F0E6" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>';
     return head(mesa ? `Taula ${esc(mesa)} · ${esc(C.adreca)}` : esc(C.adreca)) + (!mesa ? `<div class="sheet small">Per demanar, escaneja el codi QR de la teva taula.</div>` : '') +
-      (S.offers.length ? `<div class="sec">Ofertes de membres</div>` + S.offers.map(o => `<div class="offer"><h3>${esc(o.title)}</h3><p>${esc(o.body)}</p>${S.card ? '' : `<div class="lock">${lock}Només per a membres</div>`}</div>`).join('') : '') +
+      (S.offers.length ? `<button class="offerbtn" data-a="go" data-v="ofertes"><span>🎁</span><div><b>Ofertes per a membres</b><small>${S.card ? 'Mira què et sumem avui a la taula' : '🔒 Fes-te la targeta per desbloquejar-les'}</small></div><i>→</i></button>` : '') +
       cats.map(c => `<div class="sec">${esc(c)}</div><div class="items">${S.menu.filter(i => i.category === c).map(itemCard).join('')}</div>`).join('');
   }
   function bCarta(){
@@ -427,9 +448,10 @@ function startApp(){
     return h + (S.card ? tabbar() : '');
   }
   function tabbar(){
-    const t = [['web', 'Inici'], [mesa ? 'carta' : 'web', 'Carta'], ['targeta', 'Targeta'], ['reserva', 'Reservar'], ['avisos', 'Avisos']];
-    return `<div class="tabbar">${t.map(([v, l], i) => `<button class="${(S.screen === v && i !== 0) || (i === 1 && S.screen === 'carta') ? 'on' : ''}" data-a="${i === 1 && !mesa ? 'tocarta' : 'go'}" data-v="${v}">${l}${l === 'Avisos' && S.notices.length ? ' · ' + S.notices.length : ''}</button>`).join('')}</div>`;
+    const t = [['carta', 'Carta'], ['targeta', 'Targeta'], ['ofertes', 'Ofertes'], ['reserva', 'Reservar'], ['avisos', 'Avisos']];
+    return `<div class="tabbar">${t.map(([v, l]) => `<button class="${S.screen === v ? 'on' : ''}" data-a="${v === 'carta' && !mesa ? 'tocarta' : 'go'}" data-v="${v}">${l}${l === 'Avisos' && S.notices.length ? ' · ' + S.notices.length : ''}</button>`).join('')}</div>`;
   }
+
   function vCistella(){
     const t = cartT(), r = S.card ? S.card.rules : null;
     return head(`Taula ${esc(mesa || '?')}`) + `<h2 style="font-size:34px">La teva comanda</h2>` +
@@ -450,16 +472,55 @@ function startApp(){
     const ref = store.get('jaleo_ref');
     return head('Club') + `<h2 style="font-size:40px">Fes-te la targeta</h2><p class="serif" style="font-size:26px;margin:4px 0 0;color:var(--acc)">i t’emportes punts de regal.</p>
     <div class="sheet"><b>Ja tens targeta?</b> Posa el mateix nom i email que la primera vegada i la recuperaràs amb tots els punts.</div>
+    ${store.get('jaleo_jcc') ? `<div class="sheet">⭐ <b>Vens de la comunitat JCC.</b> Fes-te la targeta i quedarà marcada: els dijous sumes punts x2.</div>` : ''}
     ${ref ? `<div class="sheet">T’ha convidat un amic: quan gastis els primers euros us endureu punts tots dos.</div>` : ''}
     <form id="reg"><label class="f" for="rn">Nom</label><input id="rn" required maxlength="60" autocomplete="given-name" value="${esc(store.get('jaleo_name') || '')}"><label class="f" for="re">Email</label><input id="re" type="email" required maxlength="120" autocomplete="email" value="${esc(store.get('jaleo_email') || '')}">
     <label class="chk"><input type="checkbox" id="r18" required>Confirmo que soc major de 18 anys.</label><label class="chk"><input type="checkbox" id="rmk">Vull rebre ofertes i avisos de ${esc(C.nom)}. Me’n puc donar de baixa quan vulgui.</label>
     <p class="small">Fem servir el teu nom i email només per al programa de punts i, si ho acceptes, per enviar-te ofertes. Pots demanar que els esborrem a la barra o per Instagram @${esc(C.instagram)}.</p>${msgs()}
-    <button class="btn pri" type="submit" ${S.busy || !ok ? 'disabled' : ''}>Crear la meva targeta</button></form>`;
+    <button class="btn pri" type="submit" ${S.busy || !ok ? 'disabled' : ''}>Crear la meva targeta</button></form>
+    ${liveOffers().length ? `<div class="sec">El que desbloqueges</div>${liveOffers().slice(0, 4).map(offerCard).join('')}<button class="btn sec2" data-a="go" data-v="ofertes">Veure totes les ofertes (${liveOffers().length})</button>` : ''}
+    <p style="text-align:center;margin:14px 0 4px"><a href="#" class="small" data-a="go" data-v="${mesa ? 'carta' : 'web'}">Ara no, només vull mirar</a></p>`;
   }
   function vHola(){ return `<div class="prize"><p class="small">Benvingut/da, ${esc(S.card.name)}</p><div class="big">+${S.card.rules.welcome_points}</div><p class="serif" style="font-size:30px;margin:6px 0">punts de benvinguda</p><p>Les ofertes de membres ja estan desbloquejades.</p></div><div class="sheet"><b>Guarda-la a la pantalla d’inici</b><ol style="margin:6px 0 0;padding-left:20px"><li>iPhone (Safari): Compartir → «Afegir a la pantalla d’inici».</li><li>Android (Chrome): menú ⋮ → «Afegir a la pantalla d’inici».</li></ol></div>`; }
+  const LOCK = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F7F0E6" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+  const DAYN = { 1: 'Dl', 2: 'Dt', 3: 'Dc', 4: 'Dj', 5: 'Dv', 6: 'Ds', 7: 'Dg' }, DAYL = { 1: 'dilluns', 2: 'dimarts', 3: 'dimecres', 4: 'dijous', 5: 'divendres', 6: 'dissabte', 7: 'diumenge' };
+  const hhmm = t => String(t || '19:00').slice(0, 5);
+  const liveOffers = () => S.offers.filter(o => o.active !== false).sort((a, b) => (a.sort ?? 100) - (b.sort ?? 100) || a.id - b.id);
+  function nextOpen(o){
+    const now = new Date(), h = now.getHours(), d0 = ((now.getDay() + 6) % 7) + 1, sd = h < 6 ? (d0 === 1 ? 7 : d0 - 1) : d0, days = o.days || [];
+    if (days.includes(sd) && h >= 6) return 'avui a les ' + hhmm(o.from_time);
+    for (let i = 1; i <= 7; i++) { const d = ((sd - 1 + i) % 7) + 1; if (days.includes(d)) return (i === 1 ? 'demà' : 'el ' + DAYL[d]) + ' a les ' + hhmm(o.from_time); }
+    return '';
+  }
+  function offerState(o){
+    if (!S.card) return 'locked';
+    if (o.jcc_only && !S.card.jcc) return 'jcc';
+    const cl = S.mo && (S.mo.claims || []).find(c => c.offer_id === o.id); if (cl) return 'claimed:' + cl.status;
+    if (S.mo && (S.mo.open || []).includes(o.id)) return 'open';
+    return 'closed';
+  }
+  function offerCard(o){
+    const st = offerState(o);
+    let foot = '';
+    if (st === 'open') foot = o.claimable ? `<button class="sbtn light" data-a="claim" data-v="${o.id}" ${S.busy ? 'disabled' : ''}>Demanar a la meva taula</button>` : '<span class="ochip">✓ Activa ara</span>';
+    else if (st === 'closed') foot = `<span class="ochip dim">S’obre ${esc(nextOpen(o))}</span>`;
+    else if (st === 'jcc') foot = `<a class="sbtn light" href="${esc(C.whatsapp)}" target="_blank" rel="noopener">Uneix-te a la comunitat JCC</a>`;
+    else if (st === 'claimed:pendent') foot = '<span class="ochip">Demanat · t’ho portem a la taula</span>';
+    else if (st === 'claimed:entregat') foot = '<span class="ochip">Gaudit avui ✓</span>';
+    else if (st === 'claimed:rebutjat') foot = '<span class="ochip dim">No s’ha pogut avui · pregunta a la barra</span>';
+    return `<div class="offer full"><div class="oe">${esc(o.emoji || '🎁')}</div>${o.jcc_only ? '<span class="otag">JCC</span>' : ''}<h3>${esc(o.title)}</h3>${o.perk ? `<div class="perk">${esc(o.perk)}</div>` : ''}<p>${esc(o.body)}</p><div class="odays">${(o.days || []).map(d => DAYN[d]).join(' · ')} · des de les ${hhmm(o.from_time)}</div><div class="ofoot">${foot}</div>${st === 'locked' ? `<div class="lock">${LOCK}Només per a membres</div>` : ''}</div>`;
+  }
+  function vOfertes(){
+    const L = liveOffers();
+    return head('Ofertes') + `<h2 style="font-size:38px">Ofertes per a membres</h2><p class="serif" style="font-size:24px;margin:2px 0 10px;color:var(--acc)">No són descomptes: et sumem coses a la taula.</p>
+    ${!S.card ? `<div class="sheet"><b>🔒 Estan bloquejades.</b> Fes-te la targeta gratis i s’obren al moment.</div><button class="btn pri" data-a="go" data-v="registre">Fes-te la targeta i desbloqueja-les</button>` : S.card.jcc ? '<div class="sheet">⭐ <b>Ets JCC.</b> Els dijous sumes punts x2.</div>' : `<div class="sheet">⭐ Els membres de la <b>comunitat JCC</b> de WhatsApp sumen punts x2 els dijous. Entra a la comunitat i toca l’enllaç de la descripció.<br><a href="${esc(C.whatsapp)}" target="_blank" rel="noopener">Entrar a la comunitat JCC →</a></div>`}
+    ${S.card && !mesa ? `<label class="f" for="ctab">Número de taula (per portar-t’ho)</label><input id="ctab" inputmode="numeric" maxlength="10" placeholder="Ex: 7" value="${esc(S.ctab || '')}">` : ''}
+    ${msgs()}${L.map(offerCard).join('') || '<p class="small">Aviat hi haurà ofertes noves.</p>'}<p class="small">Les ofertes s’obren a l’hora indicada els dies marcats. Una vegada per oferta i nit.</p>`;
+  }
   function vTargeta(){
     const c = S.card, nx = S.rewards.find(r => r.cost > c.points), pct = nx ? Math.min(100, c.points / nx.cost * 100) : 100, pend = c.requests.find(q => q.status === 'pendent');
-    return head('Club') + `<div class="mcard"><div class="row"><div><div style="font-size:13px;color:#fde9e4">Membre</div><div style="font-family:Anton,sans-serif;font-size:28px">${esc(c.name)}</div></div><div style="text-align:right"><div class="big">${c.points}</div><div style="font-size:13px;color:#fde9e4">punts</div></div></div><div class="qrbox" id="qr" aria-label="Codi QR de la targeta ${esc(c.code)}"></div><div style="text-align:center;font-size:14px;position:relative">${esc(c.code)} · ensenya-ho a la barra quan paguis</div></div>
+    return head('Club') + `<div class="mcard"><div class="row"><div><div style="font-size:13px;color:#fde9e4">Membre</div><div style="font-family:Anton,sans-serif;font-size:28px">${esc(c.name)}</div></div><div style="text-align:right"><div class="big">${c.points}</div><div style="font-size:13px;color:#fde9e4">punts</div></div></div><div class="qrbox" id="qr" aria-label="Codi QR de la targeta ${esc(c.code)}"></div><div style="text-align:center;font-size:14px;position:relative">${esc(c.code)} · ensenya-ho a la barra quan paguis</div>${c.jcc ? '<div style="text-align:center;margin-top:6px;position:relative"><span class="otag" style="position:static">⭐ JCC · x2 els dijous</span></div>' : ''}</div>
+    <button class="btn pri" style="margin-top:12px" data-a="go" data-v="ofertes">🎁 Ofertes per a membres${S.mo && S.mo.open && S.mo.open.length ? ` · ${S.mo.open.length} ${S.mo.open.length === 1 ? 'oberta' : 'obertes'} ara` : ''}</button>
     <div class="sec">${nx ? `Et falten ${nx.cost - c.points} punts` : 'Pots demanar qualsevol premi!'}</div>${nx ? `<div class="bar"><i style="width:${pct}%"></i></div><p class="small" style="margin:0">Següent premi: <b style="color:var(--ink)">${esc(nx.name)}</b></p>` : ''}
     <div class="sec">Recompenses</div>${S.rewards.map(r => `<div class="rw"><span>${esc(r.name)}<br><span class="small">${r.cost} punts</span></span>${pend && pend.reward_id === r.id ? '<span class="chip c-wait">Demanat · t’ho portem</span>' : c.points >= r.cost ? `<button class="sbtn" data-a="req" data-v="${r.id}" ${pend ? 'disabled' : ''}>Demanar</button>` : `<b class="small">Et falten ${r.cost - c.points}</b>`}</div>`).join('')}
     ${msgs()}${S.push === 'off' || S.push === 'ios' ? `<button class="btn sec2" data-a="go" data-v="avisos">🔔 Rebre els avisos al mòbil</button>` : ''}<button class="btn sec2" data-a="go" data-v="convida">Convidar amics i guanyar punts</button>`;
@@ -495,15 +556,15 @@ function startApp(){
   let io;
   function render(){
     if (['targeta', 'convida', 'reserva', 'premi', 'hola'].includes(S.screen) && !S.card) S.screen = 'registre';
-    const V = { web: vWeb, carta: vCarta, cistella: vCistella, comanda: vComanda, registre: vRegistre, hola: vHola, targeta: vTargeta, premi: vPremi, convida: vConvida, reserva: vReserva, avisos: vAvisos }[S.screen] || vWeb;
+    const V = { web: vWeb, carta: vCarta, cistella: vCistella, comanda: vComanda, registre: vRegistre, hola: vHola, targeta: vTargeta, premi: vPremi, convida: vConvida, reserva: vReserva, avisos: vAvisos, ofertes: vOfertes }[S.screen] || vWeb;
     $('#root').innerHTML = S.screen === 'web' ? V() : `<div class="app"><div class="screen">${V()}</div></div>`;
     const bottom = $('#bottom');
     if (S.screen === 'web') { bottom.hidden = !(mesa || S.card); $('#bottomIn').innerHTML = mesa ? `<button class="btn pri" data-a="go" data-v="carta">Demanar des de la taula ${esc(mesa)}</button>` : S.card ? tabbar() : ''; }
     else {
       bottom.hidden = false;
       const back = `<button class="btn sec2" data-a="go" data-v="${S.card ? 'targeta' : mesa ? 'carta' : 'web'}">Tornar</button>`;
-      const B = { carta: bCarta, cistella: () => (cartN() && mesa ? `<button class="btn pri" data-a="send" ${S.busy ? 'disabled' : ''}>Enviar la comanda a la barra</button>` : '') + `<button class="btn sec2" data-a="go" data-v="carta">Seguir mirant la carta</button>`, targeta: tabbar, reserva: tabbar, avisos: tabbar, hola: () => `<button class="btn pri" data-a="go" data-v="targeta">Veure la meva targeta</button>` }[S.screen];
-      $('#bottomIn').innerHTML = B ? B() : back;
+      const B = { carta: bCarta, cistella: () => (cartN() && mesa ? `<button class="btn pri" data-a="send" ${S.busy ? 'disabled' : ''}>Enviar la comanda a la barra</button>` : '') + `<button class="btn sec2" data-a="go" data-v="carta">Seguir mirant la carta</button>`, targeta: tabbar, reserva: tabbar, avisos: tabbar, ofertes: () => S.card ? tabbar() : `<button class="btn pri" data-a="go" data-v="registre">Fes-te la targeta gratis</button>`, hola: () => `<button class="btn pri" data-a="go" data-v="targeta">Veure la meva targeta</button>` }[S.screen];
+      if (S.screen === 'registre') { bottom.hidden = true; $('#bottomIn').innerHTML = ''; } else $('#bottomIn').innerHTML = B ? B() : back;
     }
     S.bumped = null;
     if (S.screen === 'targeta' && window.QRCode) new QRCode($('#qr'), { text: S.card.code, width: 146, height: 146, colorDark: '#2a0a10', colorLight: '#F7F0E6' });
@@ -546,7 +607,14 @@ function startApp(){
   document.addEventListener('click', async e => {
     const b = e.target.closest('[data-a]'); if (!b) return;
     const a = b.dataset.a, v = b.dataset.v;
-    if (a === 'go' || a === 'tocarta') { e.preventDefault(); if (a === 'tocarta') { go('web'); setTimeout(() => location.hash = '#carta', 50); return; } if (v === 'comanda') { S.order = null; pollOrder(); } if (v === 'reserva') await loadTaken(S.resDay || new Date().toISOString().slice(0, 10)); go(v); }
+    if (a === 'go' || a === 'tocarta') { e.preventDefault(); if (a === 'tocarta') { go('web'); setTimeout(() => location.hash = '#carta', 50); return; } if (v === 'comanda') { S.order = null; pollOrder(); } if (v === 'reserva') await loadTaken(S.resDay || new Date().toISOString().slice(0, 10)); if (v === 'ofertes' || v === 'targeta') await loadMO(); go(v); }
+    if (a === 'claim') {
+      const tab = mesa || ($('#ctab') && $('#ctab').value.trim()) || null; S.ctab = tab || '';
+      S.busy = true; render();
+      const { error } = await sb.rpc('claim_offer', { p_secret: S.secret, p_offer_id: Number(v), p_table: tab });
+      S.busy = false; if (error) { S.err = errMsg(error); S.msg = ''; } else { S.err = ''; S.msg = 'Fet! La barra ja ho té. ' + (tab ? 'T’ho portem a la taula ' + tab + '.' : 'Digues el teu nom a la barra.'); confetti(); }
+      await loadMO(); const y = scrollY; render(); scrollTo(0, y);
+    }
     if (a === 'pushon') { S.busy = true; render(); try { await pushOn(S.secret); S.push = 'on'; S.msg = 'Fet! Et sortiran els avisos al mòbil.'; S.err = ''; } catch(err) { S.push = await pushState(); S.msg = ''; S.err = S.push === 'denied' ? 'Has bloquejat les notificacions. Activa-les a la configuració del mòbil.' : 'No s’han pogut activar les notificacions. Torna-ho a provar.'; } S.busy = false; render(); }
     if (a === 'pushoff') { e.preventDefault(); try { await pushOff(); } catch(_) {} S.push = await pushState(); S.msg = 'Notificacions desactivades.'; render(); }
     if (a === 'cat') { S.cat = v; const y = scrollY; render(); scrollTo(0, y); }
@@ -592,7 +660,7 @@ function startApp(){
       await loadTaken(p.p_day); render();
     }
   });
-  (async () => { await Promise.all([loadPublic(), loadCard(), pushState().then(p => S.push = p)]); if (S.lastOrder && mesa && S.lastOrder.table === mesa) await pollOrder(); render(); })();
+  (async () => { await Promise.all([loadPublic(), loadCard(), pushState().then(p => S.push = p)]); await loadMO(); if (S.lastOrder && mesa && S.lastOrder.table === mesa) await pollOrder(); render(); })();
 }
 
 /* =====================================================================
@@ -610,13 +678,15 @@ function startPanel(){
 
   async function load(){
     const since = new Date(Date.now() - 2 * DAY).toISOString();
-    const [o, q, r, c, t, m, w, of, n] = await Promise.all([sb.from('orders').select('*').gte('created_at', since).order('created_at', { ascending: false }), sb.from('reward_requests').select('*').gte('created_at', since).order('created_at', { ascending: false }), sb.from('reservations').select('*').gte('day', new Date().toISOString().slice(0, 10)).order('day').order('time'), sb.from('customers').select('id,code,name,email,marketing,points,visits,spent,last_visit,referred_by,created_at').order('created_at', { ascending: false }), sb.from('dining_tables').select('*').order('id'), sb.from('menu_items').select('*').order('sort').order('id'), sb.from('rewards').select('*').order('cost'), sb.from('offers').select('*').order('id'), sb.from('notices').select('*').order('created_at', { ascending: false }).limit(20)]);
+    const [o, q, r, c, t, m, w, of, n] = await Promise.all([sb.from('orders').select('*').gte('created_at', since).order('created_at', { ascending: false }), sb.from('reward_requests').select('*').gte('created_at', since).order('created_at', { ascending: false }), sb.from('reservations').select('*').gte('day', new Date().toISOString().slice(0, 10)).order('day').order('time'), sb.from('customers').select('id,code,name,email,marketing,points,visits,spent,last_visit,referred_by,created_at,jcc').order('created_at', { ascending: false }), sb.from('dining_tables').select('*').order('id'), sb.from('menu_items').select('*').order('sort').order('id'), sb.from('rewards').select('*').order('cost'), sb.from('offers').select('*').order('id'), sb.from('notices').select('*').order('created_at', { ascending: false }).limit(20)]);
     const nw = (o.data || []).filter(x => x.status === 'rebuda' && !S.seen.has('o' + x.id)).length + (q.data || []).filter(x => x.status === 'pendent' && !S.seen.has('q' + x.id)).length;
     if (S.loaded && nw) beep();
     (o.data || []).forEach(x => S.seen.add('o' + x.id)); (q.data || []).forEach(x => S.seen.add('q' + x.id));
     S.orders = o.data || []; S.reqs = q.data || []; S.res = r.data || []; S.customers = c.data || []; if (!S.dirty.size) S.tables = t.data || [];
     S.menu = m.data || []; S.rewards = w.data || []; S.offers = of.data || []; S.notices = n.data || []; S.loaded = true;
     const pc = await sb.from('push_subs').select('id', { count: 'exact', head: true }); S.pushN = pc.count || 0;
+    const oc = await sb.from('offer_claims').select('*').gte('created_at', since).order('created_at', { ascending: false }); S.claims = oc.data || [];
+    if (!S.jcc) { const jc = await sb.rpc('jcc_code'); S.jcc = jc.data || ''; }
   }
   function vComandes(){
     const act = S.orders.filter(o => !['pagada', 'cancelada'].includes(o.status)), done = S.orders.filter(o => o.status === 'pagada').slice(0, 8), nx = { rebuda: ['preparant', 'Començar a preparar'], preparant: ['servida', 'Marcar servida'] };
@@ -624,7 +694,7 @@ function startPanel(){
       ${o.status !== 'pagada' ? `<div class="row">${nx[o.status] ? `<button class="sbtn" data-p="ost" data-id="${o.id}" data-v="${nx[o.status][0]}">${nx[o.status][1]}</button>` : ''}<button class="sbtn ${o.status === 'servida' ? '' : 'ghost'}" data-p="pay" data-id="${o.id}">Cobrar ${eur(o.total)}${o.customer_id ? ' i sumar punts' : ''}</button><button class="sbtn ghost" data-p="ost" data-id="${o.id}" data-v="cancelada">Cancel·lar</button></div>` : ''}</div>`;
     return `<div class="grid">${act.length ? act.map(card).join('') : '<p class="small">No hi ha comandes obertes. Quan n’entri una, sonarà (deixa aquesta pestanya oberta i toca la pantalla un cop).</p>'}</div>${done.length ? `<h3 style="margin:22px 0 10px;font-size:22px">Cobrades (últimes)</h3><div class="grid">${done.map(card).join('')}</div>` : ''}`;
   }
-  function vPremis(){ return `<div class="grid">${S.reqs.length ? S.reqs.map(q => { const c = S.customers.find(x => x.id === q.customer_id) || {}; return `<div class="box ${q.status === 'pendent' ? 'new' : ''}"><b>${esc(c.name)}</b>${q.table_no ? ' · Taula ' + esc(q.table_no) : ''}<div>${esc(q.reward_name)} <span class="small">(${q.cost} punts · en té ${c.points ?? '?'})</span></div><div class="small">${hm(q.created_at)}</div>${q.status === 'pendent' ? `<div class="row"><button class="sbtn" data-p="give" data-id="${q.id}">Entregar i descomptar</button><button class="sbtn ghost" data-p="deny" data-id="${q.id}">Rebutjar</button></div>` : `<span class="chip ${q.status === 'entregat' ? 'c-ok' : 'c-no'}">${esc(q.status)}</span>`}</div>`; }).join('') : '<p class="small">Cap premi demanat en els darrers dies.</p>'}</div>`; }
+  function vPremis(){ return `<h3 style="margin:4px 0 8px;font-size:22px">Ofertes demanades</h3><div class="grid">${(S.claims || []).length ? S.claims.map(q => { const c = S.customers.find(x => x.id === q.customer_id) || {}; const o = S.offers.find(x => x.id === q.offer_id) || {}; return `<div class="box ${q.status === 'pendent' ? 'new' : ''}"><b>${esc(o.emoji || '🎁')} ${esc(q.offer_title)}</b><div>${esc(c.name || '?')}${c.jcc ? ' <span class="chip c-ok">JCC</span>' : ''}${q.table_no ? ' · <b>Taula ' + esc(q.table_no) + '</b>' : ' · sense taula'}</div><div class="small">${hm(q.created_at)}</div>${q.status === 'pendent' ? `<div class="row"><button class="sbtn" data-p="ocl" data-id="${q.id}" data-v="entregat">Portat a la taula</button><button class="sbtn ghost" data-p="ocl" data-id="${q.id}" data-v="rebutjat">No es pot</button></div>` : `<span class="chip ${q.status === 'entregat' ? 'c-ok' : 'c-no'}">${esc(q.status)}</span>`}</div>`; }).join('') : '<p class="small">Cap oferta demanada avui.</p>'}</div><h3 style="margin:22px 0 8px;font-size:22px">Premis amb punts</h3>` + `<div class="grid">${S.reqs.length ? S.reqs.map(q => { const c = S.customers.find(x => x.id === q.customer_id) || {}; return `<div class="box ${q.status === 'pendent' ? 'new' : ''}"><b>${esc(c.name)}</b>${q.table_no ? ' · Taula ' + esc(q.table_no) : ''}<div>${esc(q.reward_name)} <span class="small">(${q.cost} punts · en té ${c.points ?? '?'})</span></div><div class="small">${hm(q.created_at)}</div>${q.status === 'pendent' ? `<div class="row"><button class="sbtn" data-p="give" data-id="${q.id}">Entregar i descomptar</button><button class="sbtn ghost" data-p="deny" data-id="${q.id}">Rebutjar</button></div>` : `<span class="chip ${q.status === 'entregat' ? 'c-ok' : 'c-no'}">${esc(q.status)}</span>`}</div>`; }).join('') : '<p class="small">Cap premi demanat en els darrers dies.</p>'}</div>`; }
   function vReserves(){ return S.res.length ? `<div class="scroll"><table class="stack"><thead><tr><th>Dia</th><th>Hora</th><th>Client</th><th>Persones</th><th>Taula</th><th>Comentari</th><th>Estat</th><th></th></tr></thead><tbody>${S.res.map(r => `<tr><td>${esc(r.day)}</td><td>${esc(r.time)}</td><td>${esc(cname(r.customer_id))}</td><td class="n">${r.people}</td><td>${esc(tname(r.table_id)) || '—'}</td><td>${esc(r.note || '')}</td><td><span class="chip ${r.status === 'confirmada' ? 'c-ok' : r.status === 'pendent' ? 'c-wait' : 'c-no'}">${esc(r.status)}</span></td><td>${r.status === 'pendent' ? `<button class="sbtn" data-p="rst" data-id="${r.id}" data-v="confirmada">Confirmar</button> <button class="sbtn ghost" data-p="rst" data-id="${r.id}" data-v="rebutjada">Rebutjar</button>` : ''}</td></tr>`).join('')}</tbody></table></div>` : '<p class="small">No hi ha reserves properes.</p>'; }
   function vClients(){
     let list = S.customers.filter(c => !S.q || (c.name + ' ' + c.email + ' ' + c.code).toLowerCase().includes(S.q.toLowerCase()));
@@ -632,9 +702,10 @@ function startPanel(){
     const act = S.customers.filter(c => status(c)[0] === 'Actiu').length, off = S.customers.filter(c => ['En risc', 'Inactiu'].includes(status(c)[0])).length;
     return `<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr))">${[[S.customers.length, 'membres'], [act, 'actius (14 dies)'], [off, 'en risc o inactius'], [S.customers.filter(c => c.referred_by).length, 'vinguts per amics']].map(([n, l]) => `<div class="kpi"><div class="big">${n}</div><span class="small">${l}</span></div>`).join('')}</div>
     <div class="box" style="margin-top:12px"><b>Sumar punts a la barra</b> <span class="small">(compres sense l’app)</span><div class="row mini"><input id="apCode" placeholder="Codi de la targeta (J…)" style="max-width:220px"><input id="apAmt" type="number" min="1" step="0.5" placeholder="Import €" style="max-width:140px"><button class="sbtn" data-p="addpts">Sumar</button></div></div>
+    <div class="box" style="margin-top:12px"><b>⭐ Comunitat JCC (punts x2 els dijous)</b><p class="small">Posa aquest enllaç a la descripció o al missatge fixat de la comunitat de WhatsApp. Qui el toqui quedarà marcat com a JCC. Si es filtra, canvia el codi i posa l’enllaç nou.</p><div class="row mini"><input id="jccl" readonly value="${esc(location.origin + '/?jcc=' + (S.jcc || ''))}" style="max-width:420px"><button class="sbtn" data-p="jcccopy">Copiar</button><button class="sbtn ghost" data-p="jccnew">Canviar codi</button></div><p class="small" style="margin:0">${S.customers.filter(c => c.jcc).length} clients JCC · també pots marcar-los a mà a la columna JCC.</p></div>
     <div class="row"><input id="cq" placeholder="Buscar per nom, email o codi" value="${esc(S.q)}" style="max-width:320px"><button class="sbtn ${S.filter === 'tots' ? '' : 'ghost'}" data-p="cf" data-v="tots">Tots</button><button class="sbtn ${S.filter === 'fora' ? '' : 'ghost'}" data-p="cf" data-v="fora">Han deixat de venir</button></div>
     ${S.recovery ? `<div class="box" style="margin-top:12px"><b>Recuperar la targeta de ${esc(S.recovery.name)}</b><p class="small">Que el client escanegi aquest QR amb el mòbil nou. No el comparteixis amb ningú més.</p><div id="recqr" style="background:#fff;padding:8px;width:196px"></div><div class="row"><button class="sbtn ghost" data-p="closerec">Tancar</button></div></div>` : ''}
-    <div class="scroll" style="margin-top:12px"><table class="stack"><thead><tr><th>Client</th><th>Codi</th><th>Punts</th><th>Visites</th><th>Gastat</th><th>Darrera visita</th><th>Estat</th><th>Ofertes</th><th></th></tr></thead><tbody>${list.map(c => { const s = status(c); return `<tr><td>${esc(c.name)}<br><span class="small">${esc(c.email)}</span></td><td>${esc(c.code)}</td><td class="n">${c.points}</td><td class="n">${c.visits}</td><td class="n">${eur(c.spent)}</td><td>${ago(c.last_visit)}</td><td><span class="chip ${s[1]}">${s[0]}</span></td><td>${c.marketing ? 'Sí' : 'No'}</td><td><button class="sbtn ghost" data-p="rec" data-id="${c.id}">Recuperar</button></td></tr>`; }).join('')}</tbody></table></div>
+    <div class="scroll" style="margin-top:12px"><table class="stack"><thead><tr><th>Client</th><th>Codi</th><th>Punts</th><th>Visites</th><th>Gastat</th><th>Darrera visita</th><th>Estat</th><th>Ofertes</th><th>JCC</th><th></th></tr></thead><tbody>${list.map(c => { const s = status(c); return `<tr><td>${esc(c.name)}<br><span class="small">${esc(c.email)}</span></td><td>${esc(c.code)}</td><td class="n">${c.points}</td><td class="n">${c.visits}</td><td class="n">${eur(c.spent)}</td><td>${ago(c.last_visit)}</td><td><span class="chip ${s[1]}">${s[0]}</span></td><td>${c.marketing ? 'Sí' : 'No'}</td><td><input type="checkbox" aria-label="JCC" data-t="customers" data-id="${c.id}" data-k="jcc" ${c.jcc ? 'checked' : ''}></td><td><button class="sbtn ghost" data-p="rec" data-id="${c.id}">Recuperar</button></td></tr>`; }).join('')}</tbody></table></div>
     <p class="small">Actiu: menys de 14 dies sense venir · En risc: 14–30 · Inactiu: més de 30.</p>`;
   }
   function vPlanol(){
@@ -648,7 +719,9 @@ function startPanel(){
     return `<p class="small">Els canvis es desen sols en sortir de cada camp. Per posar una foto real, toca «Canviar foto» i tria-la de la galeria (es redueix sola).</p><h3 style="margin:16px 0 8px;font-size:22px">Carta</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Foto</th><th>Producte</th><th>Categoria</th><th>Preu €</th><th>Visible</th></tr></thead><tbody>${S.menu.map(i => row(i, 'menu_items')).join('')}</tbody></table></div>
     <div class="row mini"><input id="nn" placeholder="Nou producte" style="max-width:200px"><input id="nc" placeholder="Categoria" style="max-width:160px"><input id="np" type="number" step="0.1" placeholder="Preu" style="max-width:100px"><select id="ni" style="max-width:150px">${['glass', 'cocktail', 'beer', 'bucket', 'shot', 'hookah', 'soda', 'food'].map(x => `<option>${x}</option>`).join('')}</select><button class="sbtn" data-p="additem">Afegir</button></div>
     <h3 style="margin:22px 0 8px;font-size:22px">Recompenses</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Premi</th><th>Punts</th><th>Visible</th></tr></thead><tbody>${S.rewards.map(i => row(i, 'rewards')).join('')}</tbody></table></div><div class="row mini"><input id="rwn" placeholder="Nou premi" style="max-width:240px"><input id="rwc" type="number" min="1" placeholder="Punts" style="max-width:110px"><button class="sbtn" data-p="addrw">Afegir</button></div>
-    <h3 style="margin:22px 0 8px;font-size:22px">Ofertes de membres</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Títol</th><th>Text</th><th>Visible</th></tr></thead><tbody>${S.offers.map(i => row(i, 'offers')).join('')}</tbody></table></div><div class="row mini"><input id="ofn" placeholder="Títol" style="max-width:240px"><input id="ofb" placeholder="Text" style="max-width:300px"><button class="sbtn" data-p="addof">Afegir</button></div>`;
+    <h3 style="margin:22px 0 8px;font-size:22px">Ofertes de membres</h3><p class="small">Dies: marca quan s’obre cada oferta. «Es demana» = el client la pot demanar des del mòbil i et surt a Premis. «Només JCC» = només per a la comunitat.</p>
+    ${S.offers.slice().sort((a, b) => (a.sort ?? 100) - (b.sort ?? 100) || a.id - b.id).map(o => `<div class="box mini" style="margin-top:10px"><div class="row"><input data-t="offers" data-id="${o.id}" data-k="emoji" value="${esc(o.emoji || '🎁')}" style="max-width:64px;text-align:center"><input data-t="offers" data-id="${o.id}" data-k="title" value="${esc(o.title)}" placeholder="Títol" style="max-width:260px"><input data-t="offers" data-id="${o.id}" data-k="perk" value="${esc(o.perk || '')}" placeholder="Què s’emporta (curt)" style="max-width:240px"></div><textarea data-t="offers" data-id="${o.id}" data-k="body" maxlength="300" placeholder="Descripció">${esc(o.body)}</textarea><div class="row" style="align-items:center">${[4, 5, 6, 7, 1, 2, 3].map(d => `<label class="chk" style="margin:0"><input type="checkbox" data-ofday="${o.id}" value="${d}" ${(o.days || []).includes(d) ? 'checked' : ''}>${['', 'Dl', 'Dt', 'Dc', 'Dj', 'Dv', 'Ds', 'Dg'][d]}</label>`).join('')}<label class="small">des de <input type="time" data-t="offers" data-id="${o.id}" data-k="from_time" value="${String(o.from_time || '19:00').slice(0, 5)}" style="max-width:120px"></label></div><div class="row" style="align-items:center"><label class="chk" style="margin:0"><input type="checkbox" data-t="offers" data-id="${o.id}" data-k="claimable" ${o.claimable ? 'checked' : ''}>Es demana</label><label class="chk" style="margin:0"><input type="checkbox" data-t="offers" data-id="${o.id}" data-k="jcc_only" ${o.jcc_only ? 'checked' : ''}>Només JCC</label><label class="chk" style="margin:0"><input type="checkbox" data-t="offers" data-id="${o.id}" data-k="active" ${o.active ? 'checked' : ''}>Visible</label><label class="small">ordre <input type="number" data-t="offers" data-id="${o.id}" data-k="sort" value="${o.sort ?? 100}" style="max-width:80px"></label><button class="sbtn ghost" data-p="delof" data-id="${o.id}">Esborrar</button></div></div>`).join('')}
+    <div class="row mini" style="margin-top:10px"><input id="ofn" placeholder="Títol de l’oferta nova" style="max-width:240px"><input id="ofp" placeholder="Què s’emporta" style="max-width:220px"><input id="ofb" placeholder="Descripció" style="max-width:300px"><button class="sbtn" data-p="addof">Afegir</button></div>`;
   }
   function vAvisos(){ return `<div class="box mini"><b>Nou avís</b><p class="small">Surt a «Avisos» de la targeta de tots els clients. Màxim 1 o 2 per setmana.</p><label class="f" for="nt">Títol</label><input id="nt" maxlength="60" placeholder="Avui hi ha partit!"><label class="f" for="nb">Text</label><textarea id="nb" maxlength="300" placeholder="Reserva taula des de la targeta."></textarea><label class="chk" style="display:flex;gap:8px;align-items:center;margin:10px 0"><input type="checkbox" id="npush" checked> 🔔 Enviar també com a notificació al mòbil (${S.pushN || 0} mòbils subscrits)</label><div class="row"><button class="sbtn" data-p="addnotice">Publicar</button></div></div>${S.notices.map(n => `<div class="box" style="margin-top:10px"><b>${esc(n.title)}</b><p style="margin:4px 0">${esc(n.body)}</p><span class="small">${new Date(n.created_at).toLocaleString('ca-ES')}</span> <button class="sbtn ghost" data-p="delnotice" data-id="${n.id}">Esborrar</button></div>`).join('')}`; }
   function render(){
@@ -693,7 +766,7 @@ function startPanel(){
     if (a === 'deltable') { const t = S.selTable; const { error } = await sb.from('dining_tables').delete().eq('id', t); if (error) return flash('No es pot esborrar: té reserves. Desmarca «Es pot reservar».'); S.selTable = null; S.dirty.delete(t); await load(); render(); }
     if (a === 'additem') { const r = { name: $('#nn').value.trim(), category: $('#nc').value.trim() || 'Altres', price: Number($('#np').value), icon: $('#ni').value, sort: 100 }; if (!r.name || !(r.price >= 0)) return flash('Posa nom i preu.'); await run(sb.from('menu_items').insert(r), 'Producte afegit'); }
     if (a === 'addrw') { const r = { name: $('#rwn').value.trim(), cost: Number($('#rwc').value) }; if (!r.name || !(r.cost > 0)) return flash('Posa nom i punts.'); await run(sb.from('rewards').insert(r), 'Premi afegit'); }
-    if (a === 'addof') { const r = { title: $('#ofn').value.trim(), body: $('#ofb').value.trim() }; if (!r.title) return flash('Posa un títol.'); await run(sb.from('offers').insert(r), 'Oferta afegida'); }
+    if (a === 'addof') { const r = { title: $('#ofn').value.trim(), body: $('#ofb').value.trim(), perk: $('#ofp').value.trim() }; if (!r.title) return flash('Posa un títol.'); await run(sb.from('offers').insert(r), 'Oferta afegida'); }
     if (a === 'addnotice') {
       const r = { title: $('#nt').value.trim(), body: $('#nb').value.trim() }, push = $('#npush') && $('#npush').checked;
       if (!r.title || !r.body) return flash('Omple títol i text.');
@@ -703,6 +776,10 @@ function startPanel(){
       if (push) { const { data, error: pe } = await sb.functions.invoke('send-push', { body: r }); m += pe ? ' (però la notificació ha fallat: ' + (pe.message || pe) + ')' : ` i enviat a ${data.sent} mòbil${data.sent === 1 ? '' : 's'}`; }
       S.msg = m; await load(); render();
     }
+    if (a === 'ocl') await run(sb.from('offer_claims').update({ status: v }).eq('id', id), v === 'entregat' ? 'Marcat com a portat' : 'Marcat com a no disponible');
+    if (a === 'delof') { if (!confirm('Esborrar aquesta oferta?')) return; await run(sb.from('offers').delete().eq('id', id), 'Oferta esborrada'); }
+    if (a === 'jcccopy') { try { await navigator.clipboard.writeText($('#jccl').value); flash('Enllaç copiat'); } catch(_) { $('#jccl').select(); flash('Copia l’enllaç seleccionat'); } }
+    if (a === 'jccnew') { const { data, error } = await sb.rpc('new_jcc_code'); if (error) return flash('Error: ' + error.message); S.jcc = data; flash('Codi nou. Recorda canviar l’enllaç a la comunitat.'); }
     if (a === 'delnotice') await run(sb.from('notices').delete().eq('id', id), 'Avís esborrat');
   });
   document.addEventListener('input', e => { if (e.target.id === 'cq') { S.q = e.target.value; render(); } });
@@ -722,13 +799,14 @@ function startPanel(){
       } catch (err) { S.uploading = null; flash('No s’ha pogut pujar la foto: ' + (err.message || err)); }
       return;
     }
+    if (el.dataset.ofday) { const id = el.dataset.ofday, days = [...document.querySelectorAll(`[data-ofday="${id}"]:checked`)].map(x => Number(x.value)).sort(); const { error } = await sb.from('offers').update({ days }).eq('id', id); flash(error ? 'Error: ' + error.message : 'Desat'); await load(); return; }
     if (el.dataset.t) { const val = el.type === 'checkbox' ? el.checked : el.type === 'number' ? Number(el.value) : el.value; const { error } = await sb.from(el.dataset.t).update({ [el.dataset.k]: val }).eq('id', el.dataset.id); flash(error ? 'Error: ' + error.message : 'Desat'); await load(); return; }
     if (S.tab === 'planol' && el.dataset.k && S.selTable) { const t = S.tables.find(x => x.id === S.selTable), k = el.dataset.k; t[k] = el.type === 'checkbox' ? el.checked : el.type === 'number' ? Number(el.value) : el.value; if (k === 'shape' && el.value === 'bar') t.bookable = false; S.dirty.add(t.id); render(); }
   });
   function vLogin(err){ $('#root').innerHTML = `<div class="login"><h1 style="color:var(--acc);font-size:44px">${esc(C.nom)} · Panell</h1><p class="small">Només per al personal.</p><form id="login"><label class="f" for="le">Email</label><input id="le" type="email" required autocomplete="username"><label class="f" for="lp">Contrasenya</label><input id="lp" type="password" required autocomplete="current-password">${err ? `<div class="err">${esc(err)}</div>` : ''}<button class="btn pri" type="submit">Entrar</button></form></div>`; }
   document.addEventListener('submit', async e => { if (e.target.id !== 'login') return; e.preventDefault(); const { error } = await sb.auth.signInWithPassword({ email: $('#le').value, password: $('#lp').value }); if (error) return vLogin('Email o contrasenya incorrectes.'); start(); });
   let started = false;
-  async function start(){ if (started) return; started = true; await load(); render(); sb.channel('panell').on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, refresh).on('postgres_changes', { event: '*', schema: 'public', table: 'reward_requests' }, refresh).on('postgres_changes', { event: '*', schema: 'public', table: 'reservations' }, refresh).subscribe(); setInterval(refresh, 20000); }
+  async function start(){ if (started) return; started = true; await load(); render(); sb.channel('panell').on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, refresh).on('postgres_changes', { event: '*', schema: 'public', table: 'offer_claims' }, refresh).on('postgres_changes', { event: '*', schema: 'public', table: 'reward_requests' }, refresh).on('postgres_changes', { event: '*', schema: 'public', table: 'reservations' }, refresh).subscribe(); setInterval(refresh, 20000); }
   async function refresh(){ await load(); if (!busyTyping() && !S.dirty.size) render(); }
   sb.auth.getSession().then(({ data }) => data.session ? start() : vLogin());
 }
