@@ -608,3 +608,32 @@ grant execute on function public.save_push(text,text,text,text), public.drop_pus
 -- RECUPERAR LA TARGETA: mateix email + mateix nom = es torna la targeta existent
 -- (versió actualitzada de create_card aplicada a Supabase)
 -- =====================================================================
+create or replace function public.create_card(p_name text, p_email text, p_marketing boolean,
+                                              p_adult boolean, p_ref text default null)
+returns jsonb language plpgsql security definer set search_path = public as $$
+declare
+  r jsonb := public.rules();
+  v_ref uuid; v_code text; v_secret text; v_id uuid;
+  v_email text := lower(trim(p_email));
+  ex public.customers;
+begin
+  if not coalesce(p_adult, false) then raise exception 'ADULT_REQUIRED'; end if;
+  if length(trim(coalesce(p_name,''))) < 1 or length(p_name) > 60 then raise exception 'BAD_NAME'; end if;
+  if v_email !~ '^[^@\s]+@[^@\s]+\.[^@\s]+$' or length(v_email) > 120 then raise exception 'BAD_EMAIL'; end if;
+  select * into ex from public.customers where email = v_email;
+  if found then
+    if lower(regexp_replace(trim(ex.name), '\s+', ' ', 'g')) = lower(regexp_replace(trim(p_name), '\s+', ' ', 'g')) then
+      if coalesce(p_marketing, false) and not ex.marketing then update public.customers set marketing = true where id = ex.id; end if;
+      return jsonb_build_object('code', ex.code, 'secret', ex.secret, 'existing', true);
+    end if;
+    raise exception 'EMAIL_EXISTS';
+  end if;
+  if p_ref is not null and p_ref <> '' then select id into v_ref from public.customers where code = upper(p_ref); end if;
+  v_code := public.new_code();
+  v_secret := encode(extensions.gen_random_bytes(18), 'hex');
+  insert into public.customers(code, secret, name, email, marketing, points, referred_by)
+  values (v_code, v_secret, trim(p_name), v_email, coalesce(p_marketing,false), (r->>'welcome_points')::int, v_ref)
+  returning id into v_id;
+  insert into public.points_log(customer_id, delta, reason) values (v_id, (r->>'welcome_points')::int, 'Benvinguda');
+  return jsonb_build_object('code', v_code, 'secret', v_secret, 'existing', false);
+end $$;
