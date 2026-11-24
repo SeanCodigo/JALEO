@@ -436,3 +436,101 @@ select * from (values
   ('Taula 8', 4, 'sofa', 74, 58, 16, 16, true),
   ('Taula 9', 7, 'round', 24, 62, 14, 20, true)
 ) v(name, seats, shape, x, y, w, h, bookable) where not exists (select 1 from public.dining_tables);
+
+-- ---------- PERMISOS DE L'API (Supabase no els dona per defecte als projectes nous) ----------
+grant usage on schema public to anon, authenticated;
+grant select on public.menu_items, public.rewards, public.offers, public.dining_tables, public.notices to anon;
+grant select, insert, update, delete on all tables in schema public to authenticated;
+grant usage, select on all sequences in schema public to authenticated;
+grant execute on function public.rules() to anon, authenticated;
+grant execute on function public.create_card(text, text, boolean, boolean, text) to anon, authenticated;
+grant execute on function public.get_card(text) to anon, authenticated;
+grant execute on function public.place_order(text, jsonb, text) to anon, authenticated;
+grant execute on function public.get_order(bigint, text) to anon, authenticated;
+grant execute on function public.request_reward(text, int, text) to anon, authenticated;
+grant execute on function public.taken_tables(date) to anon, authenticated;
+grant execute on function public.create_reservation(text, date, text, int, text, int) to anon, authenticated;
+revoke execute on function public.new_code() from public, anon, authenticated;
+
+-- ---------- NOMÉS EL PERSONAL DE LA LLISTA POT ENTRAR AL PANELL ----------
+-- Per afegir algú: insert into public.staff(email) values ('email@exemple.com');
+create table if not exists public.staff (
+  email text primary key,
+  created_at timestamptz not null default now()
+);
+alter table public.staff enable row level security;
+
+create or replace function public.is_staff() returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (select 1 from public.staff where lower(email) = lower(coalesce(auth.jwt() ->> 'email', '')))
+$$;
+revoke execute on function public.is_staff() from public, anon;
+grant execute on function public.is_staff() to authenticated;
+
+do $$
+declare t text;
+begin
+  foreach t in array array['menu_items','rewards','offers','customers','orders','dining_tables',
+                           'reward_requests','reservations','notices','points_log']
+  loop
+    execute format('drop policy if exists staff_all on public.%I', t);
+    execute format('create policy staff_all on public.%I for all to authenticated using (public.is_staff()) with check (public.is_staff())', t);
+  end loop;
+end $$;
+drop policy if exists staff_read on public.staff;
+create policy staff_read on public.staff for select to authenticated using (public.is_staff());
+revoke insert, update, delete on public.staff from authenticated, anon;
+
+create or replace function public.pay_order(p_id bigint)
+returns int language plpgsql security definer set search_path = public as $$
+declare o public.orders; pts int := 0;
+begin
+  if not public.is_staff() then raise exception 'STAFF_ONLY'; end if;
+  select * into o from public.orders where id = p_id for update;
+  if not found or o.status in ('pagada','cancelada') then return 0; end if;
+  if o.customer_id is not null then
+    pts := public.award_spend(o.customer_id, o.total, 'Comanda #' || o.id);
+  end if;
+  update public.orders set status = 'pagada', points_awarded = pts where id = p_id;
+  return pts;
+end $$;
+
+create or replace function public.add_points(p_code text, p_amount numeric)
+returns int language plpgsql security definer set search_path = public as $$
+declare v uuid;
+begin
+  if not public.is_staff() then raise exception 'STAFF_ONLY'; end if;
+  if p_amount <= 0 or p_amount > 500 then raise exception 'BAD_AMOUNT'; end if;
+  select id into v from public.customers where code = upper(trim(p_code));
+  if not found then raise exception 'NO_CARD'; end if;
+  return public.award_spend(v, p_amount, 'Cobrament a la barra');
+end $$;
+
+create or replace function public.resolve_reward(p_id bigint, p_accept boolean)
+returns text language plpgsql security definer set search_path = public as $$
+declare q public.reward_requests; c public.customers;
+begin
+  if not public.is_staff() then raise exception 'STAFF_ONLY'; end if;
+  select * into q from public.reward_requests where id = p_id for update;
+  if not found or q.status <> 'pendent' then return 'ja resolt'; end if;
+  if not p_accept then
+    update public.reward_requests set status = 'rebutjat' where id = p_id;
+    return 'rebutjat';
+  end if;
+  select * into c from public.customers where id = q.customer_id for update;
+  if c.points < q.cost then
+    update public.reward_requests set status = 'rebutjat' where id = p_id;
+    return 'sense punts';
+  end if;
+  update public.customers set points = points - q.cost where id = c.id;
+  insert into public.points_log(customer_id, delta, reason) values (c.id, -q.cost, 'Premi: ' || q.reward_name);
+  update public.reward_requests set status = 'entregat' where id = p_id;
+  return 'entregat';
+end $$;
+
+revoke execute on function public.pay_order(bigint) from public, anon;
+revoke execute on function public.add_points(text, numeric) from public, anon;
+revoke execute on function public.resolve_reward(bigint, boolean) from public, anon;
+grant execute on function public.pay_order(bigint) to authenticated;
+grant execute on function public.add_points(text, numeric) to authenticated;
+grant execute on function public.resolve_reward(bigint, boolean) to authenticated;
