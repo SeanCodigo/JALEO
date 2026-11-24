@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#A3202F">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="JALEO">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/img/icon-180.png">
 <title>JALEO · Aquí comença la nit</title>
 <meta name="description" content="JALEO, pub i cachimbes a Pl. Catalunya, 6, Reus. Carta, reserves i JALEO Club.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23A3202F'/%3E%3Cpath d='M32 10l5 17 17 5-17 5-5 17-5-17-17-5 17-5z' fill='%23F7F0E6'/%3E%3C/svg%3E">
@@ -291,6 +293,32 @@ const DAY = 864e5;
 const store = { get(k){ try { return localStorage.getItem(k); } catch(_) { return null; } }, set(k, v){ try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch(_) {} } };
 const ok = !!(C.supabaseUrl && C.supabaseAnonKey && window.supabase);
 const sb = ok ? window.supabase.createClient(C.supabaseUrl, C.supabaseAnonKey) : null;
+
+/* ---------- Notificacions al mòbil (Web Push) ---------- */
+const PUSH_KEY = 'BNk9TOPVzUDUEyPQpm7fDH-BH6uGcPg4qKwyt3yohxhLnT6piXinxaWxSY2Hb3nuvGmisXxYUOl3W1Gn8zo72ZU';
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isStandalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const pushSupported = () => 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
+function b64u(x){ const r = atob((x + '='.repeat((4 - x.length % 4) % 4)).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from(r, c => c.charCodeAt(0)); }
+async function pushState(){
+  if (!pushSupported()) return isIOS && !isStandalone() ? 'ios' : 'no';
+  if (Notification.permission === 'denied') return 'denied';
+  try { const reg = await navigator.serviceWorker.getRegistration('/'); const sub = reg && await reg.pushManager.getSubscription(); return sub ? 'on' : 'off'; } catch(_) { return 'off'; }
+}
+async function pushOn(secret){
+  if ((await Notification.requestPermission()) !== 'granted') throw new Error('perm');
+  const reg = await navigator.serviceWorker.register('/sw.js'); await navigator.serviceWorker.ready;
+  let sub = await reg.pushManager.getSubscription();
+  if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64u(PUSH_KEY) });
+  const j = sub.toJSON();
+  const { error } = await sb.rpc('save_push', { p_endpoint: j.endpoint, p_p256dh: j.keys.p256dh, p_auth: j.keys.auth, p_secret: secret || null });
+  if (error) throw error;
+}
+async function pushOff(){
+  const reg = await navigator.serviceWorker.getRegistration('/'); const sub = reg && await reg.pushManager.getSubscription();
+  if (sub) { await sb.rpc('drop_push', { p_endpoint: sub.endpoint }); await sub.unsubscribe(); }
+}
 const STAR = (s, c) => `<svg width="${s}" height="${s}" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 2l6 24 24 6-24 6-6 24-6-24-24-6 24-6z" fill="${c}"/></svg>`;
 let tt; const toast = t => { $('#fx').insertAdjacentHTML('beforeend', `<div class="toast" role="status"><div class="ic">J</div><div><b>${esc(C.nom)}</b><div style="font-size:14px">${esc(t)}</div></div></div>`); clearTimeout(tt); tt = setTimeout(() => document.querySelectorAll('.toast').forEach(x => x.remove()), 4500); };
 const confetti = () => { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; const cols = ['#A3202F', '#D0394A', '#C9A55A', '#F2D9B0', '#7A1424']; let h = '<div class="confetti">'; for (let i = 0; i < 70; i++) h += `<i style="left:${Math.random() * 100}%;background:${cols[i % 5]};animation-duration:${2 + Math.random() * 2.5}s;animation-delay:${Math.random() * .6}s;transform:rotate(${Math.random() * 360}deg)"></i>`; $('#fx').insertAdjacentHTML('beforeend', h + '</div>'); setTimeout(() => document.querySelectorAll('.confetti').forEach(x => x.remove()), 5500); };
@@ -313,7 +341,7 @@ function startApp(){
   if (params.get('card')) store.set('jaleo_secret', params.get('card').slice(0, 80));
   if ([...params.keys()].length) history.replaceState(null, '', location.pathname + location.hash);
   let mesa = null; try { mesa = sessionStorage.getItem('jaleo_mesa'); } catch(_) {}
-  const S = { screen: mesa ? 'carta' : 'web', menu: [], rewards: [], offers: [], notices: [], tables: [], card: null, secret: store.get('jaleo_secret'), cart: {}, msg: '', err: '', taken: [], resDay: null, resTable: null, resForm: { h: '22:00', p: 4, n: '' }, busy: false, cat: null,
+  const S = { push: null, screen: params.get('v') === 'avisos' ? 'avisos' : mesa ? 'carta' : 'web', menu: [], rewards: [], offers: [], notices: [], tables: [], card: null, secret: store.get('jaleo_secret'), cart: {}, msg: '', err: '', taken: [], resDay: null, resTable: null, resForm: { h: '22:00', p: 4, n: '' }, busy: false, cat: null,
     lastOrder: JSON.parse(store.get('jaleo_last_order') || 'null'), order: null, bumped: null };
 
   async function loadPublic(){
@@ -433,7 +461,7 @@ function startApp(){
     return head('Club') + `<div class="mcard"><div class="row"><div><div style="font-size:13px;color:#fde9e4">Membre</div><div style="font-family:Anton,sans-serif;font-size:28px">${esc(c.name)}</div></div><div style="text-align:right"><div class="big">${c.points}</div><div style="font-size:13px;color:#fde9e4">punts</div></div></div><div class="qrbox" id="qr" aria-label="Codi QR de la targeta ${esc(c.code)}"></div><div style="text-align:center;font-size:14px;position:relative">${esc(c.code)} · ensenya-ho a la barra quan paguis</div></div>
     <div class="sec">${nx ? `Et falten ${nx.cost - c.points} punts` : 'Pots demanar qualsevol premi!'}</div>${nx ? `<div class="bar"><i style="width:${pct}%"></i></div><p class="small" style="margin:0">Següent premi: <b style="color:var(--ink)">${esc(nx.name)}</b></p>` : ''}
     <div class="sec">Recompenses</div>${S.rewards.map(r => `<div class="rw"><span>${esc(r.name)}<br><span class="small">${r.cost} punts</span></span>${pend && pend.reward_id === r.id ? '<span class="chip c-wait">Demanat · t’ho portem</span>' : c.points >= r.cost ? `<button class="sbtn" data-a="req" data-v="${r.id}" ${pend ? 'disabled' : ''}>Demanar</button>` : `<b class="small">Et falten ${r.cost - c.points}</b>`}</div>`).join('')}
-    ${msgs()}<button class="btn sec2" data-a="go" data-v="convida">Convidar amics i guanyar punts</button>`;
+    ${msgs()}${S.push === 'off' || S.push === 'ios' ? `<button class="btn sec2" data-a="go" data-v="avisos">🔔 Rebre els avisos al mòbil</button>` : ''}<button class="btn sec2" data-a="go" data-v="convida">Convidar amics i guanyar punts</button>`;
   }
   function vPremi(){ return `<div class="prize"><p class="small">${esc(S.card.name)}</p><p class="serif" style="font-size:32px;margin:0">El teu premi</p><div class="big">ÉS GRATIS</div><p style="font-size:22px;margin-top:14px"><b>${esc(S.prize)}</b></p><p class="small">Gaudeix-lo!</p></div>`; }
   function vConvida(){
@@ -453,7 +481,15 @@ function startApp(){
     ${msgs()}<button class="btn pri" type="submit" ${S.busy || !S.resTable ? 'disabled' : ''}>Enviar reserva</button></form>
     ${mine.length ? '<div class="sec">Les meves reserves</div>' + mine.map(x => `<div class="rw"><span>${esc(x.day)} · ${esc(x.time)} · ${x.people} pers.${x.table ? ' · ' + esc(x.table) : ''}</span><span class="chip ${x.status === 'confirmada' ? 'c-ok' : x.status === 'pendent' ? 'c-wait' : 'c-no'}">${esc(x.status)}</span></div>`).join('') : ''}`;
   }
-  function vAvisos(){ return head('Avisos') + (S.notices.length ? S.notices.map(n => `<div class="sheet"><b>${esc(n.title)}</b><p style="margin:4px 0 0">${esc(n.body)}</p><p class="small" style="margin:4px 0 0">${new Date(n.created_at).toLocaleDateString('ca-ES')}</p></div>`).join('') : '<p class="small">Encara no hi ha avisos.</p>'); }
+  function pushBox(){
+    const p = S.push;
+    if (p === 'off') return `<div class="sheet"><b>🔔 Vols que t’avisem al mòbil?</b><p style="margin:4px 0 10px">Ofertes, festes i novetats de ${esc(C.nom)} directament a la pantalla. Màxim 1 o 2 per setmana.</p><button class="btn pri" data-a="pushon" ${S.busy ? 'disabled' : ''}>Activar notificacions</button></div>`;
+    if (p === 'on') return `<div class="sheet"><b>🔔 Notificacions activades</b><p class="small" style="margin:4px 0 0">T’avisarem al mòbil quan hi hagi novetats. <a href="#" data-a="pushoff">Desactivar</a></p></div>`;
+    if (p === 'ios') return `<div class="sheet"><b>🔔 Avisos a l’iPhone</b><p style="margin:4px 0 0">1. Obre aquesta web amb <b>Safari</b>.<br>2. Toca el botó <b>Compartir</b> (el quadrat amb la fletxa ⬆️).<br>3. Tria <b>«Afegir a pantalla d’inici»</b>.<br>4. Obre ${esc(C.nom)} des de la icona nova i torna aquí a «Avisos» per activar-les.</p></div>`;
+    if (p === 'denied') return `<div class="sheet"><b>🔕 Notificacions bloquejades</b><p class="small" style="margin:4px 0 0">Les pots tornar a activar a la configuració del mòbil o del navegador, dins dels permisos d’aquesta web.</p></div>`;
+    return '';
+  }
+  function vAvisos(){ return head('Avisos') + pushBox() + msgs() + (S.notices.length ? S.notices.map(n => `<div class="sheet"><b>${esc(n.title)}</b><p style="margin:4px 0 0">${esc(n.body)}</p><p class="small" style="margin:4px 0 0">${new Date(n.created_at).toLocaleDateString('ca-ES')}</p></div>`).join('') : '<p class="small">Encara no hi ha avisos.</p>'); }
 
   let io;
   function render(){
@@ -510,6 +546,8 @@ function startApp(){
     const b = e.target.closest('[data-a]'); if (!b) return;
     const a = b.dataset.a, v = b.dataset.v;
     if (a === 'go' || a === 'tocarta') { e.preventDefault(); if (a === 'tocarta') { go('web'); setTimeout(() => location.hash = '#carta', 50); return; } if (v === 'comanda') { S.order = null; pollOrder(); } if (v === 'reserva') await loadTaken(S.resDay || new Date().toISOString().slice(0, 10)); go(v); }
+    if (a === 'pushon') { S.busy = true; render(); try { await pushOn(S.secret); S.push = 'on'; S.msg = 'Fet! Et sortiran els avisos al mòbil.'; S.err = ''; } catch(err) { S.push = await pushState(); S.msg = ''; S.err = S.push === 'denied' ? 'Has bloquejat les notificacions. Activa-les a la configuració del mòbil.' : 'No s’han pogut activar les notificacions. Torna-ho a provar.'; } S.busy = false; render(); }
+    if (a === 'pushoff') { e.preventDefault(); try { await pushOff(); } catch(_) {} S.push = await pushState(); S.msg = 'Notificacions desactivades.'; render(); }
     if (a === 'cat') { S.cat = v; const y = scrollY; render(); scrollTo(0, y); }
     if (a === 'add') { S.cart[v] = (S.cart[v] || 0) + 1; S.bumped = v; const y = scrollY; render(); scrollTo(0, y); }
     if (a === 'dec') { S.cart[v]--; if (S.cart[v] <= 0) delete S.cart[v]; render(); }
@@ -550,7 +588,7 @@ function startApp(){
       await loadTaken(p.p_day); render();
     }
   });
-  (async () => { await Promise.all([loadPublic(), loadCard()]); if (S.lastOrder && mesa && S.lastOrder.table === mesa) await pollOrder(); render(); })();
+  (async () => { await Promise.all([loadPublic(), loadCard(), pushState().then(p => S.push = p)]); if (S.lastOrder && mesa && S.lastOrder.table === mesa) await pollOrder(); render(); })();
 }
 
 /* =====================================================================
@@ -574,6 +612,7 @@ function startPanel(){
     (o.data || []).forEach(x => S.seen.add('o' + x.id)); (q.data || []).forEach(x => S.seen.add('q' + x.id));
     S.orders = o.data || []; S.reqs = q.data || []; S.res = r.data || []; S.customers = c.data || []; if (!S.dirty.size) S.tables = t.data || [];
     S.menu = m.data || []; S.rewards = w.data || []; S.offers = of.data || []; S.notices = n.data || []; S.loaded = true;
+    const pc = await sb.from('push_subs').select('id', { count: 'exact', head: true }); S.pushN = pc.count || 0;
   }
   function vComandes(){
     const act = S.orders.filter(o => !['pagada', 'cancelada'].includes(o.status)), done = S.orders.filter(o => o.status === 'pagada').slice(0, 8), nx = { rebuda: ['preparant', 'Començar a preparar'], preparant: ['servida', 'Marcar servida'] };
@@ -607,7 +646,7 @@ function startPanel(){
     <h3 style="margin:22px 0 8px;font-size:22px">Recompenses</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Premi</th><th>Punts</th><th>Visible</th></tr></thead><tbody>${S.rewards.map(i => row(i, 'rewards')).join('')}</tbody></table></div><div class="row mini"><input id="rwn" placeholder="Nou premi" style="max-width:240px"><input id="rwc" type="number" min="1" placeholder="Punts" style="max-width:110px"><button class="sbtn" data-p="addrw">Afegir</button></div>
     <h3 style="margin:22px 0 8px;font-size:22px">Ofertes de membres</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Títol</th><th>Text</th><th>Visible</th></tr></thead><tbody>${S.offers.map(i => row(i, 'offers')).join('')}</tbody></table></div><div class="row mini"><input id="ofn" placeholder="Títol" style="max-width:240px"><input id="ofb" placeholder="Text" style="max-width:300px"><button class="sbtn" data-p="addof">Afegir</button></div>`;
   }
-  function vAvisos(){ return `<div class="box mini"><b>Nou avís</b><p class="small">Surt a «Avisos» de la targeta de tots els clients. Màxim 1 o 2 per setmana.</p><label class="f" for="nt">Títol</label><input id="nt" maxlength="60" placeholder="Avui hi ha partit!"><label class="f" for="nb">Text</label><textarea id="nb" maxlength="300" placeholder="Reserva taula des de la targeta."></textarea><div class="row"><button class="sbtn" data-p="addnotice">Publicar</button></div></div>${S.notices.map(n => `<div class="box" style="margin-top:10px"><b>${esc(n.title)}</b><p style="margin:4px 0">${esc(n.body)}</p><span class="small">${new Date(n.created_at).toLocaleString('ca-ES')}</span> <button class="sbtn ghost" data-p="delnotice" data-id="${n.id}">Esborrar</button></div>`).join('')}`; }
+  function vAvisos(){ return `<div class="box mini"><b>Nou avís</b><p class="small">Surt a «Avisos» de la targeta de tots els clients. Màxim 1 o 2 per setmana.</p><label class="f" for="nt">Títol</label><input id="nt" maxlength="60" placeholder="Avui hi ha partit!"><label class="f" for="nb">Text</label><textarea id="nb" maxlength="300" placeholder="Reserva taula des de la targeta."></textarea><label class="chk" style="display:flex;gap:8px;align-items:center;margin:10px 0"><input type="checkbox" id="npush" checked> 🔔 Enviar també com a notificació al mòbil (${S.pushN || 0} mòbils subscrits)</label><div class="row"><button class="sbtn" data-p="addnotice">Publicar</button></div></div>${S.notices.map(n => `<div class="box" style="margin-top:10px"><b>${esc(n.title)}</b><p style="margin:4px 0">${esc(n.body)}</p><span class="small">${new Date(n.created_at).toLocaleString('ca-ES')}</span> <button class="sbtn ghost" data-p="delnotice" data-id="${n.id}">Esborrar</button></div>`).join('')}`; }
   function render(){
     const pend = { comandes: S.orders.filter(o => o.status === 'rebuda').length, premis: S.reqs.filter(q => q.status === 'pendent').length, reserves: S.res.filter(r => r.status === 'pendent').length };
     const tabs = [['comandes', 'Comandes'], ['premis', 'Premis'], ['reserves', 'Reserves'], ['clients', 'Clients'], ['planol', 'Plànol'], ['carta', 'Carta i premis'], ['avisos', 'Avisos']];
@@ -651,7 +690,15 @@ function startPanel(){
     if (a === 'additem') { const r = { name: $('#nn').value.trim(), category: $('#nc').value.trim() || 'Altres', price: Number($('#np').value), icon: $('#ni').value, sort: 100 }; if (!r.name || !(r.price >= 0)) return flash('Posa nom i preu.'); await run(sb.from('menu_items').insert(r), 'Producte afegit'); }
     if (a === 'addrw') { const r = { name: $('#rwn').value.trim(), cost: Number($('#rwc').value) }; if (!r.name || !(r.cost > 0)) return flash('Posa nom i punts.'); await run(sb.from('rewards').insert(r), 'Premi afegit'); }
     if (a === 'addof') { const r = { title: $('#ofn').value.trim(), body: $('#ofb').value.trim() }; if (!r.title) return flash('Posa un títol.'); await run(sb.from('offers').insert(r), 'Oferta afegida'); }
-    if (a === 'addnotice') { const r = { title: $('#nt').value.trim(), body: $('#nb').value.trim() }; if (!r.title || !r.body) return flash('Omple títol i text.'); await run(sb.from('notices').insert(r), 'Avís publicat'); }
+    if (a === 'addnotice') {
+      const r = { title: $('#nt').value.trim(), body: $('#nb').value.trim() }, push = $('#npush') && $('#npush').checked;
+      if (!r.title || !r.body) return flash('Omple títol i text.');
+      b.disabled = true;
+      const { error } = await sb.from('notices').insert(r); if (error) { b.disabled = false; return flash('Error: ' + error.message); }
+      let m = 'Avís publicat';
+      if (push) { const { data, error: pe } = await sb.functions.invoke('send-push', { body: r }); m += pe ? ' (però la notificació ha fallat: ' + (pe.message || pe) + ')' : ` i enviat a ${data.sent} mòbil${data.sent === 1 ? '' : 's'}`; }
+      S.msg = m; await load(); render();
+    }
     if (a === 'delnotice') await run(sb.from('notices').delete().eq('id', id), 'Avís esborrat');
   });
   document.addEventListener('input', e => { if (e.target.id === 'cq') { S.q = e.target.value; render(); } });

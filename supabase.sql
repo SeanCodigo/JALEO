@@ -558,3 +558,48 @@ create policy productes_staff_update on storage.objects for update to authentica
 drop policy if exists productes_staff_delete on storage.objects;
 create policy productes_staff_delete on storage.objects for delete to authenticated
   using (bucket_id = 'productes' and public.is_staff());
+
+-- =====================================================================
+-- NOTIFICACIONS AL MÒBIL (Web Push)
+-- Les claus VAPID es guarden a public.app_secrets (vapid_public, vapid_private),
+-- sense accés per a anon/authenticated. Les fa servir la funció Edge «send-push».
+-- =====================================================================
+create table if not exists public.push_subs (
+  id bigint generated always as identity primary key,
+  endpoint text unique not null,
+  p256dh text not null,
+  auth text not null,
+  customer_id uuid references public.customers(id) on delete set null,
+  created_at timestamptz default now(),
+  last_ok timestamptz
+);
+alter table public.push_subs enable row level security;
+revoke all on public.push_subs from anon, authenticated;
+grant select, delete on public.push_subs to authenticated;
+drop policy if exists staff_all on public.push_subs;
+create policy staff_all on public.push_subs for all to authenticated using (public.is_staff()) with check (public.is_staff());
+
+create table if not exists public.app_secrets (k text primary key, v text not null);
+alter table public.app_secrets enable row level security;
+revoke all on public.app_secrets from anon, authenticated;
+
+create or replace function public.save_push(p_endpoint text, p_p256dh text, p_auth text, p_secret text default null)
+returns boolean language plpgsql security definer set search_path = public as $$
+declare cid uuid;
+begin
+  if p_endpoint is null or p_endpoint !~ '^https://' or length(p_endpoint) > 1000
+     or length(coalesce(p_p256dh,'')) not between 40 and 200 or length(coalesce(p_auth,'')) not between 10 and 100 then
+    raise exception 'subscripcio no valida';
+  end if;
+  if p_secret is not null then select id into cid from customers where secret = p_secret; end if;
+  insert into push_subs(endpoint, p256dh, auth, customer_id) values (p_endpoint, p_p256dh, p_auth, cid)
+  on conflict (endpoint) do update set p256dh = excluded.p256dh, auth = excluded.auth, customer_id = coalesce(excluded.customer_id, push_subs.customer_id);
+  return true;
+end $$;
+
+create or replace function public.drop_push(p_endpoint text)
+returns boolean language sql security definer set search_path = public as $$
+  delete from push_subs where endpoint = p_endpoint; select true;
+$$;
+revoke all on function public.save_push(text,text,text,text), public.drop_push(text) from public;
+grant execute on function public.save_push(text,text,text,text), public.drop_push(text) to anon, authenticated;
