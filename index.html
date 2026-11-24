@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#A3202F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="JALEO">
+<title>JALEO · Aquí comença la nit</title>
+<meta name="description" content="JALEO, pub i cachimbes a Pl. Catalunya, 6, Reus. Carta, reserves i JALEO Club.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23A3202F'/%3E%3Cpath d='M32 10l5 17 17 5-17 5-5 17-5-17-17-5 17-5z' fill='%23F7F0E6'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap">
+
+<!-- =====================================================================
+     CONFIGURACIÓ · omple només aquesta part (mira la guia, pas 3)
+     ===================================================================== -->
+<script>
+window.JALEO = {
+  supabaseUrl: "",          // exemple: "https://abcdefgh.supabase.co"
+  supabaseAnonKey: "",      // clau "anon public" de Supabase
+  nom: "JALEO",
+  adreca: "Pl. Catalunya, 6 · Reus",
+  instagram: "jaleoreus",   // sense @
+  telefon: "616 562 597",
+  mapa: "https://maps.google.com/?q=Pla%C3%A7a+Catalunya+6+Reus",
+  nits: [
+    { dia: "Dijous", nom: "Jaleo Universitari", hora: "22:00", text: "La previa dels universitaris. Doble punts per als membres JCC." },
+    { dia: "Divendres", nom: "Jaleo Fridays", hora: "23:00", text: "Copes amb la colla, cachimbes i bona música." },
+    { dia: "Dissabte", nom: "Bendito Jaleo", hora: "19:00", text: "La nit gran de la setmana." }
+  ]
+};
+</script>
+
+<style>
+:root{--bg:#FBF6EF;--ink:#2a0a10;--muted:#7a5a50;--line:#eadbcd;--acc:#A3202F;--acc2:#7A1424;--hot:#D0394A;--gold:#C9A55A;--cream:#F7F0E6;--night:#1a0408}
+*{box-sizing:border-box;min-width:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Archivo,system-ui,-apple-system,sans-serif;overflow-x:clip}
+h1,h2,h3{font-family:Anton,Impact,'Arial Narrow',sans-serif;font-weight:400;letter-spacing:.01em;line-height:1.02;margin:0}
+a{color:var(--acc)}
+button,input,select,textarea{font:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.serif{font-family:'Instrument Serif',Georgia,serif;font-style:italic;font-weight:400}
+.small{font-size:13px;color:var(--muted)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 max(5vw,18px)}
+
+/* ---------- capçalera ---------- */
+.nav{position:fixed;inset:0 0 auto 0;z-index:30;transition:background .3s,box-shadow .3s}
+.nav.solid{background:rgba(251,246,239,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 2px 20px rgba(122,20,36,.08)}
+.nav .wrap{display:flex;justify-content:space-between;align-items:center;height:66px;gap:12px}
+.logo{font-family:Anton,sans-serif;font-size:30px;letter-spacing:.04em;color:#fff;text-decoration:none;transition:color .3s}
+.nav.solid .logo{color:var(--acc)}
+.nav .links{display:flex;gap:6px;align-items:center}
+.nav .links a{color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:8px 10px;border-radius:10px;transition:color .3s}
+.nav.solid .links a{color:var(--acc2)}
+.nav .cta{background:var(--cream);color:var(--acc2)!important;border-radius:40px!important;padding:10px 16px!important}
+.nav.solid .cta{background:var(--acc);color:#fff!important}
+@media(max-width:760px){.nav .links a:not(.cta){display:none}}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100svh;background:radial-gradient(ellipse 80% 60% at 70% 40%,#7A1424 0%,#3E0A11 45%,var(--night) 100%);color:var(--cream);overflow:hidden;display:flex;align-items:center}
+.hero .wrap{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:30px;align-items:center;padding-top:90px;padding-bottom:70px;width:100%}
+@media(max-width:860px){.hero .wrap{grid-template-columns:minmax(0,1fr);text-align:left}}
+.kick{display:inline-flex;align-items:center;gap:10px;font-weight:600;font-size:14px;background:rgba(247,240,230,.1);border:1px solid rgba(247,240,230,.25);padding:8px 14px;border-radius:40px;opacity:0;animation:up .8s .2s forwards}
+.kick i{width:9px;height:9px;border-radius:50%;background:#ff5a6a;box-shadow:0 0 12px #ff5a6a;animation:blink 1.4s infinite}
+.big-title{font-size:clamp(88px,17vw,220px);line-height:.86;margin-top:16px;display:flex;overflow:hidden}
+.big-title span{display:inline-block;transform:translateY(110%);animation:letter .9s cubic-bezier(.2,.8,.2,1) forwards;text-shadow:0 0 30px rgba(255,90,106,.25)}
+.hero .tag{font-size:clamp(30px,4.4vw,54px);color:#F2D9B0;margin:6px 0 0;opacity:0;animation:up .9s .9s forwards}
+.hero p.lead{max-width:46ch;color:#f1dfd6;font-size:18px;opacity:0;animation:up .9s 1.1s forwards}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;opacity:0;animation:up .9s 1.3s forwards}
+.b{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:12px 22px;border-radius:40px;border:0;font-weight:600;font-size:16px;cursor:pointer;text-decoration:none;transition:transform .15s,box-shadow .2s,background .2s}
+.b:active{transform:scale(.96)}
+.b.hot{background:var(--hot);color:#fff;box-shadow:0 10px 30px rgba(208,57,74,.45)}
+.b.hot:hover{box-shadow:0 14px 40px rgba(208,57,74,.6)}
+.b.line{background:transparent;color:var(--cream);border:2px solid rgba(247,240,230,.6)}
+.b.dark{background:var(--acc2);color:#fff}
+.b.cream{background:var(--cream);color:var(--acc2)}
+.stars span{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;opacity:.5;animation:twinkle 3s infinite}
+.glow{position:absolute;width:520px;height:520px;border-radius:50%;filter:blur(90px);opacity:.45;animation:drift 14s ease-in-out infinite}
+/* targeta 3D */
+.stage{perspective:1200px;display:flex;justify-content:center;opacity:0;animation:up 1s 1s forwards}
+.card3d{width:min(360px,86vw);aspect-ratio:1.58;border-radius:24px;padding:22px;color:#fff;position:relative;transform-style:preserve-3d;animation:float 7s ease-in-out infinite;background:linear-gradient(140deg,#E4485A 0%,#A3202F 50%,#5E0B15 100%);box-shadow:0 40px 80px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.3);overflow:hidden}
+.card3d:before{content:"";position:absolute;inset:-50%;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.35) 50%,transparent 60%);animation:shine 4.5s ease-in-out infinite}
+.card3d .r{display:flex;justify-content:space-between;align-items:flex-start;position:relative}
+.card3d b{font-family:Anton,sans-serif;font-weight:400;font-size:30px;letter-spacing:.04em}
+.card3d .pts{font-family:Anton,sans-serif;font-size:54px;line-height:1}
+.card3d .chipc{width:46px;height:34px;border-radius:8px;background:linear-gradient(135deg,#F2D9B0,#C9A55A);margin-top:24px;position:relative}
+.card3d .nm{position:absolute;left:22px;bottom:18px;font-size:15px;letter-spacing:.08em;opacity:.9}
+
+/* ---------- franja ---------- */
+.marquee{background:var(--acc);color:var(--cream);overflow:hidden;white-space:nowrap;padding:16px 0;border-block:3px solid var(--acc2)}
+.marquee div{display:inline-flex;gap:40px;animation:mq 28s linear infinite;font-family:Anton,sans-serif;font-size:clamp(26px,4vw,44px);letter-spacing:.03em;padding-right:40px}
+.marquee em{font-style:normal;color:#F2D9B0}
+
+/* ---------- seccions ---------- */
+section.s{padding:clamp(60px,9vw,120px) 0}
+.eyebrow{color:var(--acc);font-weight:700;font-size:15px;margin-bottom:8px}
+.st{font-size:clamp(42px,6vw,76px)}
+.st .serif{color:var(--acc);font-size:.8em}
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+.nights{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:36px}
+@media(max-width:860px){.nights{grid-template-columns:minmax(0,1fr)}}
+.night{position:relative;border-radius:26px;padding:26px;min-height:300px;color:#fff;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s;box-shadow:0 18px 40px rgba(122,20,36,.18)}
+.night:hover{transform:translateY(-8px) rotate(-.6deg);box-shadow:0 30px 60px rgba(122,20,36,.3)}
+.night .d{font-weight:700;font-size:15px;opacity:.9}.night h3{font-size:44px;margin:6px 0}
+.night .h{position:absolute;top:22px;right:22px;font-family:Anton,sans-serif;font-size:30px;background:rgba(255,255,255,.15);padding:4px 14px;border-radius:30px}
+.night svg{position:absolute;top:24px;left:24px;opacity:.9}
+.n0{background:linear-gradient(160deg,#2a0a10,#7A1424)}.n1{background:linear-gradient(160deg,#A3202F,#5E0B15)}.n2{background:linear-gradient(160deg,#D0394A,#7A1424)}
+.club{background:var(--night);color:var(--cream);position:relative;overflow:hidden}
+.club .st .serif{color:#F2D9B0}
+.steps4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:40px;counter-reset:s}
+@media(max-width:860px){.steps4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.steps4{grid-template-columns:minmax(0,1fr)}}
+.step{background:rgba(247,240,230,.06);border:1px solid rgba(247,240,230,.15);border-radius:22px;padding:22px;transition:background .3s,transform .3s}
+.step:hover{background:rgba(247,240,230,.12);transform:translateY(-4px)}
+.step .ic{width:54px;height:54px;border-radius:16px;background:var(--acc);display:grid;place-items:center;margin-bottom:14px}
+.step h3{font-size:26px;margin-bottom:4px}.step p{margin:0;color:#e6d4c8;font-size:15px}
+.rwrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.rwpill{border:1px solid rgba(242,217,176,.4);color:#F2D9B0;border-radius:40px;padding:10px 18px;font-weight:600}
+.tabsC{display:flex;gap:8px;flex-wrap:wrap;margin:26px 0 16px}
+.tabsC button{min-height:44px;border-radius:40px;border:1px solid #e3cfc0;background:#fff;color:var(--acc2);font-weight:600;padding:8px 18px;cursor:pointer;transition:all .2s}
+.tabsC button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.menuGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:14px}
+.visit{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:26px;align-items:center}
+@media(max-width:860px){.visit{grid-template-columns:minmax(0,1fr)}}
+.vbox{background:#fff;border-radius:26px;padding:28px;box-shadow:0 14px 40px rgba(122,20,36,.1)}
+.vbox p{margin:6px 0}
+footer{background:var(--acc2);color:var(--cream);padding:34px 0;text-align:center}
+footer b{font-family:Anton,sans-serif;font-weight:400;font-size:40px;letter-spacing:.05em}
+
+/* ---------- app (mòbil) ---------- */
+.app{max-width:540px;margin:0 auto;padding:12px 16px 150px;min-height:100svh}
+.screen{animation:screenIn .45s cubic-bezier(.2,.8,.2,1)}
+.brand{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:8px 0 14px}
+.brand a{font-family:Anton,sans-serif;font-size:36px;color:var(--acc);letter-spacing:.03em;text-decoration:none}
+.brand span{font-size:14px;color:var(--muted);text-align:right}
+.sec{font-family:Anton,sans-serif;font-size:22px;margin:22px 0 10px;letter-spacing:.02em}
+.offer{position:relative;border-radius:20px;padding:16px 18px;margin-bottom:10px;color:#fff;background:linear-gradient(135deg,#D0394A,#A3202F);overflow:hidden}
+.offer:after{content:"";position:absolute;inset:-60%;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.25) 50%,transparent 58%);animation:shine 5s ease-in-out infinite}
+.offer h3{font-size:24px;position:relative}.offer p{margin:2px 0 0;font-size:14px;color:#fde9e4;position:relative}
+.lock{position:absolute;inset:0;z-index:2;background:rgba(122,20,36,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;gap:10px;font-weight:600}
+.lock svg{animation:wiggle 2.6s ease-in-out infinite}
+.items{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.item{background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 4px 14px rgba(122,20,36,.10);display:flex;flex-direction:column;transition:transform .2s}
+.item:hover{transform:translateY(-3px)}
+.item svg{display:block;width:100%;height:96px}
+.item svg .dr{animation:bob 3.5s ease-in-out infinite;transform-origin:center}
+.item .meta{padding:10px 12px;display:flex;justify-content:space-between;gap:6px;font-size:15px;flex:1}
+.item strong{white-space:nowrap;color:var(--acc)}
+.item .add{width:100%;min-height:44px;border:0;border-top:1px solid #f0e2d6;background:#fff;color:var(--acc);font-weight:600;font-size:15px;cursor:pointer;transition:background .2s,color .2s}
+.item .add.on{background:var(--acc);color:#fff}
+.item .add.pop{animation:pop .35s}
+.btn{display:block;width:100%;min-height:52px;border:0;border-radius:16px;font-weight:600;font-size:16px;cursor:pointer;margin-top:10px;padding:12px;text-align:center;text-decoration:none;transition:transform .15s,filter .2s}
+.btn:active{transform:scale(.97)}
+.btn.pri{background:var(--acc);color:#fff;box-shadow:0 10px 24px rgba(163,32,47,.3)}
+.btn.sec2{background:#fff;color:var(--acc2);border:1px solid #e3cfc0}
+.btn.dark{background:var(--acc2);color:#fff}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.bump{animation:bump .4s}
+.bottom{position:fixed;left:0;right:0;bottom:0;padding:10px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(rgba(251,246,239,0),var(--bg) 35%);z-index:20}
+.bottom .in{max-width:540px;margin:0 auto}
+.tabbar{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;background:#fff;border-radius:20px;padding:6px;box-shadow:0 10px 30px rgba(122,20,36,.15);margin-top:8px}
+.tabbar button{border:0;background:none;border-radius:14px;min-height:52px;color:var(--muted);font-weight:600;font-size:12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.tabbar button.on{background:#fbeceb;color:var(--acc)}
+label.f{display:block;font-size:14px;margin:12px 0 4px;color:#5a3a34;font-weight:500}
+input,select,textarea{width:100%;min-height:48px;border-radius:12px;border:1px solid #e3cfc0;background:#fff;color:var(--ink);font-size:16px;padding:10px 12px}
+textarea{min-height:80px}
+.chk{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin-top:12px}.chk input{width:22px;min-height:22px;margin-top:2px;flex:none}
+.mcard{border-radius:24px;padding:20px;color:#fff;background:linear-gradient(140deg,#E4485A 0%,#A3202F 50%,#5E0B15 100%);box-shadow:0 18px 36px rgba(122,20,36,.35);position:relative;overflow:hidden;animation:cardIn .7s cubic-bezier(.2,.8,.2,1)}
+.mcard:before{content:"";position:absolute;inset:-50%;background:linear-gradient(115deg,transparent 42%,rgba(255,255,255,.3) 50%,transparent 58%);animation:shine 4.5s ease-in-out infinite}
+.mcard .row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;position:relative}
+.big{font-family:Anton,sans-serif;font-size:48px;line-height:1}
+.qrbox{background:var(--cream);border-radius:16px;padding:10px;width:166px;margin:16px auto 6px;position:relative}
+.qrbox img,.qrbox canvas{display:block;width:146px!important;height:146px!important}
+.bar{height:14px;background:#efe1d4;border-radius:10px;overflow:hidden;margin:8px 0 4px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#C9A55A,#F2D9B0,#C9A55A);background-size:200% 100%;border-radius:10px;animation:grow 1.2s cubic-bezier(.2,.8,.2,1),shimmer 2.5s linear infinite}
+.rw{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0;border-bottom:1px solid var(--line)}
+.chip{display:inline-block;border-radius:20px;padding:4px 10px;font-size:13px;font-weight:600;white-space:nowrap}
+.c-ok{background:#d8efd5;color:#1f5a1a}.c-wait{background:#fbe5c0;color:#7a4a00}.c-no{background:#f6d0d4;color:#8a1020}.c-grey{background:#eee5db;color:#5a4640}
+.sbtn{min-height:44px;border-radius:12px;border:0;padding:8px 14px;font-weight:600;font-size:15px;cursor:pointer;background:var(--acc);color:#fff;transition:transform .15s}
+.sbtn:active{transform:scale(.95)}
+.sbtn.ghost{background:#fff;color:var(--acc2);border:1px solid #e3cfc0}
+.sbtn:disabled{opacity:.45;cursor:not-allowed}
+.line{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid var(--line)}
+.qbtn{width:42px;height:42px;border-radius:12px;border:1px solid #e3cfc0;background:#fff;color:var(--acc2);font-weight:700;font-size:18px;cursor:pointer}
+.stepsO{display:flex;gap:6px;margin:16px 0}
+.stepsO span{flex:1;text-align:center;font-size:13px;padding:10px 4px;border-radius:12px;background:#efe1d4;color:var(--muted);transition:all .4s}
+.stepsO span.on{background:var(--acc);color:#fff;font-weight:600}
+.stepsO span.now{animation:pulse 1.6s infinite}
+.sheet{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:12px}
+.err{background:#fde3e5;color:#8a1020;border-radius:12px;padding:10px 12px;margin-top:10px;font-size:14px;animation:shake .4s}
+.okmsg{background:#e3f3df;color:#1f5a1a;border-radius:12px;padding:10px 12px;margin-top:10px;font-size:14px}
+.prize{text-align:center;padding-top:40px;position:relative}
+.prize .big{font-size:72px;color:var(--acc);animation:zoom .7s cubic-bezier(.2,1.4,.4,1)}
+.confetti{position:fixed;inset:0;pointer-events:none;z-index:40;overflow:hidden}
+.confetti i{position:absolute;top:-20px;width:10px;height:14px;border-radius:2px;animation:fall linear forwards}
+.toast{position:fixed;left:50%;top:14px;transform:translateX(-50%);width:min(480px,calc(100% - 24px));background:#fff;color:var(--ink);border-radius:20px;padding:12px 14px;z-index:50;box-shadow:0 14px 36px rgba(0,0,0,.25);display:flex;gap:10px;align-items:center;animation:drop .45s cubic-bezier(.2,1.2,.4,1)}
+.toast .ic{width:38px;height:38px;border-radius:10px;background:var(--acc);color:#fff;display:grid;place-items:center;font-family:Anton,sans-serif;flex:none}
+/* plànol */
+.map{position:relative;width:100%;aspect-ratio:10/7;background:#f3e8dc;border:2px solid #d9c4ad;border-radius:18px;overflow:hidden;touch-action:none;background-image:repeating-linear-gradient(0deg,rgba(122,20,36,.05) 0 1px,transparent 1px 24px),repeating-linear-gradient(90deg,rgba(122,20,36,.05) 0 1px,transparent 1px 24px)}
+.tb{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;font:600 12px/1.1 Archivo,sans-serif;border:2px solid var(--acc);background:#fff;color:var(--acc2);cursor:pointer;user-select:none;-webkit-user-select:none;padding:2px;transition:background .25s,transform .2s,box-shadow .25s}
+.tb:hover{transform:scale(1.05)}
+.tb.round{border-radius:50%}.tb.rect{border-radius:8px}.tb.sofa{border-radius:14px;border-width:3px}
+.tb.bar{background:#e3d3bf;border-color:#c9b49a;color:#5a4640;cursor:default;border-radius:6px}.tb.bar:hover{transform:none}
+.tb.taken{background:#e9e1d8;border-color:#c9bcb0;color:#9a8a80;cursor:not-allowed;text-decoration:line-through}.tb.taken:hover{transform:none}
+.tb.sel{background:var(--acc);color:#fff;box-shadow:0 0 0 5px rgba(163,32,47,.25);animation:pulse 1.6s infinite}
+.tb small{font-weight:500;font-size:11px;opacity:.85}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;vertical-align:-2px;margin-right:5px;border:2px solid var(--acc)}
+
+/* ---------- panell ---------- */
+.pw{max-width:1220px;margin:0 auto;padding:16px max(3vw,14px) 60px}
+.ptop{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.ptop h1{font-size:34px;color:var(--acc)}
+.ptabs{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+.ptabs button{min-height:44px;border-radius:12px;border:1px solid #e3cfc0;background:#fff;color:var(--acc2);font-weight:600;font-size:15px;padding:8px 14px;cursor:pointer}
+.ptabs button.on{background:var(--acc2);color:#fff;border-color:var(--acc2)}
+.ptabs .n{display:inline-block;min-width:22px;border-radius:11px;background:var(--hot);color:#fff;font-size:12px;padding:1px 6px;margin-left:6px;animation:pulse 1.6s infinite}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.box{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;animation:screenIn .4s}
+.box.new{border-color:var(--acc);box-shadow:0 0 0 3px rgba(163,32,47,.15);animation:ring 1.8s infinite}
+.box ul{margin:6px 0;padding-left:18px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:15px;background:#fff;border-radius:14px;overflow:hidden}
+th{text-align:left;font-size:13px;color:var(--muted);font-weight:600;padding:10px 8px;border-bottom:1px solid var(--line)}
+td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+td.n{text-align:right;white-space:nowrap}
+.scroll{overflow-x:auto}
+.editor{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;align-items:start}
+@media(max-width:800px){.editor{grid-template-columns:minmax(0,1fr)}}
+.pw .map .tb{cursor:grab}.pw .map .tb.sel{outline:3px solid var(--gold);animation:none}
+.f2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.mini input,.mini select{min-height:40px;padding:6px 8px}
+.login{max-width:380px;margin:60px auto}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
+@media(max-width:600px){table{font-size:13px}.stack thead{display:none}.stack tr{display:grid;padding-block:10px}.stack td{display:flow-root;border:0;padding:3px 0;padding-inline-start:8em;text-align:start}.stack td::before{content:attr(data-l);float:inline-start;width:7.5em;margin-inline-start:-8em;white-space:normal;color:var(--muted)}.stack td:empty{display:none}}
+/* QR */
+.qcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;margin-top:20px}
+.qc{background:var(--acc);color:var(--cream);border-radius:20px;padding:18px;text-align:center;break-inside:avoid}
+.qc h2{font-size:40px;letter-spacing:.03em}
+.qc .q{background:var(--cream);border-radius:14px;padding:10px;width:180px;margin:10px auto}
+.qc .q img,.qc .q canvas{display:block;width:160px!important;height:160px!important}
+@media print{.noprint{display:none}body{background:#fff}}
+
+/* ---------- animacions ---------- */
+@keyframes up{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:none}}
+@keyframes letter{to{transform:none}}
+@keyframes blink{50%{opacity:.25}}
+@keyframes twinkle{50%{opacity:1;transform:scale(1.6)}}
+@keyframes drift{50%{transform:translate(60px,-40px) scale(1.15)}}
+@keyframes float{0%,100%{transform:rotateX(14deg) rotateY(-18deg) translateY(0)}50%{transform:rotateX(6deg) rotateY(-4deg) translateY(-16px)}}
+@keyframes shine{0%{transform:translateX(-60%)}60%,100%{transform:translateX(60%)}}
+@keyframes mq{to{transform:translateX(-50%)}}
+@keyframes screenIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes cardIn{from{opacity:0;transform:perspective(800px) rotateX(30deg) translateY(30px)}to{opacity:1;transform:none}}
+@keyframes pop{50%{transform:scale(1.08)}}
+@keyframes bump{30%{transform:scale(1.05)}60%{transform:scale(.98)}}
+@keyframes bob{50%{transform:translateY(-4px)}}
+@keyframes wiggle{0%,80%,100%{transform:rotate(0)}85%{transform:rotate(-12deg)}90%{transform:rotate(10deg)}95%{transform:rotate(-6deg)}}
+@keyframes grow{from{width:0}}
+@keyframes shimmer{to{background-position:-200% 0}}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(163,32,47,0)}0%{box-shadow:0 0 0 0 rgba(163,32,47,.35)}}
+@keyframes ring{50%{box-shadow:0 0 0 7px rgba(163,32,47,.05)}}
+@keyframes zoom{from{transform:scale(.3);opacity:0}}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@keyframes drop{from{transform:translate(-50%,-40px);opacity:0}}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}.big-title span{transform:none}.kick,.hero .tag,.hero p.lead,.btns,.stage{opacity:1}}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<div class="bottom" id="bottom" hidden><div class="in" id="bottomIn"></div></div>
+<div id="fx"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+{
+const C = window.JALEO || {};
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const eur = n => Number(n).toFixed(2).replace('.', ',').replace(',00', '') + ' €';
+const hm = t => new Date(t).toLocaleTimeString('ca-ES', { hour: '2-digit', minute: '2-digit' });
+const DAY = 864e5;
+const store = { get(k){ try { return localStorage.getItem(k); } catch(_) { return null; } }, set(k, v){ try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch(_) {} } };
+const ok = !!(C.supabaseUrl && C.supabaseAnonKey && window.supabase);
+const sb = ok ? window.supabase.createClient(C.supabaseUrl, C.supabaseAnonKey) : null;
+const STAR = (s, c) => `<svg width="${s}" height="${s}" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 2l6 24 24 6-24 6-6 24-6-24-24-6 24-6z" fill="${c}"/></svg>`;
+let tt; const toast = t => { $('#fx').insertAdjacentHTML('beforeend', `<div class="toast" role="status"><div class="ic">J</div><div><b>${esc(C.nom)}</b><div style="font-size:14px">${esc(t)}</div></div></div>`); clearTimeout(tt); tt = setTimeout(() => document.querySelectorAll('.toast').forEach(x => x.remove()), 4500); };
+const confetti = () => { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; const cols = ['#A3202F', '#D0394A', '#C9A55A', '#F2D9B0', '#7A1424']; let h = '<div class="confetti">'; for (let i = 0; i < 70; i++) h += `<i style="left:${Math.random() * 100}%;background:${cols[i % 5]};animation-duration:${2 + Math.random() * 2.5}s;animation-delay:${Math.random() * .6}s;transform:rotate(${Math.random() * 360}deg)"></i>`; $('#fx').insertAdjacentHTML('beforeend', h + '</div>'); setTimeout(() => document.querySelectorAll('.confetti').forEach(x => x.remove()), 5500); };
+const ERR = { EMAIL_EXISTS: 'Aquest email ja té targeta. Si has canviat de mòbil, demana a la barra que te la recuperin.', BAD_EMAIL: 'Revisa l’email.', BAD_NAME: 'Escriu el teu nom.', ADULT_REQUIRED: 'Has de ser major de 18 anys.', TOO_MANY: 'Massa peticions seguides. Espera uns minuts.', NOT_ENOUGH: 'Encara no tens prou punts.', ALREADY_PENDING: 'Ja tens un premi demanat. Espera que te’l portin.', TABLE_TAKEN: 'Aquesta taula ja està reservada aquest dia.', BAD_DAY: 'Tria un dia d’avui als propers 60 dies.', BAD_ITEM: 'Algun producte ja no està disponible.', NO_CARD: 'No trobem la teva targeta.' };
+const errMsg = e => { const m = (e && (e.message || e.details)) || ''; const k = Object.keys(ERR).find(k => m.includes(k)); return k ? ERR[k] : 'Hi ha hagut un error. Torna-ho a provar.'; };
+
+function pic(kind, col){
+  const id = 'g' + Math.random().toString(36).slice(2, 7), s = 'fill="none" stroke="#F7F0E6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"';
+  const sh = { glass:`<path d="M64 20h32l-4 58H68z" ${s}/><path d="M68 40h24" ${s}/><rect x="72" y="44" width="9" height="9" rx="2" fill="#F7F0E6" opacity=".6"/><path d="M86 34l12-22" ${s}/>`, cocktail:`<path d="M58 22h44L80 48z" ${s}/><path d="M80 48v26M68 76h24" ${s}/><circle cx="96" cy="22" r="7" ${s}/>`, beer:`<path d="M64 26h28v50H64z" ${s}/><path d="M92 36h8a6 6 0 016 6v14a6 6 0 01-6 6h-8" ${s}/><path d="M62 26q6-10 16-4q8-8 16 4" ${s}/>`, bucket:`<path d="M54 36h52l-6 42H60z" ${s}/><path d="M64 36V18M76 36V14M88 36V18M98 36V20" ${s}/>`, shot:`<path d="M68 30h24l-3 40H71z" ${s}/><path d="M70 42h20" ${s}/>`, hookah:`<path d="M72 14h16l-3 10h-10z" ${s}/><path d="M80 24v24M66 32h28" ${s}/><path d="M80 48c-16 4-18 24 0 28c18-4 16-24 0-28z" ${s}/><path d="M86 40c18 0 22 18 14 30" ${s}/>`, soda:`<path d="M70 18h20v58H70z" ${s}/><path d="M70 34h20" ${s}/>`, food:`<path d="M52 56h56a28 18 0 01-56 0z" ${s}/><path d="M66 46q4-10 0-18M80 46q4-10 0-18M94 46q4-10 0-18" ${s}/>` };
+  return `<svg viewBox="0 0 160 92" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${esc(col)}"/><stop offset="1" stop-color="#7A1424"/></linearGradient></defs><rect width="160" height="92" fill="url(#${id})"/><circle cx="130" cy="16" r="26" fill="#fff" opacity=".08"/><g class="dr">${sh[kind] || sh.glass}</g></svg>`;
+}
+
+/* =====================================================================
+   1 · WEB + APP DEL CLIENT
+   ===================================================================== */
+function startApp(){
+  const params = new URLSearchParams(location.search);
+  if (params.get('mesa')) { try { sessionStorage.setItem('jaleo_mesa', params.get('mesa').slice(0, 10)); } catch(_) {} }
+  if (params.get('ref')) store.set('jaleo_ref', params.get('ref').slice(0, 12));
+  if (params.get('card')) store.set('jaleo_secret', params.get('card').slice(0, 80));
+  if ([...params.keys()].length) history.replaceState(null, '', location.pathname + location.hash);
+  let mesa = null; try { mesa = sessionStorage.getItem('jaleo_mesa'); } catch(_) {}
+  const S = { screen: mesa ? 'carta' : 'web', menu: [], rewards: [], offers: [], notices: [], tables: [], card: null, secret: store.get('jaleo_secret'), cart: {}, msg: '', err: '', taken: [], resDay: null, resTable: null, resForm: { h: '22:00', p: 4, n: '' }, busy: false, cat: null,
+    lastOrder: JSON.parse(store.get('jaleo_last_order') || 'null'), order: null, bumped: null };
+
+  async function loadPublic(){
+    if (!ok) { // vista prèvia amb dades d'exemple fins que connectis la base de dades
+      const M = [['Copes','Cubata',7,'glass','#7A3412'],['Copes','Mojito',7,'cocktail','#4f8a3c'],['Copes','Piña colada',7.5,'cocktail','#c9a55a'],['Copes','Cubata premium',10,'glass','#5a2208'],['Cervesa','Canya',2.3,'beer','#d49a2a'],['Cervesa','Galleda 6 quintos',10,'bucket','#b8954e'],['Cachimbes','Cachimba',12,'hookah','#7A1424'],['Cachimbes','Cachimba premium',18,'hookah','#C9A55A'],['Sense alcohol','Refresc',2.5,'soda','#3e6db5']];
+      S.menu = M.map((m, i) => ({ id: i + 1, category: m[0], name: m[1], price: m[2], icon: m[3], color: m[4] }));
+      S.rewards = [{ id: 1, name: 'Refresc o xupito', cost: 30 }, { id: 2, name: 'Cubata de regal', cost: 60 }, { id: 3, name: 'Cachimba sense nicotina de regal', cost: 120 }];
+      S.offers = [{ id: 1, title: 'Doble punts els dijous', body: 'Jaleo Universitari · membres JCC' }];
+      return;
+    }
+    const [m, r, o, n, t] = await Promise.all([sb.from('menu_items').select('*').order('sort').order('id'), sb.from('rewards').select('*').order('cost'), sb.from('offers').select('*').order('id'), sb.from('notices').select('*').order('created_at', { ascending: false }).limit(10), sb.from('dining_tables').select('*').order('id')]);
+    S.menu = m.data || []; S.rewards = r.data || []; S.offers = o.data || []; S.notices = n.data || []; S.tables = t.data || [];
+  }
+  async function loadCard(){
+    if (!ok || !S.secret) { S.card = null; return; }
+    const { data, error } = await sb.rpc('get_card', { p_secret: S.secret });
+    if (error) return;
+    if (!data) { store.set('jaleo_secret', null); S.secret = null; S.card = null; return; }
+    S.card = data;
+  }
+  const price = id => (S.menu.find(x => x.id == id) || {}).price || 0;
+  const cartN = () => Object.values(S.cart).reduce((a, b) => a + b, 0);
+  const cartT = () => Object.entries(S.cart).reduce((a, [k, q]) => a + price(k) * q, 0);
+  const go = s => { S.screen = s; S.err = ''; S.msg = ''; render(); window.scrollTo({ top: 0 }); };
+  const head = r => `<div class="brand"><a href="#" data-a="go" data-v="web">${esc(C.nom)}</a><span>${r}</span></div>`;
+  const msgs = () => (S.err ? `<div class="err" role="alert">${esc(S.err)}</div>` : '') + (S.msg ? `<div class="okmsg" role="status">${esc(S.msg)}</div>` : '');
+  const itemCard = i => `<div class="item">${pic(i.icon, i.color)}<div class="meta"><span>${esc(i.name)}</span><strong>${eur(i.price)}</strong></div>${mesa ? `<button class="add ${S.cart[i.id] ? 'on' : ''} ${S.bumped == i.id ? 'pop' : ''}" data-a="add" data-v="${i.id}" aria-label="Afegir ${esc(i.name)}">${S.cart[i.id] ? S.cart[i.id] + ' a la comanda · +' : '+ Afegir'}</button>` : ''}</div>`;
+
+  // ---------- la web (portada) ----------
+  function vWeb(){
+    const cats = [...new Set(S.menu.map(i => i.category))]; const cat = S.cat || cats[0];
+    const stars = Array.from({ length: 40 }, (_, i) => `<span style="left:${(i * 37) % 100}%;top:${(i * 53) % 100}%;animation-delay:${(i % 7) * .4}s"></span>`).join('');
+    const icons = [`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM18 18h3v3h-3z"/></svg>`, `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>`, `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2l3 7 7 .6-5.3 4.6L18 21l-6-3.7L6 21l1.3-6.8L2 9.6 9 9z"/></svg>`, `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M14 20c.3-2.4 1.8-4.5 4-4.5s3 1.5 3 4.5"/></svg>`];
+    return `
+    <header class="nav" id="nav"><div class="wrap"><a class="logo" href="#top">${esc(C.nom)}</a><nav class="links"><a href="#nits">Les nits</a><a href="#club">JALEO Club</a><a href="#carta">Carta</a><a href="#visita">On som</a><a class="cta" href="#" data-a="go" data-v="${S.card ? 'targeta' : 'registre'}">${S.card ? 'La meva targeta' : 'Fes-te la targeta'}</a></nav></div></header>
+    <section class="hero" id="top"><div class="stars" aria-hidden="true">${stars}</div><div class="glow" style="background:#D0394A;left:-120px;top:10%"></div><div class="glow" style="background:#C9A55A;right:-160px;bottom:-10%;animation-delay:-6s;opacity:.25"></div>
+      <div class="wrap"><div>
+        <span class="kick"><i></i>${esc(C.adreca)}</span>
+        <h1 class="big-title" aria-label="${esc(C.nom)}">${[...C.nom].map((ch, i) => `<span style="animation-delay:${.25 + i * .09}s">${esc(ch)}</span>`).join('')}</h1>
+        <p class="tag serif">Aquí comença la nit.</p>
+        <p class="lead">Copes, cachimbes i la millor previa de Reus. Fes-te la targeta de JALEO Club, suma punts cada vegada que vens i desbloqueja ofertes només per a membres.</p>
+        <div class="btns"><a class="b hot" href="#" data-a="go" data-v="${S.card ? 'targeta' : 'registre'}">${S.card ? 'La meva targeta' : 'Fes-te la targeta gratis'}</a><a class="b line" href="#" data-a="go" data-v="reserva">Reserva taula</a></div>
+      </div>
+      <div class="stage" aria-hidden="true"><div class="card3d"><div class="r"><b>${esc(C.nom)}</b><div style="text-align:right"><div class="pts">${S.card ? S.card.points : 60}</div><div style="font-size:13px;opacity:.85">punts</div></div></div><div class="chipc"></div><div style="position:absolute;right:22px;bottom:16px">${STAR(26, '#F7F0E6')}</div><div class="nm">${S.card ? esc(S.card.name).toUpperCase() : 'JALEO CLUB · MEMBRE'}</div></div></div>
+      </div></section>
+    <div class="marquee" aria-hidden="true"><div>${Array(2).fill(C.nits.map(n => `${esc(n.nom).toUpperCase()} <em>✶</em>`).join(' ') + ' AQUÍ COMENÇA LA NIT <em>✶</em>').join(' ')}</div></div>
+
+    <section class="s" id="nits"><div class="wrap"><div class="reveal"><div class="eyebrow">Cada setmana</div><h2 class="st">Tres nits, <span class="serif">tres maneres</span> de liar-la</h2></div>
+      <div class="nights">${C.nits.map((n, i) => `<article class="night n${i % 3} reveal" style="transition-delay:${i * .12}s">${STAR(30, '#F2D9B0')}<span class="h">${esc(n.hora)}</span><div class="d">${esc(n.dia)}</div><h3>${esc(n.nom)}</h3><p style="margin:0;color:#fde9e4">${esc(n.text)}</p></article>`).join('')}</div></div></section>
+
+    <section class="s club" id="club"><div class="glow" style="background:#A3202F;right:-200px;top:0"></div><div class="wrap" style="position:relative">
+      <div class="reveal"><div class="eyebrow" style="color:#F2D9B0">JALEO Club</div><h2 class="st">La targeta que <span class="serif">et fa tornar</span></h2><p style="max-width:60ch;color:#e6d4c8;font-size:18px">Sense descarregar cap app. La tens al mòbil amb el nostre logo i cada euro que gastes es converteix en punts.</p></div>
+      <div class="steps4">${[['Escaneja el QR', 'De la teva taula: veus la carta amb preus i pots demanar des del mòbil.'], ['Fes-te la targeta', 'Nom i email. Al moment desbloqueges les ofertes i t’emportes punts de regal.'], ['Suma punts', '1 punt per cada euro. Demana el premi des de la targeta quan hi arribis.'], ['Porta la colla', 'Convida amics amb el teu enllaç: quan gastin els primers euros, punts per a tots dos.']].map((s, i) => `<div class="step reveal" style="transition-delay:${i * .1}s"><div class="ic">${icons[i]}</div><h3>${s[0]}</h3><p>${s[1]}</p></div>`).join('')}</div>
+      ${S.rewards.length ? `<div class="rwrow reveal">${S.rewards.map(r => `<span class="rwpill">${esc(r.name)} · ${r.cost} punts</span>`).join('')}</div>` : ''}
+      <div class="btns reveal" style="opacity:1;animation:none"><a class="b hot" href="#" data-a="go" data-v="${S.card ? 'targeta' : 'registre'}">${S.card ? 'Veure la meva targeta' : 'Vull la meva targeta'}</a></div></div></section>
+
+    <section class="s" id="carta"><div class="wrap"><div class="reveal"><div class="eyebrow">La carta</div><h2 class="st">Què et <span class="serif">vens a prendre?</span></h2><p class="small" style="font-size:15px">Per demanar des de la taula, escaneja el QR que hi ha a cada taula.</p></div>
+      ${cats.length ? `<div class="tabsC reveal">${cats.map(c => `<button class="${c === cat ? 'on' : ''}" data-a="cat" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div><div class="menuGrid">${S.menu.filter(i => i.category === cat).map(itemCard).join('')}</div>` : '<p class="small">La carta apareixerà aquí quan connectis la base de dades.</p>'}
+    </div></section>
+
+    <section class="s" id="visita" style="padding-top:0"><div class="wrap visit">
+      <div class="reveal"><div class="eyebrow">On som</div><h2 class="st">Ens veiem <span class="serif">a la plaça</span></h2>
+        <div class="btns" style="opacity:1;animation:none"><a class="b dark" href="#" data-a="go" data-v="reserva">Reserva taula al plànol</a><a class="b cream" style="border:1px solid #e3cfc0" href="${esc(C.mapa)}" target="_blank" rel="noopener">Com arribar</a></div></div>
+      <div class="vbox reveal"><p style="font-family:Anton,sans-serif;font-size:28px;color:var(--acc)">${esc(C.nom)}</p><p>${esc(C.adreca)}</p>${C.nits.map(n => `<p><b>${esc(n.dia)}</b> · ${esc(n.nom)} · des de les ${esc(n.hora)}</p>`).join('')}<p>Instagram: <a href="https://instagram.com/${esc(C.instagram)}" target="_blank" rel="noopener">@${esc(C.instagram)}</a></p><p>Telèfon i WhatsApp: ${esc(C.telefon)}</p><p class="small">Només majors de 18 anys. Consum responsable.</p></div>
+    </div></section>
+    <footer><b>${esc(C.nom)}</b><p class="serif" style="font-size:22px;margin:4px 0 0">Aquí comença la nit.</p></footer>`;
+  }
+
+  // ---------- pantalles de l'app ----------
+  function vCarta(){
+    const cats = [...new Set(S.menu.map(i => i.category))];
+    const lock = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F7F0E6" stroke-width="2" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>';
+    return head(mesa ? `Taula ${esc(mesa)} · ${esc(C.adreca)}` : esc(C.adreca)) + (!mesa ? `<div class="sheet small">Per demanar, escaneja el codi QR de la teva taula.</div>` : '') +
+      (S.offers.length ? `<div class="sec">Ofertes de membres</div>` + S.offers.map(o => `<div class="offer"><h3>${esc(o.title)}</h3><p>${esc(o.body)}</p>${S.card ? '' : `<div class="lock">${lock}Només per a membres</div>`}</div>`).join('') : '') +
+      cats.map(c => `<div class="sec">${esc(c)}</div><div class="items">${S.menu.filter(i => i.category === c).map(itemCard).join('')}</div>`).join('');
+  }
+  function bCarta(){
+    let h = '';
+    if (cartN()) h += `<button class="btn pri ${S.bumped ? 'bump' : ''}" data-a="go" data-v="cistella">Veure la comanda · ${cartN()} · ${eur(cartT())}</button>`;
+    else if (S.lastOrder && mesa) h += `<button class="btn sec2" data-a="go" data-v="comanda">Seguir la meva comanda #${S.lastOrder.id}</button>`;
+    if (!S.card) h += `<button class="btn dark" data-a="go" data-v="registre">Desbloqueja les ofertes</button>`;
+    return h + (S.card ? tabbar() : '');
+  }
+  function tabbar(){
+    const t = [['web', 'Inici'], [mesa ? 'carta' : 'web', 'Carta'], ['targeta', 'Targeta'], ['reserva', 'Reservar'], ['avisos', 'Avisos']];
+    return `<div class="tabbar">${t.map(([v, l], i) => `<button class="${(S.screen === v && i !== 0) || (i === 1 && S.screen === 'carta') ? 'on' : ''}" data-a="${i === 1 && !mesa ? 'tocarta' : 'go'}" data-v="${v}">${l}${l === 'Avisos' && S.notices.length ? ' · ' + S.notices.length : ''}</button>`).join('')}</div>`;
+  }
+  function vCistella(){
+    const t = cartT(), r = S.card ? S.card.rules : null;
+    return head(`Taula ${esc(mesa || '?')}`) + `<h2 style="font-size:34px">La teva comanda</h2>` +
+      (cartN() ? Object.entries(S.cart).map(([k, q]) => { const it = S.menu.find(x => x.id == k); return `<div class="line"><span>${esc(it.name)}<br><span class="small">${eur(it.price)}</span></span><span style="display:flex;align-items:center;gap:8px"><button class="qbtn" data-a="dec" data-v="${k}" aria-label="Treure ${esc(it.name)}">−</button><b>${q}</b><button class="qbtn" data-a="add" data-v="${k}" aria-label="Afegir ${esc(it.name)}">+</button></span></div>`; }).join('') : '<p class="small">La comanda és buida.</p>') +
+      `<div class="line" style="border:0"><b>Total</b><b class="big" style="font-size:30px">${eur(t)}</b></div>` +
+      (S.card ? `<div class="sheet">Amb aquesta comanda sumaràs <b>${Math.min(r.max_points_visit, Math.floor(t))} punts</b> quan la paguis.</div>` : `<div class="sheet">Fes-te la targeta abans d’enviar i sumaràs punts amb aquesta comanda.<button class="btn sec2" data-a="go" data-v="registre">Fer-me la targeta</button></div>`) +
+      `<p class="small">Pagues a la barra o al cambrer, com sempre.</p>` + msgs();
+  }
+  function vComanda(){
+    const o = S.order; if (!o) return head('') + '<p class="small">Carregant la comanda…</p>';
+    const st = ['rebuda', 'preparant', 'servida', 'pagada'], k = st.indexOf(o.status), lbl = { rebuda: 'Rebuda', preparant: 'Preparant', servida: 'Servida', pagada: 'Pagada' };
+    return head(`Taula ${esc(mesa || '')}`) + `<h2 style="font-size:34px">Comanda #${o.id}</h2>` +
+      (o.status === 'cancelada' ? '<div class="err">Aquesta comanda s’ha cancel·lat. Parla amb el cambrer.</div>' : `<div class="stepsO">${st.map((x, i) => `<span class="${i <= k ? 'on' : ''} ${i === k && k < 3 ? 'now' : ''}">${lbl[x]}</span>`).join('')}</div>`) +
+      o.items.map(i => `<div class="line"><span>${i.qty} × ${esc(i.name)}</span><b>${eur(i.price * i.qty)}</b></div>`).join('') + `<div class="line" style="border:0"><b>Total</b><b>${eur(o.total)}</b></div>` +
+      (o.status === 'pagada' && o.points_awarded ? `<div class="okmsg"><b>+${o.points_awarded} punts</b> sumats a la teva targeta.</div>` : '<p class="small">Els punts se sumen quan es cobra la comanda.</p>');
+  }
+  function vRegistre(){
+    const ref = store.get('jaleo_ref');
+    return head('Club') + `<h2 style="font-size:40px">Fes-te la targeta</h2><p class="serif" style="font-size:26px;margin:4px 0 0;color:var(--acc)">i t’emportes punts de regal.</p>
+    ${ref ? `<div class="sheet">T’ha convidat un amic: quan gastis els primers euros us endureu punts tots dos.</div>` : ''}
+    <form id="reg"><label class="f" for="rn">Nom</label><input id="rn" required maxlength="60" autocomplete="given-name"><label class="f" for="re">Email</label><input id="re" type="email" required maxlength="120" autocomplete="email">
+    <label class="chk"><input type="checkbox" id="r18" required>Confirmo que soc major de 18 anys.</label><label class="chk"><input type="checkbox" id="rmk">Vull rebre ofertes i avisos de ${esc(C.nom)}. Me’n puc donar de baixa quan vulgui.</label>
+    <p class="small">Fem servir el teu nom i email només per al programa de punts i, si ho acceptes, per enviar-te ofertes. Pots demanar que els esborrem a la barra o per Instagram @${esc(C.instagram)}.</p>${msgs()}
+    <button class="btn pri" type="submit" ${S.busy || !ok ? 'disabled' : ''}>Crear la meva targeta</button></form>`;
+  }
+  function vHola(){ return `<div class="prize"><p class="small">Benvingut/da, ${esc(S.card.name)}</p><div class="big">+${S.card.rules.welcome_points}</div><p class="serif" style="font-size:30px;margin:6px 0">punts de benvinguda</p><p>Les ofertes de membres ja estan desbloquejades.</p></div><div class="sheet"><b>Guarda-la a la pantalla d’inici</b><ol style="margin:6px 0 0;padding-left:20px"><li>iPhone (Safari): Compartir → «Afegir a la pantalla d’inici».</li><li>Android (Chrome): menú ⋮ → «Afegir a la pantalla d’inici».</li></ol></div>`; }
+  function vTargeta(){
+    const c = S.card, nx = S.rewards.find(r => r.cost > c.points), pct = nx ? Math.min(100, c.points / nx.cost * 100) : 100, pend = c.requests.find(q => q.status === 'pendent');
+    return head('Club') + `<div class="mcard"><div class="row"><div><div style="font-size:13px;color:#fde9e4">Membre</div><div style="font-family:Anton,sans-serif;font-size:28px">${esc(c.name)}</div></div><div style="text-align:right"><div class="big">${c.points}</div><div style="font-size:13px;color:#fde9e4">punts</div></div></div><div class="qrbox" id="qr" aria-label="Codi QR de la targeta ${esc(c.code)}"></div><div style="text-align:center;font-size:14px;position:relative">${esc(c.code)} · ensenya-ho a la barra quan paguis</div></div>
+    <div class="sec">${nx ? `Et falten ${nx.cost - c.points} punts` : 'Pots demanar qualsevol premi!'}</div>${nx ? `<div class="bar"><i style="width:${pct}%"></i></div><p class="small" style="margin:0">Següent premi: <b style="color:var(--ink)">${esc(nx.name)}</b></p>` : ''}
+    <div class="sec">Recompenses</div>${S.rewards.map(r => `<div class="rw"><span>${esc(r.name)}<br><span class="small">${r.cost} punts</span></span>${pend && pend.reward_id === r.id ? '<span class="chip c-wait">Demanat · t’ho portem</span>' : c.points >= r.cost ? `<button class="sbtn" data-a="req" data-v="${r.id}" ${pend ? 'disabled' : ''}>Demanar</button>` : `<b class="small">Et falten ${r.cost - c.points}</b>`}</div>`).join('')}
+    ${msgs()}<button class="btn sec2" data-a="go" data-v="convida">Convidar amics i guanyar punts</button>`;
+  }
+  function vPremi(){ return `<div class="prize"><p class="small">${esc(S.card.name)}</p><p class="serif" style="font-size:32px;margin:0">El teu premi</p><div class="big">ÉS GRATIS</div><p style="font-size:22px;margin-top:14px"><b>${esc(S.prize)}</b></p><p class="small">Gaudeix-lo!</p></div>`; }
+  function vConvida(){
+    const link = location.origin + location.pathname + '?ref=' + encodeURIComponent(S.card.code), r = S.card.rules;
+    return head('Convida') + `<h2 style="font-size:36px">Porta la colla</h2><p>Quan el teu amic es faci la targeta amb el teu enllaç i gasti els primers ${r.ref_min_spend} €, <b>us endueu ${r.ref_points} punts cadascú</b>.</p><div class="sheet" style="word-break:break-all">${esc(link)}</div><button class="btn pri" data-a="share">Compartir l’enllaç</button><button class="btn sec2" data-a="copy">Copiar l’enllaç</button>${msgs()}`;
+  }
+  function vReserva(){
+    const today = new Date().toISOString().slice(0, 10), day = S.resDay || today, mine = S.card.reservations || [];
+    return head('Reserves') + `<h2 style="font-size:34px">Reserva la teva taula</h2>
+    <form id="res"><label class="f" for="rd">Dia</label><input id="rd" type="date" min="${today}" value="${day}" required>
+    <div class="sec" style="font-size:19px">Tria la taula</div>
+    <div class="map">${S.tables.map(t => { const tk = S.taken.includes(t.id), sel = S.resTable === t.id; return `<button type="button" class="tb ${esc(t.shape)} ${tk ? 'taken' : ''} ${sel ? 'sel' : ''}" style="left:${t.x}%;top:${t.y}%;width:${t.w}%;height:${t.h}%" ${t.bookable && !tk ? `data-a="pick" data-v="${t.id}"` : 'disabled'} aria-label="${esc(t.name)}${t.seats ? ', ' + t.seats + ' persones' : ''}${tk ? ', reservada' : ''}">${esc(t.name.replace('Taula ', ''))}${t.seats ? `<small>${t.seats} pers.</small>` : ''}</button>`; }).join('')}</div>
+    <div class="legend"><span><i></i>Lliure</span><span><i style="background:#A3202F"></i>La teva</span><span><i style="background:#e9e1d8;border-color:#c9bcb0"></i>Reservada</span></div>
+    <p class="small">${S.resTable ? 'Has triat: <b>' + esc((S.tables.find(t => t.id === S.resTable) || {}).name) + '</b>' : 'Toca una taula lliure del plànol.'}</p>
+    <label class="f" for="rh">Hora</label><select id="rh">${['19:00', '20:00', '21:00', '22:00', '23:00', '00:00'].map(h => `<option ${S.resForm.h === h ? 'selected' : ''}>${h}</option>`).join('')}</select>
+    <label class="f" for="rp">Persones</label><input id="rp" type="number" min="1" max="40" value="${esc(S.resForm.p)}" required><label class="f" for="rnote">Comentari (opcional)</label><input id="rnote" maxlength="300" placeholder="Aniversari, previa…" value="${esc(S.resForm.n)}">
+    ${msgs()}<button class="btn pri" type="submit" ${S.busy || !S.resTable ? 'disabled' : ''}>Enviar reserva</button></form>
+    ${mine.length ? '<div class="sec">Les meves reserves</div>' + mine.map(x => `<div class="rw"><span>${esc(x.day)} · ${esc(x.time)} · ${x.people} pers.${x.table ? ' · ' + esc(x.table) : ''}</span><span class="chip ${x.status === 'confirmada' ? 'c-ok' : x.status === 'pendent' ? 'c-wait' : 'c-no'}">${esc(x.status)}</span></div>`).join('') : ''}`;
+  }
+  function vAvisos(){ return head('Avisos') + (S.notices.length ? S.notices.map(n => `<div class="sheet"><b>${esc(n.title)}</b><p style="margin:4px 0 0">${esc(n.body)}</p><p class="small" style="margin:4px 0 0">${new Date(n.created_at).toLocaleDateString('ca-ES')}</p></div>`).join('') : '<p class="small">Encara no hi ha avisos.</p>'); }
+
+  let io;
+  function render(){
+    if (['targeta', 'convida', 'reserva', 'premi', 'hola'].includes(S.screen) && !S.card) S.screen = 'registre';
+    const V = { web: vWeb, carta: vCarta, cistella: vCistella, comanda: vComanda, registre: vRegistre, hola: vHola, targeta: vTargeta, premi: vPremi, convida: vConvida, reserva: vReserva, avisos: vAvisos }[S.screen] || vWeb;
+    $('#root').innerHTML = S.screen === 'web' ? V() : `<div class="app"><div class="screen">${V()}</div></div>`;
+    const bottom = $('#bottom');
+    if (S.screen === 'web') { bottom.hidden = !(mesa || S.card); $('#bottomIn').innerHTML = mesa ? `<button class="btn pri" data-a="go" data-v="carta">Demanar des de la taula ${esc(mesa)}</button>` : S.card ? tabbar() : ''; }
+    else {
+      bottom.hidden = false;
+      const back = `<button class="btn sec2" data-a="go" data-v="${S.card ? 'targeta' : mesa ? 'carta' : 'web'}">Tornar</button>`;
+      const B = { carta: bCarta, cistella: () => (cartN() && mesa ? `<button class="btn pri" data-a="send" ${S.busy ? 'disabled' : ''}>Enviar la comanda a la barra</button>` : '') + `<button class="btn sec2" data-a="go" data-v="carta">Seguir mirant la carta</button>`, targeta: tabbar, reserva: tabbar, avisos: tabbar, hola: () => `<button class="btn pri" data-a="go" data-v="targeta">Veure la meva targeta</button>` }[S.screen];
+      $('#bottomIn').innerHTML = B ? B() : back;
+    }
+    S.bumped = null;
+    if (S.screen === 'targeta' && window.QRCode) new QRCode($('#qr'), { text: S.card.code, width: 146, height: 146, colorDark: '#2a0a10', colorLight: '#F7F0E6' });
+    if (S.screen === 'web') {
+      const nav = $('#nav'), onS = () => nav && nav.classList.toggle('solid', scrollY > 40); onS(); window.onscroll = onS;
+      if (io) io.disconnect();
+      io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 }) : null;
+      document.querySelectorAll('.reveal').forEach(el => io ? io.observe(el) : el.classList.add('in'));
+    } else window.onscroll = null;
+    if (!ok && S.screen === 'web' && !S.warned) { S.warned = true; toast('Vista prèvia: connecta la base de dades per activar targetes, comandes i reserves.'); }
+  }
+
+  async function pollOrder(){
+    if (!ok || !S.lastOrder) return;
+    const { data } = await sb.rpc('get_order', { p_id: S.lastOrder.id, p_table: S.lastOrder.table });
+    if (!data) return;
+    const before = S.order && S.order.status; S.order = data;
+    if (before && before !== data.status) {
+      if (data.status === 'preparant') toast('Estem preparant la teva comanda.');
+      if (data.status === 'servida') toast('Comanda servida. Salut!');
+      if (data.status === 'pagada') { toast(data.points_awarded ? `Pagat! Has sumat ${data.points_awarded} punts.` : 'Comanda pagada. Gràcies!'); if (data.points_awarded) confetti(); await loadCard(); }
+    }
+    if ((data.status === 'pagada' || data.status === 'cancelada') && S.screen !== 'comanda') { S.lastOrder = null; store.set('jaleo_last_order', null); }
+    if (S.screen === 'comanda') render();
+  }
+  async function pollCard(){
+    if (!ok || !S.secret) return;
+    const before = S.card && S.card.requests.find(q => q.status === 'pendent');
+    await loadCard();
+    if (before && S.card) {
+      const now = S.card.requests.find(q => q.id === before.id);
+      if (now && now.status === 'entregat') { S.prize = now.reward_name; S.screen = 'premi'; render(); confetti(); return; }
+      if (now && now.status === 'rebutjat') toast('No s’ha pogut entregar el premi. Parla amb el cambrer.');
+    }
+    if (S.screen === 'targeta') render();
+  }
+  setInterval(pollOrder, 5000); setInterval(pollCard, 8000);
+  async function loadTaken(day){ if (!ok) return; const { data } = await sb.rpc('taken_tables', { p_day: day }); S.taken = data || []; S.resDay = day; }
+
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('[data-a]'); if (!b) return;
+    const a = b.dataset.a, v = b.dataset.v;
+    if (a === 'go' || a === 'tocarta') { e.preventDefault(); if (a === 'tocarta') { go('web'); setTimeout(() => location.hash = '#carta', 50); return; } if (v === 'comanda') { S.order = null; pollOrder(); } if (v === 'reserva') await loadTaken(S.resDay || new Date().toISOString().slice(0, 10)); go(v); }
+    if (a === 'cat') { S.cat = v; const y = scrollY; render(); scrollTo(0, y); }
+    if (a === 'add') { S.cart[v] = (S.cart[v] || 0) + 1; S.bumped = v; const y = scrollY; render(); scrollTo(0, y); }
+    if (a === 'dec') { S.cart[v]--; if (S.cart[v] <= 0) delete S.cart[v]; render(); }
+    if (a === 'send') {
+      S.busy = true; render();
+      const items = Object.entries(S.cart).map(([id, qty]) => ({ id: Number(id), qty }));
+      const { data, error } = await sb.rpc('place_order', { p_table: mesa, p_items: items, p_secret: S.secret || null });
+      S.busy = false; if (error) { S.err = errMsg(error); render(); return; }
+      S.cart = {}; S.lastOrder = { id: data, table: mesa }; store.set('jaleo_last_order', JSON.stringify(S.lastOrder)); S.order = null; go('comanda'); toast('Comanda enviada a la barra!'); pollOrder();
+    }
+    if (a === 'req') { const { error } = await sb.rpc('request_reward', { p_secret: S.secret, p_reward_id: Number(v), p_table: mesa || null }); if (error) S.err = errMsg(error); else { S.msg = 'Premi demanat. Te’l portem a la taula.'; S.err = ''; } await loadCard(); render(); }
+    if (a === 'pick') { S.resTable = Number(v); render(); }
+    if (a === 'copy' || a === 'share') {
+      const link = location.origin + location.pathname + '?ref=' + encodeURIComponent(S.card.code);
+      if (a === 'share' && navigator.share) { try { await navigator.share({ title: C.nom + ' Club', text: 'Fes-te la targeta de ' + C.nom + ' i guanyem punts tots dos', url: link }); } catch(_) {} return; }
+      try { await navigator.clipboard.writeText(link); S.msg = 'Enllaç copiat!'; } catch(_) { S.msg = 'Copia l’enllaç de dalt.'; } render();
+    }
+  });
+  document.addEventListener('input', e => { const id = e.target.id; if (id === 'rp') S.resForm.p = e.target.value; if (id === 'rnote') S.resForm.n = e.target.value; });
+  document.addEventListener('change', async e => { if (e.target.id === 'rh') S.resForm.h = e.target.value; if (e.target.id === 'rd') { S.resDay = e.target.value; S.resTable = null; await loadTaken(S.resDay); render(); } });
+  document.addEventListener('submit', async e => {
+    e.preventDefault();
+    if (e.target.id === 'reg') {
+      const vals = { n: $('#rn').value, m: $('#re').value, mk: $('#rmk').checked, ad: $('#r18').checked };
+      S.busy = true; S.err = ''; render();
+      const { data, error } = await sb.rpc('create_card', { p_name: vals.n, p_email: vals.m, p_marketing: vals.mk, p_adult: vals.ad, p_ref: store.get('jaleo_ref') || null });
+      S.busy = false;
+      if (error) { S.err = errMsg(error); render(); $('#rn').value = vals.n; $('#re').value = vals.m; return; }
+      S.secret = data.secret; store.set('jaleo_secret', data.secret); store.set('jaleo_ref', null);
+      await loadCard(); go(cartN() ? 'cistella' : 'hola'); confetti();
+    }
+    if (e.target.id === 'res') {
+      const p = { p_secret: S.secret, p_day: $('#rd').value, p_time: $('#rh').value, p_people: Number($('#rp').value), p_note: $('#rnote').value || null, p_table_id: S.resTable };
+      S.busy = true;
+      const { error } = await sb.rpc('create_reservation', p);
+      S.busy = false;
+      if (error) S.err = errMsg(error); else { S.msg = 'Reserva enviada! Te la confirmarem aviat.'; S.err = ''; S.resTable = null; await loadCard(); confetti(); }
+      await loadTaken(p.p_day); render();
+    }
+  });
+  (async () => { await Promise.all([loadPublic(), loadCard()]); if (S.lastOrder && mesa && S.lastOrder.table === mesa) await pollOrder(); render(); })();
+}
+
+/* =====================================================================
+   2 · PANELL DE LA BARRA  (adreça de la web + #panel)
+   ===================================================================== */
+function startPanel(){
+  document.title = C.nom + ' · Panell';
+  if (!ok) { $('#root').innerHTML = '<div class="pw"><h1 style="color:var(--acc)">Falta la configuració</h1><p>Omple la part de CONFIGURACIÓ del codi (guia, pas 3).</p></div>'; return; }
+  const S = { tab: 'comandes', orders: [], reqs: [], res: [], customers: [], tables: [], menu: [], rewards: [], offers: [], notices: [], q: '', filter: 'tots', selTable: null, dirty: new Set(), msg: '', seen: new Set(), recovery: null, loaded: false };
+  const status = c => { if (!c.last_visit) return ['Nou', 'c-grey']; const d = (Date.now() - new Date(c.last_visit)) / DAY; return d < 14 ? ['Actiu', 'c-ok'] : d <= 30 ? ['En risc', 'c-wait'] : ['Inactiu', 'c-no']; };
+  const ago = t => { if (!t) return '—'; const d = Math.floor((Date.now() - new Date(t)) / DAY); return d < 1 ? 'avui' : d === 1 ? 'ahir' : 'fa ' + d + ' dies'; };
+  const cname = id => (S.customers.find(c => c.id === id) || {}).name || '';
+  const tname = id => (S.tables.find(t => t.id === id) || {}).name || '';
+  let ctx; const beep = () => { try { ctx = ctx || new (window.AudioContext || window.webkitAudioContext)(); [0, .18].forEach(d => { const o = ctx.createOscillator(), g = ctx.createGain(); o.frequency.value = d ? 1175 : 880; o.connect(g); g.connect(ctx.destination); g.gain.setValueAtTime(.25, ctx.currentTime + d); g.gain.exponentialRampToValueAtTime(.001, ctx.currentTime + d + .35); o.start(ctx.currentTime + d); o.stop(ctx.currentTime + d + .35); }); } catch(_) {} };
+
+  async function load(){
+    const since = new Date(Date.now() - 2 * DAY).toISOString();
+    const [o, q, r, c, t, m, w, of, n] = await Promise.all([sb.from('orders').select('*').gte('created_at', since).order('created_at', { ascending: false }), sb.from('reward_requests').select('*').gte('created_at', since).order('created_at', { ascending: false }), sb.from('reservations').select('*').gte('day', new Date().toISOString().slice(0, 10)).order('day').order('time'), sb.from('customers').select('id,code,name,email,marketing,points,visits,spent,last_visit,referred_by,created_at').order('created_at', { ascending: false }), sb.from('dining_tables').select('*').order('id'), sb.from('menu_items').select('*').order('sort').order('id'), sb.from('rewards').select('*').order('cost'), sb.from('offers').select('*').order('id'), sb.from('notices').select('*').order('created_at', { ascending: false }).limit(20)]);
+    const nw = (o.data || []).filter(x => x.status === 'rebuda' && !S.seen.has('o' + x.id)).length + (q.data || []).filter(x => x.status === 'pendent' && !S.seen.has('q' + x.id)).length;
+    if (S.loaded && nw) beep();
+    (o.data || []).forEach(x => S.seen.add('o' + x.id)); (q.data || []).forEach(x => S.seen.add('q' + x.id));
+    S.orders = o.data || []; S.reqs = q.data || []; S.res = r.data || []; S.customers = c.data || []; if (!S.dirty.size) S.tables = t.data || [];
+    S.menu = m.data || []; S.rewards = w.data || []; S.offers = of.data || []; S.notices = n.data || []; S.loaded = true;
+  }
+  function vComandes(){
+    const act = S.orders.filter(o => !['pagada', 'cancelada'].includes(o.status)), done = S.orders.filter(o => o.status === 'pagada').slice(0, 8), nx = { rebuda: ['preparant', 'Començar a preparar'], preparant: ['servida', 'Marcar servida'] };
+    const card = o => `<div class="box ${o.status === 'rebuda' ? 'new' : ''}"><div style="display:flex;justify-content:space-between;gap:8px"><b>#${o.id} · Taula ${esc(o.table_no)}</b><span class="chip ${o.status === 'rebuda' ? 'c-no' : o.status === 'pagada' ? 'c-ok' : 'c-wait'}">${esc(o.status)}</span></div><div class="small">${hm(o.created_at)}${o.customer_id ? ' · ' + esc(cname(o.customer_id)) + ' (membre)' : ' · sense targeta'}</div><ul>${o.items.map(i => `<li>${i.qty} × ${esc(i.name)}</li>`).join('')}</ul><b>${eur(o.total)}</b>${o.points_awarded ? ` · +${o.points_awarded} punts` : ''}
+      ${o.status !== 'pagada' ? `<div class="row">${nx[o.status] ? `<button class="sbtn" data-p="ost" data-id="${o.id}" data-v="${nx[o.status][0]}">${nx[o.status][1]}</button>` : ''}<button class="sbtn ${o.status === 'servida' ? '' : 'ghost'}" data-p="pay" data-id="${o.id}">Cobrar ${eur(o.total)}${o.customer_id ? ' i sumar punts' : ''}</button><button class="sbtn ghost" data-p="ost" data-id="${o.id}" data-v="cancelada">Cancel·lar</button></div>` : ''}</div>`;
+    return `<div class="grid">${act.length ? act.map(card).join('') : '<p class="small">No hi ha comandes obertes. Quan n’entri una, sonarà (deixa aquesta pestanya oberta i toca la pantalla un cop).</p>'}</div>${done.length ? `<h3 style="margin:22px 0 10px;font-size:22px">Cobrades (últimes)</h3><div class="grid">${done.map(card).join('')}</div>` : ''}`;
+  }
+  function vPremis(){ return `<div class="grid">${S.reqs.length ? S.reqs.map(q => { const c = S.customers.find(x => x.id === q.customer_id) || {}; return `<div class="box ${q.status === 'pendent' ? 'new' : ''}"><b>${esc(c.name)}</b>${q.table_no ? ' · Taula ' + esc(q.table_no) : ''}<div>${esc(q.reward_name)} <span class="small">(${q.cost} punts · en té ${c.points ?? '?'})</span></div><div class="small">${hm(q.created_at)}</div>${q.status === 'pendent' ? `<div class="row"><button class="sbtn" data-p="give" data-id="${q.id}">Entregar i descomptar</button><button class="sbtn ghost" data-p="deny" data-id="${q.id}">Rebutjar</button></div>` : `<span class="chip ${q.status === 'entregat' ? 'c-ok' : 'c-no'}">${esc(q.status)}</span>`}</div>`; }).join('') : '<p class="small">Cap premi demanat en els darrers dies.</p>'}</div>`; }
+  function vReserves(){ return S.res.length ? `<div class="scroll"><table class="stack"><thead><tr><th>Dia</th><th>Hora</th><th>Client</th><th>Persones</th><th>Taula</th><th>Comentari</th><th>Estat</th><th></th></tr></thead><tbody>${S.res.map(r => `<tr><td>${esc(r.day)}</td><td>${esc(r.time)}</td><td>${esc(cname(r.customer_id))}</td><td class="n">${r.people}</td><td>${esc(tname(r.table_id)) || '—'}</td><td>${esc(r.note || '')}</td><td><span class="chip ${r.status === 'confirmada' ? 'c-ok' : r.status === 'pendent' ? 'c-wait' : 'c-no'}">${esc(r.status)}</span></td><td>${r.status === 'pendent' ? `<button class="sbtn" data-p="rst" data-id="${r.id}" data-v="confirmada">Confirmar</button> <button class="sbtn ghost" data-p="rst" data-id="${r.id}" data-v="rebutjada">Rebutjar</button>` : ''}</td></tr>`).join('')}</tbody></table></div>` : '<p class="small">No hi ha reserves properes.</p>'; }
+  function vClients(){
+    let list = S.customers.filter(c => !S.q || (c.name + ' ' + c.email + ' ' + c.code).toLowerCase().includes(S.q.toLowerCase()));
+    if (S.filter === 'fora') list = list.filter(c => ['En risc', 'Inactiu'].includes(status(c)[0]));
+    const act = S.customers.filter(c => status(c)[0] === 'Actiu').length, off = S.customers.filter(c => ['En risc', 'Inactiu'].includes(status(c)[0])).length;
+    return `<div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr))">${[[S.customers.length, 'membres'], [act, 'actius (14 dies)'], [off, 'en risc o inactius'], [S.customers.filter(c => c.referred_by).length, 'vinguts per amics']].map(([n, l]) => `<div class="kpi"><div class="big">${n}</div><span class="small">${l}</span></div>`).join('')}</div>
+    <div class="box" style="margin-top:12px"><b>Sumar punts a la barra</b> <span class="small">(compres sense l’app)</span><div class="row mini"><input id="apCode" placeholder="Codi de la targeta (J…)" style="max-width:220px"><input id="apAmt" type="number" min="1" step="0.5" placeholder="Import €" style="max-width:140px"><button class="sbtn" data-p="addpts">Sumar</button></div></div>
+    <div class="row"><input id="cq" placeholder="Buscar per nom, email o codi" value="${esc(S.q)}" style="max-width:320px"><button class="sbtn ${S.filter === 'tots' ? '' : 'ghost'}" data-p="cf" data-v="tots">Tots</button><button class="sbtn ${S.filter === 'fora' ? '' : 'ghost'}" data-p="cf" data-v="fora">Han deixat de venir</button></div>
+    ${S.recovery ? `<div class="box" style="margin-top:12px"><b>Recuperar la targeta de ${esc(S.recovery.name)}</b><p class="small">Que el client escanegi aquest QR amb el mòbil nou. No el comparteixis amb ningú més.</p><div id="recqr" style="background:#fff;padding:8px;width:196px"></div><div class="row"><button class="sbtn ghost" data-p="closerec">Tancar</button></div></div>` : ''}
+    <div class="scroll" style="margin-top:12px"><table class="stack"><thead><tr><th>Client</th><th>Codi</th><th>Punts</th><th>Visites</th><th>Gastat</th><th>Darrera visita</th><th>Estat</th><th>Ofertes</th><th></th></tr></thead><tbody>${list.map(c => { const s = status(c); return `<tr><td>${esc(c.name)}<br><span class="small">${esc(c.email)}</span></td><td>${esc(c.code)}</td><td class="n">${c.points}</td><td class="n">${c.visits}</td><td class="n">${eur(c.spent)}</td><td>${ago(c.last_visit)}</td><td><span class="chip ${s[1]}">${s[0]}</span></td><td>${c.marketing ? 'Sí' : 'No'}</td><td><button class="sbtn ghost" data-p="rec" data-id="${c.id}">Recuperar</button></td></tr>`; }).join('')}</tbody></table></div>
+    <p class="small">Actiu: menys de 14 dies sense venir · En risc: 14–30 · Inactiu: més de 30.</p>`;
+  }
+  function vPlanol(){
+    const t = S.tables.find(x => x.id === S.selTable);
+    return `<p class="small">Arrossega les taules per posar-les on són. Toca-les per canviar nom, places, forma o mida. Després prem <b>Desar el plànol</b>.</p><div class="editor"><div><div class="map" id="map">${S.tables.map(x => `<div class="tb ${esc(x.shape)} ${x.id === S.selTable ? 'sel' : ''}" data-tid="${x.id}" style="left:${x.x}%;top:${x.y}%;width:${x.w}%;height:${x.h}%">${esc(x.name.replace('Taula ', ''))}${x.seats ? `<small>${x.seats} pers.</small>` : ''}</div>`).join('')}</div>
+    <div class="row"><button class="sbtn" data-p="savemap" ${S.dirty.size ? '' : 'disabled'}>Desar el plànol${S.dirty.size ? ' (' + S.dirty.size + ' canvis)' : ''}</button><button class="sbtn ghost" data-p="newtable">Afegir taula</button></div></div>
+    <div class="box mini">${t ? `<b>${esc(t.name)}</b><label class="f" for="tn">Nom</label><input id="tn" data-k="name" value="${esc(t.name)}"><div class="f2"><div><label class="f" for="ts">Places</label><input id="ts" data-k="seats" type="number" min="0" max="40" value="${t.seats}"></div><div><label class="f" for="tsh">Forma</label><select id="tsh" data-k="shape">${[['round', 'Rodona'], ['rect', 'Rectangular'], ['sofa', 'Sofà'], ['bar', 'Barra / no reservable']].map(([v, l]) => `<option value="${v}" ${t.shape === v ? 'selected' : ''}>${l}</option>`).join('')}</select></div><div><label class="f" for="tw">Amplada %</label><input id="tw" data-k="w" type="number" min="3" max="60" value="${t.w}"></div><div><label class="f" for="th">Alçada %</label><input id="th" data-k="h" type="number" min="3" max="90" value="${t.h}"></div></div><label class="chk"><input type="checkbox" id="tbk" data-k="bookable" ${t.bookable ? 'checked' : ''}>Es pot reservar</label><div class="row"><button class="sbtn ghost" data-p="deltable">Esborrar taula</button></div>` : '<p class="small">Toca una taula per editar-la.</p>'}</div></div>`;
+  }
+  function vCarta(){
+    const row = (i, k) => `<tr><td><input data-t="${k}" data-id="${i.id}" data-k="${k === 'offers' ? 'title' : 'name'}" value="${esc(k === 'offers' ? i.title : i.name)}"></td>${k === 'menu_items' ? `<td><input data-t="${k}" data-id="${i.id}" data-k="category" value="${esc(i.category)}"></td><td><input data-t="${k}" data-id="${i.id}" data-k="price" type="number" step="0.1" min="0" value="${i.price}" style="max-width:100px"></td>` : k === 'rewards' ? `<td><input data-t="${k}" data-id="${i.id}" data-k="cost" type="number" min="1" value="${i.cost}" style="max-width:100px"></td>` : `<td><input data-t="${k}" data-id="${i.id}" data-k="body" value="${esc(i.body)}"></td>`}<td><label class="chk" style="margin:0"><input type="checkbox" data-t="${k}" data-id="${i.id}" data-k="active" ${i.active ? 'checked' : ''}>Visible</label></td></tr>`;
+    return `<p class="small">Els canvis es desen sols en sortir de cada camp.</p><h3 style="margin:16px 0 8px;font-size:22px">Carta</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Producte</th><th>Categoria</th><th>Preu €</th><th>Visible</th></tr></thead><tbody>${S.menu.map(i => row(i, 'menu_items')).join('')}</tbody></table></div>
+    <div class="row mini"><input id="nn" placeholder="Nou producte" style="max-width:200px"><input id="nc" placeholder="Categoria" style="max-width:160px"><input id="np" type="number" step="0.1" placeholder="Preu" style="max-width:100px"><select id="ni" style="max-width:150px">${['glass', 'cocktail', 'beer', 'bucket', 'shot', 'hookah', 'soda', 'food'].map(x => `<option>${x}</option>`).join('')}</select><button class="sbtn" data-p="additem">Afegir</button></div>
+    <h3 style="margin:22px 0 8px;font-size:22px">Recompenses</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Premi</th><th>Punts</th><th>Visible</th></tr></thead><tbody>${S.rewards.map(i => row(i, 'rewards')).join('')}</tbody></table></div><div class="row mini"><input id="rwn" placeholder="Nou premi" style="max-width:240px"><input id="rwc" type="number" min="1" placeholder="Punts" style="max-width:110px"><button class="sbtn" data-p="addrw">Afegir</button></div>
+    <h3 style="margin:22px 0 8px;font-size:22px">Ofertes de membres</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Títol</th><th>Text</th><th>Visible</th></tr></thead><tbody>${S.offers.map(i => row(i, 'offers')).join('')}</tbody></table></div><div class="row mini"><input id="ofn" placeholder="Títol" style="max-width:240px"><input id="ofb" placeholder="Text" style="max-width:300px"><button class="sbtn" data-p="addof">Afegir</button></div>`;
+  }
+  function vAvisos(){ return `<div class="box mini"><b>Nou avís</b><p class="small">Surt a «Avisos» de la targeta de tots els clients. Màxim 1 o 2 per setmana.</p><label class="f" for="nt">Títol</label><input id="nt" maxlength="60" placeholder="Avui hi ha partit!"><label class="f" for="nb">Text</label><textarea id="nb" maxlength="300" placeholder="Reserva taula des de la targeta."></textarea><div class="row"><button class="sbtn" data-p="addnotice">Publicar</button></div></div>${S.notices.map(n => `<div class="box" style="margin-top:10px"><b>${esc(n.title)}</b><p style="margin:4px 0">${esc(n.body)}</p><span class="small">${new Date(n.created_at).toLocaleString('ca-ES')}</span> <button class="sbtn ghost" data-p="delnotice" data-id="${n.id}">Esborrar</button></div>`).join('')}`; }
+  function render(){
+    const pend = { comandes: S.orders.filter(o => o.status === 'rebuda').length, premis: S.reqs.filter(q => q.status === 'pendent').length, reserves: S.res.filter(r => r.status === 'pendent').length };
+    const tabs = [['comandes', 'Comandes'], ['premis', 'Premis'], ['reserves', 'Reserves'], ['clients', 'Clients'], ['planol', 'Plànol'], ['carta', 'Carta i premis'], ['avisos', 'Avisos']];
+    const V = { comandes: vComandes, premis: vPremis, reserves: vReserves, clients: vClients, planol: vPlanol, carta: vCarta, avisos: vAvisos }[S.tab];
+    const focus = document.activeElement && document.activeElement.id;
+    $('#root').innerHTML = `<div class="pw"><div class="ptop"><h1>${esc(C.nom)} · Panell</h1><div class="row" style="margin:0"><a class="sbtn ghost" href="#qr" style="text-decoration:none;display:inline-flex;align-items:center">QR de taules</a><button class="sbtn ghost" data-p="logout">Sortir</button></div></div><div class="ptabs">${tabs.map(([k, l]) => `<button class="${S.tab === k ? 'on' : ''}" data-p="tab" data-v="${k}">${l}${pend[k] ? `<span class="n">${pend[k]}</span>` : ''}</button>`).join('')}</div>${S.msg ? `<div class="okmsg" role="status">${esc(S.msg)}</div>` : ''}${V()}</div>`;
+    if (focus && document.getElementById(focus)) { const el = document.getElementById(focus); el.focus(); if (el.setSelectionRange && el.type === 'text') el.setSelectionRange(el.value.length, el.value.length); }
+    if (S.recovery && window.QRCode && $('#recqr')) new QRCode($('#recqr'), { text: S.recovery.link, width: 180, height: 180 });
+    if (S.tab === 'planol') bindDrag();
+  }
+  const flash = m => { S.msg = m; render(); setTimeout(() => { if (S.msg === m) { S.msg = ''; render(); } }, 4000); };
+  const busyTyping = () => { const a = document.activeElement; return a && ['INPUT', 'TEXTAREA', 'SELECT'].includes(a.tagName); };
+  function bindDrag(){
+    const map = $('#map'); if (!map) return;
+    map.querySelectorAll('.tb').forEach(el => el.addEventListener('pointerdown', ev => {
+      const id = Number(el.dataset.tid), t = S.tables.find(x => x.id === id), r = map.getBoundingClientRect(), sx = ev.clientX, sy = ev.clientY, ox = Number(t.x), oy = Number(t.y); let moved = false;
+      el.setPointerCapture(ev.pointerId);
+      const mv = e2 => { const dx = (e2.clientX - sx) / r.width * 100, dy = (e2.clientY - sy) / r.height * 100; if (Math.abs(dx) + Math.abs(dy) > .5) moved = true; t.x = Math.round(Math.max(0, Math.min(100 - t.w, ox + dx)) * 10) / 10; t.y = Math.round(Math.max(0, Math.min(100 - t.h, oy + dy)) * 10) / 10; el.style.left = t.x + '%'; el.style.top = t.y + '%'; };
+      const up = () => { el.removeEventListener('pointermove', mv); el.removeEventListener('pointerup', up); if (moved) S.dirty.add(id); S.selTable = id; render(); };
+      el.addEventListener('pointermove', mv); el.addEventListener('pointerup', up);
+    }));
+  }
+  document.addEventListener('click', async e => {
+    const b = e.target.closest('[data-p]'); if (!b) return;
+    const a = b.dataset.p, v = b.dataset.v, id = b.dataset.id;
+    const run = async (p, okm) => { const { error } = await p; if (error) { flash('Error: ' + error.message); return; } if (okm) S.msg = okm; await load(); render(); };
+    if (a === 'tab') { S.tab = v; S.msg = ''; render(); }
+    if (a === 'logout') { await sb.auth.signOut(); location.reload(); }
+    if (a === 'ost') await run(sb.from('orders').update({ status: v }).eq('id', id));
+    if (a === 'pay') { const { data, error } = await sb.rpc('pay_order', { p_id: Number(id) }); if (error) return flash('Error: ' + error.message); S.msg = data ? `Cobrada. +${data} punts sumats.` : 'Comanda cobrada.'; await load(); render(); }
+    if (a === 'give' || a === 'deny') { const { data, error } = await sb.rpc('resolve_reward', { p_id: Number(id), p_accept: a === 'give' }); if (error) return flash('Error: ' + error.message); S.msg = 'Premi: ' + data; await load(); render(); }
+    if (a === 'rst') await run(sb.from('reservations').update({ status: v }).eq('id', id), 'Reserva ' + v);
+    if (a === 'cf') { S.filter = v; render(); }
+    if (a === 'addpts') { const code = $('#apCode').value, amt = Number($('#apAmt').value); const { data, error } = await sb.rpc('add_points', { p_code: code, p_amount: amt }); if (error) return flash(error.message.includes('NO_CARD') ? 'No existeix cap targeta amb aquest codi.' : 'Error: ' + error.message); S.msg = `+${data} punts sumats a ${code.toUpperCase()}`; await load(); render(); }
+    if (a === 'rec') { const { data, error } = await sb.from('customers').select('name,secret').eq('id', id).single(); if (error) return flash('Error: ' + error.message); S.recovery = { name: data.name, link: location.origin + location.pathname + '?card=' + data.secret }; render(); }
+    if (a === 'closerec') { S.recovery = null; render(); }
+    if (a === 'savemap') { for (const t of S.tables.filter(t => S.dirty.has(t.id))) { const { error } = await sb.from('dining_tables').update({ name: t.name, seats: t.seats, shape: t.shape, x: t.x, y: t.y, w: t.w, h: t.h, bookable: t.bookable }).eq('id', t.id); if (error) return flash('Error: ' + error.message); } S.dirty.clear(); S.msg = 'Plànol desat.'; await load(); render(); }
+    if (a === 'newtable') { const n = S.tables.filter(t => t.shape !== 'bar').length + 1; const { data, error } = await sb.from('dining_tables').insert({ name: 'Taula ' + n, seats: 4, shape: 'round', x: 45, y: 40, w: 10, h: 14 }).select().single(); if (error) return flash('Error: ' + error.message); S.tables.push(data); S.selTable = data.id; render(); }
+    if (a === 'deltable') { const t = S.selTable; const { error } = await sb.from('dining_tables').delete().eq('id', t); if (error) return flash('No es pot esborrar: té reserves. Desmarca «Es pot reservar».'); S.selTable = null; S.dirty.delete(t); await load(); render(); }
+    if (a === 'additem') { const r = { name: $('#nn').value.trim(), category: $('#nc').value.trim() || 'Altres', price: Number($('#np').value), icon: $('#ni').value, sort: 100 }; if (!r.name || !(r.price >= 0)) return flash('Posa nom i preu.'); await run(sb.from('menu_items').insert(r), 'Producte afegit'); }
+    if (a === 'addrw') { const r = { name: $('#rwn').value.trim(), cost: Number($('#rwc').value) }; if (!r.name || !(r.cost > 0)) return flash('Posa nom i punts.'); await run(sb.from('rewards').insert(r), 'Premi afegit'); }
+    if (a === 'addof') { const r = { title: $('#ofn').value.trim(), body: $('#ofb').value.trim() }; if (!r.title) return flash('Posa un títol.'); await run(sb.from('offers').insert(r), 'Oferta afegida'); }
+    if (a === 'addnotice') { const r = { title: $('#nt').value.trim(), body: $('#nb').value.trim() }; if (!r.title || !r.body) return flash('Omple títol i text.'); await run(sb.from('notices').insert(r), 'Avís publicat'); }
+    if (a === 'delnotice') await run(sb.from('notices').delete().eq('id', id), 'Avís esborrat');
+  });
+  document.addEventListener('input', e => { if (e.target.id === 'cq') { S.q = e.target.value; render(); } });
+  document.addEventListener('change', async e => {
+    const el = e.target;
+    if (el.dataset.t) { const val = el.type === 'checkbox' ? el.checked : el.type === 'number' ? Number(el.value) : el.value; const { error } = await sb.from(el.dataset.t).update({ [el.dataset.k]: val }).eq('id', el.dataset.id); flash(error ? 'Error: ' + error.message : 'Desat'); await load(); return; }
+    if (S.tab === 'planol' && el.dataset.k && S.selTable) { const t = S.tables.find(x => x.id === S.selTable), k = el.dataset.k; t[k] = el.type === 'checkbox' ? el.checked : el.type === 'number' ? Number(el.value) : el.value; if (k === 'shape' && el.value === 'bar') t.bookable = false; S.dirty.add(t.id); render(); }
+  });
+  function vLogin(err){ $('#root').innerHTML = `<div class="login"><h1 style="color:var(--acc);font-size:44px">${esc(C.nom)} · Panell</h1><p class="small">Només per al personal.</p><form id="login"><label class="f" for="le">Email</label><input id="le" type="email" required autocomplete="username"><label class="f" for="lp">Contrasenya</label><input id="lp" type="password" required autocomplete="current-password">${err ? `<div class="err">${esc(err)}</div>` : ''}<button class="btn pri" type="submit">Entrar</button></form></div>`; }
+  document.addEventListener('submit', async e => { if (e.target.id !== 'login') return; e.preventDefault(); const { error } = await sb.auth.signInWithPassword({ email: $('#le').value, password: $('#lp').value }); if (error) return vLogin('Email o contrasenya incorrectes.'); start(); });
+  let started = false;
+  async function start(){ if (started) return; started = true; await load(); render(); sb.channel('panell').on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, refresh).on('postgres_changes', { event: '*', schema: 'public', table: 'reward_requests' }, refresh).on('postgres_changes', { event: '*', schema: 'public', table: 'reservations' }, refresh).subscribe(); setInterval(refresh, 20000); }
+  async function refresh(){ await load(); if (!busyTyping() && !S.dirty.size) render(); }
+  sb.auth.getSession().then(({ data }) => data.session ? start() : vLogin());
+}
+
+/* =====================================================================
+   3 · QR DE LES TAULES  (adreça de la web + #qr)
+   ===================================================================== */
+function startQR(){
+  const base = location.origin + location.pathname;
+  $('#root').innerHTML = `<div class="pw"><div class="noprint"><h1 style="color:var(--acc);font-size:40px">QR per a les taules</h1><p class="small">Cada QR obre la carta amb el número de taula. Imprimeix-los i posa’ls a cada taula.</p><label class="f" for="qn">Taules (separades per comes)</label><input id="qn" value="1,2,3,4,5,6,7,8,9,Barra,Terrassa"><div class="row"><button class="sbtn" id="qgo">Generar QR</button><button class="sbtn ghost" id="qpr">Imprimir</button><a class="sbtn ghost" href="#panel" style="text-decoration:none;display:inline-flex;align-items:center">Tornar al panell</a></div></div><div class="qcards" id="qcards"></div></div>`;
+  const gen = () => { const box = $('#qcards'); box.innerHTML = ''; $('#qn').value.split(',').map(s => s.trim()).filter(Boolean).forEach(t => { const d = document.createElement('div'); d.className = 'qc'; d.innerHTML = `<h2>${esc(C.nom)}</h2><div class="q"></div><p><b>${esc(/^\d+$/.test(t) ? 'Taula ' + t : t)}</b></p><p class="serif" style="font-size:20px">Escaneja, demana i suma punts</p>`; box.append(d); if (window.QRCode) new QRCode(d.querySelector('.q'), { text: base + '?mesa=' + encodeURIComponent(t), width: 160, height: 160, colorDark: '#2a0a10', colorLight: '#F7F0E6' }); }); };
+  $('#qgo').onclick = gen; $('#qpr').onclick = () => window.print(); gen();
+}
+
+const route = () => location.hash === '#panel' ? 'panel' : location.hash === '#qr' ? 'qr' : 'app';
+const mode = route();
+if (mode === 'panel') startPanel(); else if (mode === 'qr') startQR(); else startApp();
+window.addEventListener('hashchange', () => { if (route() !== mode) location.reload(); });
+}
+</script>
+</body>
+</html>
