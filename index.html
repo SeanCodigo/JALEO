@@ -209,6 +209,19 @@ textarea{min-height:80px}
 .pchip small{display:block;font-weight:500;font-size:12px;color:var(--muted);margin-top:2px}.pchip:active{transform:scale(.97);border-color:var(--acc);background:#fbeceb}
 @keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
 body.noscroll{overflow:hidden}
+#pmodal .pmbg{position:fixed;inset:0;background:rgba(26,4,8,.6);z-index:80}
+#pmodal .pmc{position:fixed;z-index:81;left:50%;top:50%;transform:translate(-50%,-50%);width:min(560px,94vw);max-height:92svh;overflow:auto;background:var(--bg);border-radius:22px;padding:16px 18px 18px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.pmh{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px}
+.scanv{position:relative;border-radius:18px;overflow:hidden;background:#000;aspect-ratio:1/1;max-height:60svh;margin:0 auto}
+.scanv video{width:100%;height:100%;object-fit:cover;display:block}
+.scanframe{position:absolute;inset:18%;border:3px solid #fff;border-radius:18px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}
+.scanframe:after{content:"";position:absolute;left:6%;right:6%;top:50%;height:2px;background:#ff3b4e;box-shadow:0 0 10px #ff3b4e;animation:scanl 1.8s ease-in-out infinite}
+@keyframes scanl{0%,100%{transform:translateY(-70px)}50%{transform:translateY(70px)}}
+.scanv p{position:absolute;left:0;right:0;bottom:8px;text-align:center;color:#fff;font-weight:600;margin:0;padding:0 10px;text-shadow:0 1px 3px #000}
+.pmpts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.pmpts>div{background:#fff;border-radius:14px;padding:10px;text-align:center}.pmpts strong{display:block;font-family:Anton,sans-serif;font-weight:400;font-size:26px;line-height:1.2;color:var(--acc)}.pmpts>div{padding:10px 6px}
+.pmbox{background:#fff;border-radius:16px;padding:12px 14px;margin-top:10px}.pmbox .row{margin-top:8px}
+.pmlog{margin-top:6px}.pmlog>div{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--line);font-size:14px}
+.scanbtn{background:var(--acc);color:#fff}
 .qbtn{width:42px;height:42px;border-radius:12px;border:1px solid #e3cfc0;background:#fff;color:var(--acc2);font-weight:700;font-size:18px;cursor:pointer}
 .stepsO{display:flex;gap:6px;margin:16px 0}
 .stepsO span{flex:1;text-align:center;font-size:13px;padding:10px 4px;border-radius:12px;background:#efe1d4;color:var(--muted);transition:all .4s}
@@ -745,7 +758,7 @@ function startPanel(){
     <div class="box" style="margin-top:12px"><b>⭐ Comunitat JCC (punts x2 els dijous)</b><p class="small">Posa aquest enllaç a la descripció o al missatge fixat de la comunitat de WhatsApp. Qui el toqui quedarà marcat com a JCC. Si es filtra, canvia el codi i posa l’enllaç nou.</p><div class="row mini"><input id="jccl" readonly value="${esc(location.origin + '/?jcc=' + (S.jcc || ''))}" style="max-width:420px"><button class="sbtn" data-p="jcccopy">Copiar</button><button class="sbtn ghost" data-p="jccnew">Canviar codi</button></div><p class="small" style="margin:0">${S.customers.filter(c => c.jcc).length} clients JCC · també pots marcar-los a mà a la columna JCC.</p></div>
     <div class="row"><input id="cq" placeholder="Buscar per nom, email o codi" value="${esc(S.q)}" style="max-width:320px"><button class="sbtn ${S.filter === 'tots' ? '' : 'ghost'}" data-p="cf" data-v="tots">Tots</button><button class="sbtn ${S.filter === 'fora' ? '' : 'ghost'}" data-p="cf" data-v="fora">Han deixat de venir</button></div>
     ${S.recovery ? `<div class="box" style="margin-top:12px"><b>Recuperar la targeta de ${esc(S.recovery.name)}</b><p class="small">Que el client escanegi aquest QR amb el mòbil nou. No el comparteixis amb ningú més.</p><div id="recqr" style="background:#fff;padding:8px;width:196px"></div><div class="row"><button class="sbtn ghost" data-p="closerec">Tancar</button></div></div>` : ''}
-    <div class="scroll" style="margin-top:12px"><table class="stack"><thead><tr><th>Client</th><th>Codi</th><th>Punts</th><th>Visites</th><th>Gastat</th><th>Darrera visita</th><th>Estat</th><th>Ofertes</th><th>JCC</th><th></th></tr></thead><tbody>${list.map(c => { const s = status(c); return `<tr><td>${esc(c.name)}<br><span class="small">${esc(c.email)}</span></td><td>${esc(c.code)}</td><td class="n">${c.points}</td><td class="n">${c.visits}</td><td class="n">${eur(c.spent)}</td><td>${ago(c.last_visit)}</td><td><span class="chip ${s[1]}">${s[0]}</span></td><td>${c.marketing ? 'Sí' : 'No'}</td><td><input type="checkbox" aria-label="JCC" data-t="customers" data-id="${c.id}" data-k="jcc" ${c.jcc ? 'checked' : ''}></td><td><button class="sbtn ghost" data-p="rec" data-id="${c.id}">Recuperar</button></td></tr>`; }).join('')}</tbody></table></div>
+    <div class="scroll" style="margin-top:12px"><table class="stack"><thead><tr><th>Client</th><th>Codi</th><th>Punts</th><th>Visites</th><th>Gastat</th><th>Darrera visita</th><th>Estat</th><th>Ofertes</th><th>JCC</th><th></th></tr></thead><tbody>${list.map(c => { const s = status(c); return `<tr><td>${esc(c.name)}<br><span class="small">${esc(c.email)}</span></td><td>${esc(c.code)}</td><td class="n">${c.points}</td><td class="n">${c.visits}</td><td class="n">${eur(c.spent)}</td><td>${ago(c.last_visit)}</td><td><span class="chip ${s[1]}">${s[0]}</span></td><td>${c.marketing ? 'Sí' : 'No'}</td><td><input type="checkbox" aria-label="JCC" data-t="customers" data-id="${c.id}" data-k="jcc" ${c.jcc ? 'checked' : ''}></td><td><button class="sbtn" data-p="fitxa" data-v="${esc(c.code)}">Fitxa</button> <button class="sbtn ghost" data-p="rec" data-id="${c.id}">Recuperar</button></td></tr>`; }).join('')}</tbody></table></div>
     <p class="small">Actiu: menys de 14 dies sense venir · En risc: 14–30 · Inactiu: més de 30.</p>`;
   }
   function vPlanol(){
@@ -764,12 +777,85 @@ function startPanel(){
     <div class="row mini" style="margin-top:10px"><input id="ofn" placeholder="Títol de l’oferta nova" style="max-width:240px"><input id="ofp" placeholder="Què s’emporta" style="max-width:220px"><input id="ofb" placeholder="Descripció" style="max-width:300px"><button class="sbtn" data-p="addof">Afegir</button></div>`;
   }
   function vAvisos(){ return `<div class="box mini"><b>Nou avís</b><p class="small">Surt a «Avisos» de la targeta de tots els clients. Màxim 1 o 2 per setmana.</p><label class="f" for="nt">Títol</label><input id="nt" maxlength="60" placeholder="Avui hi ha partit!"><label class="f" for="nb">Text</label><textarea id="nb" maxlength="300" placeholder="Reserva taula des de la targeta."></textarea><label class="chk" style="display:flex;gap:8px;align-items:center;margin:10px 0"><input type="checkbox" id="npush" checked> 🔔 Enviar també com a notificació al mòbil (${S.pushN || 0} mòbils subscrits)</label><div class="row"><button class="sbtn" data-p="addnotice">Publicar</button></div></div>${S.notices.map(n => `<div class="box" style="margin-top:10px"><b>${esc(n.title)}</b><p style="margin:4px 0">${esc(n.body)}</p><span class="small">${new Date(n.created_at).toLocaleString('ca-ES')}</span> <button class="sbtn ghost" data-p="delnotice" data-id="${n.id}">Esborrar</button></div>`).join('')}`; }
+
+  /* ---------- Escàner de targetes i fitxa del client ---------- */
+  const PM = (() => {
+    let box, stream = null, raf = null, det = null, code = null, prof = null, busy = false;
+    const el = () => { if (!box) { box = document.createElement('div'); box.id = 'pmodal'; document.body.appendChild(box); box.addEventListener('click', onClick); box.addEventListener('submit', onSubmit); } return box; };
+    const close = () => { stop(); if (box) box.innerHTML = ''; document.body.classList.remove('noscroll'); prof = null; };
+    const stop = () => { if (raf) cancelAnimationFrame(raf); raf = null; if (stream) stream.getTracks().forEach(t => t.stop()); stream = null; };
+    const loadJsQR = () => window.jsQR ? Promise.resolve() : new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js'; sc.onload = res; sc.onerror = rej; document.head.appendChild(sc); });
+    const shell = inner => `<div class="pmbg" data-m="close"></div><div class="pmc" role="dialog" aria-modal="true">${inner}</div>`;
+    async function scan(){
+      el().innerHTML = shell(`<div class="pmh"><b>Escanejar targeta</b><button class="px" data-m="close" aria-label="Tancar">×</button></div>
+        <div class="scanv"><video id="scv" playsinline muted></video><div class="scanframe"></div><p id="scmsg">Apunta al QR de la targeta del client</p></div>
+        <form class="row mini" id="scform" style="margin-top:12px"><input id="sccode" placeholder="O escriu el codi (J…)" autocomplete="off" style="max-width:240px;text-transform:uppercase"><button class="sbtn">Obrir fitxa</button></form>`);
+      document.body.classList.add('noscroll');
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
+        const v = $('#scv'); v.srcObject = stream; await v.play();
+        if ('BarcodeDetector' in window) { try { det = new BarcodeDetector({ formats: ['qr_code'] }); } catch(_) { det = null; } }
+        if (!det) { try { await loadJsQR(); } catch(_) { const m = $('#scmsg'); if (m) m.textContent = 'No s’ha pogut carregar el lector de QR. Escriu el codi a sota.'; return; } }
+        const cv = document.createElement('canvas'), cx = cv.getContext('2d', { willReadFrequently: true });
+        let last = 0;
+        const tick = async t => {
+          if (!stream) return; raf = requestAnimationFrame(tick);
+          if (t - last < 180 || v.readyState < 2) return; last = t;
+          let txt = null;
+          if (det) { try { const r = await det.detect(v); if (r[0]) txt = r[0].rawValue; } catch(_) {} }
+          else if (window.jsQR) { const w = v.videoWidth, h = v.videoHeight, k = Math.min(1, 640 / Math.max(w, h)); cv.width = w * k; cv.height = h * k; cx.drawImage(v, 0, 0, cv.width, cv.height); const r = jsQR(cx.getImageData(0, 0, cv.width, cv.height).data, cv.width, cv.height, { inversionAttempts: 'dontInvert' }); if (r) txt = r.data; }
+          if (txt) { stop(); try { navigator.vibrate && navigator.vibrate(80); } catch(_) {} open(txt); }
+        };
+        raf = requestAnimationFrame(tick);
+      } catch (e) { const m = $('#scmsg'); if (m) m.textContent = 'No es pot obrir la càmera. Dona permís a la càmera en aquest navegador, o escriu el codi a sota.'; }
+    }
+    async function open(c){
+      code = String(c || '').trim(); if (!code) return;
+      el().innerHTML = shell('<p style="padding:30px;text-align:center">Carregant fitxa…</p>'); document.body.classList.add('noscroll');
+      const { data, error } = await sb.rpc('staff_profile', { p_code: code });
+      if (error) { el().innerHTML = shell(`<div class="pmh"><b>No trobada</b><button class="px" data-m="close">×</button></div><p>${error.message.includes('NO_CARD') ? 'Aquest QR no és d’una targeta de ' + esc(C.nom) + '.' : 'Error: ' + esc(error.message)}</p><button class="sbtn" data-m="scan">Tornar a escanejar</button>`); return; }
+      prof = data; code = data.code; draw();
+    }
+    function draw(msg){
+      const p = prof, dd = t => t ? new Date(t).toLocaleDateString('ca-ES', { day: 'numeric', month: 'short' }) : '—';
+      el().innerHTML = shell(`<div class="pmh"><div><b style="font-size:22px">${esc(p.name)}</b> ${p.jcc ? '<span class="chip c-ok">⭐ JCC</span>' : ''}<div class="small">${esc(p.code)} · ${esc(p.email || '')}</div></div><button class="px" data-m="close" aria-label="Tancar">×</button></div>
+        <div class="pmpts"><div><span class="small">Punts</span><strong>${p.points}</strong></div><div><span class="small">Visites</span><strong>${p.visits}</strong></div><div><span class="small">Gastat</span><strong style="font-size:20px;white-space:nowrap">${eur(p.spent)}</strong></div><div><span class="small">Última</span><strong style="font-size:18px">${dd(p.last_visit)}</strong></div></div>
+        ${p.thursday_x2 ? '<div class="okmsg" style="margin:10px 0 0">Avui és dijous i és JCC: el que cobris suma <b>x2</b>.</div>' : ''}
+        ${msg ? `<div class="okmsg" style="margin:10px 0 0">${msg}</div>` : ''}
+        <form class="pmbox" data-f="cobrar"><b>Cobrar i sumar punts</b><span class="small"> · 1 punt per euro${p.thursday_x2 ? ' (x2 avui)' : ''}</span><div class="row mini"><input name="amt" type="number" inputmode="decimal" min="0.5" step="0.5" placeholder="Import €" style="max-width:150px" required><button class="sbtn" ${busy ? 'disabled' : ''}>Sumar</button></div></form>
+        <form class="pmbox" data-f="ajust"><b>Punts a mà</b><span class="small"> · regal, correcció o premi</span><div class="row mini">${[5, 10, 20].map(n => `<button type="button" class="sbtn ghost" data-m="quick" data-v="${n}">+${n}</button>`).join('')}<button type="button" class="sbtn ghost" data-m="quick" data-v="-10">−10</button></div><div class="row mini"><input name="d" type="number" step="1" placeholder="+/− punts" style="max-width:120px" required><input name="r" maxlength="60" placeholder="Motiu (opcional)" style="max-width:220px"><button class="sbtn" ${busy ? 'disabled' : ''}>Aplicar</button></div></form>
+        <div class="pmbox"><b>Moviments</b>${(p.log || []).length ? `<div class="pmlog">${p.log.map(l => `<div><span>${esc(l.reason || '')}</span><span class="small">${dd(l.at)}</span><b style="color:${l.delta < 0 ? '#9a1c2a' : '#1f6b3a'}">${l.delta > 0 ? '+' : ''}${l.delta}</b></div>`).join('')}</div>` : '<p class="small">Encara cap moviment.</p>'}
+        ${(p.rewards || []).length ? `<div class="small" style="margin-top:8px">Premis: ${p.rewards.map(r => esc(r.name) + ' (' + esc(r.status) + ')').join(' · ')}</div>` : ''}</div>
+        <div class="row"><button class="sbtn" data-m="scan">📷 Escanejar un altre</button><button class="sbtn ghost" data-m="close">Tancar</button></div>`);
+    }
+    async function refresh(msg){ const { data } = await sb.rpc('staff_profile', { p_code: code }); if (data) prof = data; draw(msg); load().then(render); }
+    async function adjust(d, r){
+      if (!d) return; busy = true;
+      const { error } = await sb.rpc('adjust_points', { p_code: code, p_delta: d, p_reason: r || null }); busy = false;
+      if (error) return draw(error.message.includes('NOT_ENOUGH') ? 'No té prou punts per treure’n tants.' : 'Error: ' + esc(error.message));
+      refresh(`${d > 0 ? '+' : ''}${d} punts ${d > 0 ? 'afegits' : 'trets'}.`);
+    }
+    async function onSubmit(e){
+      e.preventDefault(); const f = e.target;
+      if (f.id === 'scform') { stop(); return open($('#sccode').value); }
+      if (f.dataset.f === 'cobrar') { const amt = Number(f.amt.value); if (!(amt > 0)) return; busy = true; const { data, error } = await sb.rpc('add_points', { p_code: code, p_amount: amt }); busy = false; if (error) return draw('Error: ' + esc(error.message)); beep(); return refresh(`Cobrat ${eur(amt)} · <b>+${data} punts</b>`); }
+      if (f.dataset.f === 'ajust') return adjust(parseInt(f.d.value, 10), f.r.value.trim());
+    }
+    function onClick(e){
+      const t = e.target.closest('[data-m]'); if (!t) return; const m = t.dataset.m;
+      if (m === 'close') close();
+      if (m === 'scan') { stop(); scan(); }
+      if (m === 'quick') adjust(Number(t.dataset.v), '');
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape' && box && box.innerHTML) close(); });
+    return { scan, open };
+  })();
   function render(){
     const pend = { comandes: S.orders.filter(o => o.status === 'rebuda').length, premis: S.reqs.filter(q => q.status === 'pendent').length, reserves: S.res.filter(r => r.status === 'pendent').length };
     const tabs = [['comandes', 'Comandes'], ['premis', 'Premis'], ['reserves', 'Reserves'], ['clients', 'Clients'], ['planol', 'Plànol'], ['carta', 'Carta i premis'], ['avisos', 'Avisos']];
     const V = { comandes: vComandes, premis: vPremis, reserves: vReserves, clients: vClients, planol: vPlanol, carta: vCarta, avisos: vAvisos }[S.tab];
     const focus = document.activeElement && document.activeElement.id;
-    $('#root').innerHTML = `<div class="pw"><div class="ptop"><h1>${esc(C.nom)} · Panell</h1><div class="row" style="margin:0"><a class="sbtn ghost" href="#qr" style="text-decoration:none;display:inline-flex;align-items:center">QR de taules</a><button class="sbtn ghost" data-p="logout">Sortir</button></div></div><div class="ptabs">${tabs.map(([k, l]) => `<button class="${S.tab === k ? 'on' : ''}" data-p="tab" data-v="${k}">${l}${pend[k] ? `<span class="n">${pend[k]}</span>` : ''}</button>`).join('')}</div>${S.msg ? `<div class="okmsg" role="status">${esc(S.msg)}</div>` : ''}${V()}</div>`;
+    $('#root').innerHTML = `<div class="pw"><div class="ptop"><h1>${esc(C.nom)} · Panell</h1><div class="row" style="margin:0"><button class="sbtn scanbtn" data-p="scan">📷 Escanejar targeta</button><a class="sbtn ghost" href="#qr" style="text-decoration:none;display:inline-flex;align-items:center">QR de taules</a><button class="sbtn ghost" data-p="logout">Sortir</button></div></div><div class="ptabs">${tabs.map(([k, l]) => `<button class="${S.tab === k ? 'on' : ''}" data-p="tab" data-v="${k}">${l}${pend[k] ? `<span class="n">${pend[k]}</span>` : ''}</button>`).join('')}</div>${S.msg ? `<div class="okmsg" role="status">${esc(S.msg)}</div>` : ''}${V()}</div>`;
     if (focus && document.getElementById(focus)) { const el = document.getElementById(focus); el.focus(); if (el.setSelectionRange && el.type === 'text') el.setSelectionRange(el.value.length, el.value.length); }
     if (S.recovery && window.QRCode && $('#recqr')) new QRCode($('#recqr'), { text: S.recovery.link, width: 180, height: 180 });
     if (S.tab === 'planol') bindDrag();
@@ -817,6 +903,8 @@ function startPanel(){
         for (let i = 0; i < 8; i++) { await new Promise(res => setTimeout(res, 1500)); const q = await sb.from('notices').select('push_result').eq('id', data.id).single(); const pr = q.data && q.data.push_result; if (pr) { S.msg = pr.error ? 'Avís publicat, però la notificació ha fallat.' : `Avís publicat i enviat a ${pr.sent} mòbil${pr.sent === 1 ? '' : 's'}.`; render(); break; } }
       }
     }
+    if (a === 'scan') return PM.scan();
+    if (a === 'fitxa') return PM.open(v);
     if (a === 'ocl') await run(sb.from('offer_claims').update({ status: v }).eq('id', id), v === 'entregat' ? 'Marcat com a portat' : 'Marcat com a no disponible');
     if (a === 'delof') { if (!confirm('Esborrar aquesta oferta?')) return; await run(sb.from('offers').delete().eq('id', id), 'Oferta esborrada'); }
     if (a === 'jcccopy') { try { await navigator.clipboard.writeText($('#jccl').value); flash('Enllaç copiat'); } catch(_) { $('#jccl').select(); flash('Copia l’enllaç seleccionat'); } }

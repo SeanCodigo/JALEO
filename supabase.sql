@@ -654,3 +654,8 @@ end $$;
 -- menu_items.options = {"label","mixLabel","choices":[{"name":"Gin","mix":["Tònica","Sprite"]}, {"name":"Tequila"}]}
 -- place_order accepta per línia {id, qty, choice, mix} i valida que la mescla existeixi.
 -- =====================================================================
+
+-- =====================================================================
+-- FITXA DEL CLIENT DES DEL PANELL (migració jaleo_staff_profile_scan)
+-- staff_profile(codi) i adjust_points(codi, ±punts, motiu): només personal.
+-- =====================================================================
