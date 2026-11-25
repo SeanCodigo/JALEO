@@ -10,7 +10,7 @@
 <link rel="apple-touch-icon" href="/img/icon-180.png">
 <title>JALEO · Aquí comença la nit</title>
 <meta name="description" content="JALEO, pub i cachimbes a Pl. Catalunya, 6, Reus. Carta, reserves i JALEO Club.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23A3202F'/%3E%3Cpath d='M32 10l5 17 17 5-17 5-5 17-5-17-17-5 17-5z' fill='%23F7F0E6'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" href="/img/favicon.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap">
 
 <!-- =====================================================================
@@ -24,6 +24,7 @@ window.JALEO = {
   adreca: "Pl. Catalunya, 6 · Reus",
   instagram: "jaleoreus",   // sense @
   whatsapp: "https://chat.whatsapp.com/KkpSgTEjIj0FrZcAy5UCFQ", // comunitat JCC
+  resenyes: "https://search.google.com/local/writereview?placeid=ChIJSdaZfABRoRIRM03yxEB0p1c", // fitxa de Google «JALEO REUS»
   telefon: "616 562 597",
   mapa: "https://maps.google.com/?q=Pla%C3%A7a+Catalunya+6+Reus",
   nits: [
@@ -53,6 +54,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .nav .wrap{display:flex;justify-content:space-between;align-items:center;height:66px;gap:12px}
 .logo{font-family:Anton,sans-serif;font-size:30px;letter-spacing:.04em;color:#fff;text-decoration:none;transition:color .3s}
 .nav.solid .logo{color:var(--acc)}
+.logo img{height:36px;display:block}.logo .lg-d,.nav.solid .logo .lg-l{display:none}.nav.solid .logo .lg-d{display:block}
 .nav .links{display:flex;gap:6px;align-items:center}
 .nav .links a{color:#fff;text-decoration:none;font-weight:600;font-size:15px;padding:8px 10px;border-radius:10px;transition:color .3s}
 .nav.solid .links a{color:var(--acc2)}
@@ -223,6 +225,19 @@ body.noscroll{overflow:hidden}
 .pmlog{margin-top:6px}.pmlog>div{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--line);font-size:14px}
 .scanbtn{background:var(--acc);color:#fff}
 .walletb{display:flex;align-items:center;justify-content:center;gap:10px;background:#1f1f1f;color:#fff;margin-top:10px}.walletb.ios{background:#fff;color:var(--acc2);border:1.5px solid var(--line)}
+.reviewb{display:flex;flex-direction:column;align-items:center;gap:2px;text-decoration:none;background:#fff;color:var(--ink);border:1.5px solid var(--line);margin-top:10px}.reviewb .stars{color:#F5B301;letter-spacing:3px;font-size:18px}
+.stiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin:12px 0}
+.stile{background:#fff;border-radius:16px;padding:12px 14px}.stile span{display:block;font-size:13px;color:var(--muted)}.stile strong{display:block;font-family:Anton,sans-serif;font-weight:400;font-size:30px;line-height:1.15;color:var(--ink)}.stile small{color:var(--muted);font-size:12px}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}.sgrid .box{margin:0}
+.scols{display:flex;align-items:flex-end;gap:4px;height:170px;padding-top:24px;margin-top:8px;border-bottom:1px solid var(--line)}
+.scol{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;position:relative;outline:none}
+.scol i{display:block;width:min(100%,34px);background:var(--acc);border-radius:4px 4px 0 0;min-height:2px}
+.scol b{position:absolute;bottom:-20px;font-size:10px;font-weight:500;color:var(--muted);white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.scols{margin-bottom:24px}
+.shb{margin-top:8px}.shr{display:grid;grid-template-columns:minmax(90px,48%) 1fr auto;gap:10px;align-items:center;padding:5px 0;font-size:14px;outline:none;position:relative}
+.shr span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.shr div{height:14px;background:var(--line);border-radius:4px;overflow:hidden}.shr i{display:block;height:100%;background:var(--acc);border-radius:0 4px 4px 0}.shr b{font-size:13px;min-width:34px;text-align:right}
+[data-tip]:hover:after,[data-tip]:focus:after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);background:var(--ink);color:#fff;font-size:12px;font-weight:600;padding:5px 9px;border-radius:8px;white-space:nowrap;z-index:5;pointer-events:none}
+.scol:hover i,.scol:focus i,.shr:hover i,.shr:focus i{background:var(--acc2)}
 .qbtn{width:42px;height:42px;border-radius:12px;border:1px solid #e3cfc0;background:#fff;color:var(--acc2);font-weight:700;font-size:18px;cursor:pointer}
 .stepsO{display:flex;gap:6px;margin:16px 0}
 .stepsO span{flex:1;text-align:center;font-size:13px;padding:10px 4px;border-radius:12px;background:#efe1d4;color:var(--muted);transition:all .4s}
@@ -354,7 +369,7 @@ async function pushOff(){
   if (sub) { await sb.rpc('drop_push', { p_endpoint: sub.endpoint }); await sub.unsubscribe(); }
 }
 const STAR = (s, c) => `<svg width="${s}" height="${s}" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 2l6 24 24 6-24 6-6 24-6-24-24-6 24-6z" fill="${c}"/></svg>`;
-let tt; const toast = t => { $('#fx').insertAdjacentHTML('beforeend', `<div class="toast" role="status"><div class="ic">J</div><div><b>${esc(C.nom)}</b><div style="font-size:14px">${esc(t)}</div></div></div>`); clearTimeout(tt); tt = setTimeout(() => document.querySelectorAll('.toast').forEach(x => x.remove()), 4500); };
+let tt; const toast = t => { $('#fx').insertAdjacentHTML('beforeend', `<div class="toast" role="status"><div class="ic"><img src="/img/icon-192.png" alt="" style="width:100%;height:100%;border-radius:inherit"></div><div><b>${esc(C.nom)}</b><div style="font-size:14px">${esc(t)}</div></div></div>`); clearTimeout(tt); tt = setTimeout(() => document.querySelectorAll('.toast').forEach(x => x.remove()), 4500); };
 const confetti = () => { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; const cols = ['#A3202F', '#D0394A', '#C9A55A', '#F2D9B0', '#7A1424']; let h = '<div class="confetti">'; for (let i = 0; i < 70; i++) h += `<i style="left:${Math.random() * 100}%;background:${cols[i % 5]};animation-duration:${2 + Math.random() * 2.5}s;animation-delay:${Math.random() * .6}s;transform:rotate(${Math.random() * 360}deg)"></i>`; $('#fx').insertAdjacentHTML('beforeend', h + '</div>'); setTimeout(() => document.querySelectorAll('.confetti').forEach(x => x.remove()), 5500); };
 const ERR = { BAD_OPTION: 'Alguna beguda no té la mescla triada. Torna-la a afegir.', OFFER_CLOSED: 'Aquesta oferta encara no està oberta.', ALREADY_CLAIMED: 'Ja l’has demanada avui.', JCC_ONLY: 'Només per a membres de la comunitat JCC.', BAD_JCC: 'Aquest enllaç JCC ja no és vàlid. Agafa el nou a la comunitat de WhatsApp.', NO_CARD: 'Primer fes-te la targeta.', EMAIL_EXISTS: 'Aquest email ja té una targeta amb un altre nom. Escriu el nom tal com el vas posar el primer cop, o demana a la barra que te la recuperin.', BAD_EMAIL: 'Revisa l’email.', BAD_NAME: 'Escriu el teu nom.', ADULT_REQUIRED: 'Has de ser major de 18 anys.', TOO_MANY: 'Massa peticions seguides. Espera uns minuts.', NOT_ENOUGH: 'Encara no tens prou punts.', ALREADY_PENDING: 'Ja tens un premi demanat. Espera que te’l portin.', TABLE_TAKEN: 'Aquesta taula ja està reservada aquest dia.', BAD_DAY: 'Tria un dia d’avui als propers 60 dies.', BAD_ITEM: 'Algun producte ja no està disponible.', NO_CARD: 'No trobem la teva targeta.' };
 const errMsg = e => { const m = (e && (e.message || e.details)) || ''; const k = Object.keys(ERR).find(k => m.includes(k)); return k ? ERR[k] : 'Hi ha hagut un error. Torna-ho a provar.'; };
@@ -418,7 +433,7 @@ function startApp(){
   const cartN = () => Object.values(S.cart).reduce((a, b) => a + b, 0);
   const cartT = () => Object.entries(S.cart).reduce((a, [k, q]) => a + price(k) * q, 0);
   const go = s => { S.screen = s; S.err = ''; S.msg = ''; render(); window.scrollTo({ top: 0 }); };
-  const head = r => `<div class="brand"><a href="#" data-a="go" data-v="web">${esc(C.nom)}</a><span>${r}</span></div>`;
+  const head = r => `<div class="brand"><a href="#" data-a="go" data-v="web" aria-label="${esc(C.nom)}"><img src="/img/logo-ink.png" alt="${esc(C.nom)}" style="height:34px;display:block"></a><span>${r}</span></div>`;
   const msgs = () => (S.err ? `<div class="err" role="alert">${esc(S.err)}</div>` : '') + (S.msg ? `<div class="okmsg" role="status">${esc(S.msg)}</div>` : '');
   const itemCard = i => { const n = inCart(i.id), o = hasOpts(i);
     const btn = mesa ? `<button class="add ${n ? 'on' : ''} ${S.bumped == i.id ? 'pop' : ''}" data-a="${o ? 'pick' : 'add'}" data-v="${i.id}" aria-label="${o ? 'Triar' : 'Afegir'} ${esc(i.name)}">${n ? n + ' a la comanda · +' : o ? '+ Triar' : '+ Afegir'}</button>` : o ? `<button class="add" data-a="pick" data-v="${i.id}">Veure opcions</button>` : '';
@@ -440,7 +455,7 @@ function startApp(){
     const stars = Array.from({ length: 40 }, (_, i) => `<span style="left:${(i * 37) % 100}%;top:${(i * 53) % 100}%;animation-delay:${(i % 7) * .4}s"></span>`).join('');
     const icons = [`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM18 18h3v3h-3z"/></svg>`, `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>`, `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2l3 7 7 .6-5.3 4.6L18 21l-6-3.7L6 21l1.3-6.8L2 9.6 9 9z"/></svg>`, `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M14 20c.3-2.4 1.8-4.5 4-4.5s3 1.5 3 4.5"/></svg>`];
     return `
-    <header class="nav" id="nav"><div class="wrap"><a class="logo" href="#top">${esc(C.nom)}</a><nav class="links"><a href="#nits">Les nits</a><a href="#club">JALEO Club</a><a href="#carta">Carta</a><a href="#visita">On som</a><a class="cta" href="#" data-a="go" data-v="${S.card ? 'targeta' : 'registre'}">${S.card ? 'La meva targeta' : 'Fes-te la targeta'}</a></nav></div></header>
+    <header class="nav" id="nav"><div class="wrap"><a class="logo" href="#top" aria-label="${esc(C.nom)}"><img class="lg-l" src="/img/logo-light.png" alt="${esc(C.nom)}"><img class="lg-d" src="/img/logo-ink.png" alt=""></a><nav class="links"><a href="#nits">Les nits</a><a href="#club">JALEO Club</a><a href="#carta">Carta</a><a href="#visita">On som</a><a class="cta" href="#" data-a="go" data-v="${S.card ? 'targeta' : 'registre'}">${S.card ? 'La meva targeta' : 'Fes-te la targeta'}</a></nav></div></header>
     <section class="hero" id="top"><div class="stars" aria-hidden="true">${stars}</div><div class="glow" style="background:#D0394A;left:-120px;top:10%"></div><div class="glow" style="background:#C9A55A;right:-160px;bottom:-10%;animation-delay:-6s;opacity:.25"></div>
       <div class="wrap"><div>
         <span class="kick"><i></i>${esc(C.adreca)}</span>
@@ -469,9 +484,9 @@ function startApp(){
     <section class="s" id="visita" style="padding-top:0"><div class="wrap visit">
       <div class="reveal"><div class="eyebrow">On som</div><h2 class="st">Ens veiem <span class="serif">a la plaça</span></h2>
         <div class="btns" style="opacity:1;animation:none"><a class="b dark" href="#" data-a="go" data-v="reserva">Reserva taula al plànol</a><a class="b cream" style="border:1px solid #e3cfc0" href="${esc(C.mapa)}" target="_blank" rel="noopener">Com arribar</a></div></div>
-      <div class="vbox reveal"><p style="font-family:Anton,sans-serif;font-size:28px;color:var(--acc)">${esc(C.nom)}</p><p>${esc(C.adreca)}</p>${C.nits.map(n => `<p><b>${esc(n.dia)}</b> · ${esc(n.nom)} · des de les ${esc(n.hora)}</p>`).join('')}<p>Instagram: <a href="https://instagram.com/${esc(C.instagram)}" target="_blank" rel="noopener">@${esc(C.instagram)}</a></p><p>Telèfon i WhatsApp: ${esc(C.telefon)}</p><p class="small">Només majors de 18 anys. Consum responsable.</p></div>
+      <div class="vbox reveal"><img src="/img/logo-ink.png" alt="${esc(C.nom)}" style="height:44px;margin-bottom:6px"><p>${esc(C.adreca)}</p>${C.nits.map(n => `<p><b>${esc(n.dia)}</b> · ${esc(n.nom)} · des de les ${esc(n.hora)}</p>`).join('')}<p>Instagram: <a href="https://instagram.com/${esc(C.instagram)}" target="_blank" rel="noopener">@${esc(C.instagram)}</a></p><p><a href="${esc(C.resenyes)}" target="_blank" rel="noopener">★ Deixa’ns una ressenya a Google</a></p><p>Telèfon i WhatsApp: ${esc(C.telefon)}</p><p class="small">Només majors de 18 anys. Consum responsable.</p></div>
     </div></section>
-    <footer><b>${esc(C.nom)}</b><p class="serif" style="font-size:22px;margin:4px 0 0">Aquí comença la nit.</p></footer>`;
+    <footer><img src="/img/logo-light.png" alt="${esc(C.nom)}" style="height:46px"><p class="serif" style="font-size:22px;margin:4px 0 0">Aquí comença la nit.</p></footer>`;
   }
 
   // ---------- pantalles de l'app ----------
@@ -508,7 +523,7 @@ function startApp(){
     return head(`Taula ${esc(mesa || '')}`) + `<h2 style="font-size:34px">Comanda #${o.id}</h2>` +
       (o.status === 'cancelada' ? '<div class="err">Aquesta comanda s’ha cancel·lat. Parla amb el cambrer.</div>' : `<div class="stepsO">${st.map((x, i) => `<span class="${i <= k ? 'on' : ''} ${i === k && k < 3 ? 'now' : ''}">${lbl[x]}</span>`).join('')}</div>`) +
       o.items.map(i => `<div class="line"><span>${i.qty} × ${esc(i.name)}</span><b>${eur(i.price * i.qty)}</b></div>`).join('') + `<div class="line" style="border:0"><b>Total</b><b>${eur(o.total)}</b></div>` +
-      (o.status === 'pagada' && o.points_awarded ? `<div class="okmsg"><b>+${o.points_awarded} punts</b> sumats a la teva targeta.</div>` : '<p class="small">Els punts se sumen quan es cobra la comanda.</p>');
+      (o.status === 'pagada' && o.points_awarded ? `<div class="okmsg"><b>+${o.points_awarded} punts</b> sumats a la teva targeta.</div>` : '<p class="small">Els punts se sumen quan es cobra la comanda.</p>') + (o.status === 'pagada' ? `<a class="btn reviewb" href="${esc(C.resenyes)}" target="_blank" rel="noopener"><span class="stars">★★★★★</span>T’ha agradat la nit? Deixa’ns una ressenya</a>` : '');
   }
   function vRegistre(){
     const ref = store.get('jaleo_ref');
@@ -564,6 +579,7 @@ function startApp(){
     return head('Club') + `<div class="mcard"><div class="row"><div><div style="font-size:13px;color:#fde9e4">Membre</div><div style="font-family:Anton,sans-serif;font-size:28px">${esc(c.name)}</div></div><div style="text-align:right"><div class="big">${c.points}</div><div style="font-size:13px;color:#fde9e4">punts</div></div></div><div class="qrbox" id="qr" aria-label="Codi QR de la targeta ${esc(c.code)}"></div><div style="text-align:center;font-size:14px;position:relative">${esc(c.code)} · ensenya-ho a la barra quan paguis</div>${c.jcc ? '<div style="text-align:center;margin-top:6px;position:relative"><span class="otag" style="position:static">⭐ JCC · x2 els dijous</span></div>' : ''}</div>
     <button class="btn pri" style="margin-top:12px" data-a="go" data-v="ofertes">🎁 Ofertes per a membres${S.mo && S.mo.open && S.mo.open.length ? ` · ${S.mo.open.length} ${S.mo.open.length === 1 ? 'oberta' : 'obertes'} ara` : ''}</button>
     ${isIOS ? `<button class="btn walletb ios" data-a="saveqr">📲 Desar el meu QR al mòbil</button>` : `<button class="btn walletb" data-a="gwallet" ${S.busy ? 'disabled' : ''}><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3" fill="#4285F4"/><rect x="2" y="8" width="20" height="11" rx="3" fill="#34A853"/><rect x="2" y="11" width="20" height="8" rx="3" fill="#FBBC04"/><rect x="2" y="14" width="20" height="5" rx="2.5" fill="#EA4335"/></svg>Afegir a Google Wallet</button>`}
+    <a class="btn reviewb" href="${esc(C.resenyes)}" target="_blank" rel="noopener"><span class="stars">★★★★★</span>T’ha agradat? Deixa’ns una ressenya a Google</a>
     <div class="sec">${nx ? `Et falten ${nx.cost - c.points} punts` : 'Pots demanar qualsevol premi!'}</div>${nx ? `<div class="bar"><i style="width:${pct}%"></i></div><p class="small" style="margin:0">Següent premi: <b style="color:var(--ink)">${esc(nx.name)}</b></p>` : ''}
     <div class="sec">Recompenses</div>${S.rewards.map(r => `<div class="rw"><span>${esc(r.name)}<br><span class="small">${r.cost} punts</span></span>${pend && pend.reward_id === r.id ? '<span class="chip c-wait">Demanat · t’ho portem</span>' : c.points >= r.cost ? `<button class="sbtn" data-a="req" data-v="${r.id}" ${pend ? 'disabled' : ''}>Demanar</button>` : `<b class="small">Et falten ${r.cost - c.points}</b>`}</div>`).join('')}
     ${msgs()}${S.push === 'off' || S.push === 'ios' ? `<button class="btn sec2" data-a="go" data-v="avisos">🔔 Rebre els avisos al mòbil</button>` : ''}<button class="btn sec2" data-a="go" data-v="convida">Convidar amics i guanyar punts</button>`;
@@ -808,6 +824,30 @@ function startPanel(){
     ${S.offers.slice().sort((a, b) => (a.sort ?? 100) - (b.sort ?? 100) || a.id - b.id).map(o => `<div class="box mini" style="margin-top:10px"><div class="row"><input data-t="offers" data-id="${o.id}" data-k="emoji" value="${esc(o.emoji || '🎁')}" style="max-width:64px;text-align:center"><input data-t="offers" data-id="${o.id}" data-k="title" value="${esc(o.title)}" placeholder="Títol" style="max-width:260px"><input data-t="offers" data-id="${o.id}" data-k="perk" value="${esc(o.perk || '')}" placeholder="Què s’emporta (curt)" style="max-width:240px"></div><textarea data-t="offers" data-id="${o.id}" data-k="body" maxlength="300" placeholder="Descripció">${esc(o.body)}</textarea><div class="row" style="align-items:center">${[4, 5, 6, 7, 1, 2, 3].map(d => `<label class="chk" style="margin:0"><input type="checkbox" data-ofday="${o.id}" value="${d}" ${(o.days || []).includes(d) ? 'checked' : ''}>${['', 'Dl', 'Dt', 'Dc', 'Dj', 'Dv', 'Ds', 'Dg'][d]}</label>`).join('')}<label class="small">des de <input type="time" data-t="offers" data-id="${o.id}" data-k="from_time" value="${String(o.from_time || '19:00').slice(0, 5)}" style="max-width:120px"></label></div><div class="row" style="align-items:center"><label class="chk" style="margin:0"><input type="checkbox" data-t="offers" data-id="${o.id}" data-k="claimable" ${o.claimable ? 'checked' : ''}>Es demana</label><label class="chk" style="margin:0"><input type="checkbox" data-t="offers" data-id="${o.id}" data-k="jcc_only" ${o.jcc_only ? 'checked' : ''}>Només JCC</label><label class="chk" style="margin:0"><input type="checkbox" data-t="offers" data-id="${o.id}" data-k="active" ${o.active ? 'checked' : ''}>Visible</label><label class="small">ordre <input type="number" data-t="offers" data-id="${o.id}" data-k="sort" value="${o.sort ?? 100}" style="max-width:80px"></label><button class="sbtn ghost" data-p="delof" data-id="${o.id}">Esborrar</button></div></div>`).join('')}
     <div class="row mini" style="margin-top:10px"><input id="ofn" placeholder="Títol de l’oferta nova" style="max-width:240px"><input id="ofp" placeholder="Què s’emporta" style="max-width:220px"><input id="ofb" placeholder="Descripció" style="max-width:300px"><button class="sbtn" data-p="addof">Afegir</button></div>`;
   }
+  /* ---------- Estadístiques ---------- */
+  async function loadStats(){ const { data, error } = await sb.rpc('staff_stats', { p_days: S.statDays || 30 }); S.stats = error ? { error: error.message } : data; }
+  function vStats(){
+    const st = S.stats, D = S.statDays || 30;
+    const per = `<div class="row mini" role="group" aria-label="Període">${[[7, '7 dies'], [30, '30 dies'], [90, '3 mesos']].map(([d, l]) => `<button class="sbtn ${D === d ? '' : 'ghost'}" data-p="statd" data-v="${d}" aria-pressed="${D === d}">${l}</button>`).join('')}</div>`;
+    if (!st) { loadStats().then(render); return per + '<p class="small">Carregant…</p>'; }
+    if (st.error) return per + `<p class="small">Error: ${esc(st.error)}</p>`;
+    const k = st.kpi, dd = t => new Date(t + 'T12:00:00').toLocaleDateString('ca-ES', { weekday: 'short', day: 'numeric', month: 'short' });
+    const tile = (l, v, sub) => `<div class="stile"><span>${l}</span><strong>${v}</strong>${sub ? `<small>${sub}</small>` : ''}</div>`;
+    const cols = (rows, lab, val, fmt, short) => { const m = Math.max(1, ...rows.map(val)); return rows.length ? `<div class="scols">${rows.map(r => `<div class="scol" tabindex="0" data-tip="${esc(lab(r) + ': ' + fmt(val(r)))}"><i style="height:${Math.max(2, val(r) / m * 100)}%"></i><b>${esc((short || lab)(r))}</b></div>`).join('')}</div>` : '<p class="small">Encara no hi ha dades en aquest període.</p>'; };
+    const hb = (rows, lab, val, fmt) => { const m = Math.max(1, ...rows.map(val)); return rows.length ? `<div class="shb">${rows.map(r => `<div class="shr" tabindex="0" data-tip="${esc(lab(r) + ': ' + fmt(val(r)))}"><span>${esc(lab(r))}</span><div><i style="width:${Math.max(1, val(r) / m * 100)}%"></i></div><b>${fmt(val(r))}</b></div>`).join('')}</div>` : '<p class="small">Encara no hi ha dades en aquest període.</p>'; };
+    const n = x => Number(x) || 0, hrs = Array.from({ length: 9 }, (_, i) => (19 + i) % 24).map(h => ({ h, orders: n((st.hours.find(x => x.h === h) || {}).orders) }));
+    const s2 = st.status, tot = Math.max(1, s2.active + s2.risk + s2.inactive + s2.never);
+    return per + `<div class="stiles">${tile('Facturat (app)', eur(k.revenue), n(k.orders) + ' comandes pagades')}${tile('Tiquet mitjà', eur(k.avg_ticket))}${tile('Membres', k.members, '+' + k.new_members + ' nous')}${tile('JCC', k.jcc, 'membres de la comunitat')}${tile('Avisos actius', k.push, 'clients amb notificacions')}${tile('Punts donats', k.points)}${tile('Premis i ofertes', n(k.rewards) + n(k.claims), k.rewards + ' premis · ' + k.claims + ' ofertes')}${tile('Reserves', k.reservations)}</div>
+    <div class="sgrid">
+      <div class="box mini"><b>Vendes per nit</b><p class="small">Comandes pagades des de l’app, per nit de servei (la nit acaba a les 6 h).</p>${cols(st.nights.slice(-21), r => dd(r.day), r => n(r.revenue), v => eur(v), r => { const t = new Date(r.day + 'T12:00:00'); return ['dg', 'dl', 'dt', 'dc', 'dj', 'dv', 'ds'][t.getDay()] + ' ' + t.getDate(); })}</div>
+      <div class="box mini"><b>Productes més venuts</b><p class="small">Unitats</p>${hb(st.products, r => r.name, r => n(r.qty), v => String(v))}</div>
+      <div class="box mini"><b>Mescles preferides</b><p class="small">Combinats, xupitos i refrescos</p>${hb(st.mixes, r => r.name, r => n(r.qty), v => String(v))}</div>
+      <div class="box mini"><b>Hores amb més comandes</b>${cols(hrs, r => String(r.h).padStart(2, '0') + 'h', r => r.orders, v => v + ' comandes')}</div>
+      <div class="box mini"><b>Membres nous per setmana</b><p class="small">Últimes 8 setmanes</p>${cols(st.weeks, r => 'Setmana del ' + new Date(r.week + 'T12:00:00').toLocaleDateString('ca-ES', { day: 'numeric', month: 'short' }), r => n(r.n), v => v + ' nous', r => { const t = new Date(r.week + 'T12:00:00'); return t.getDate() + '/' + (t.getMonth() + 1); })}</div>
+      <div class="box mini"><b>Ofertes més demanades</b>${hb(st.offers, r => r.name, r => n(r.n), v => String(v))}</div>
+      <div class="box mini"><b>Estat dels clients</b><p class="small">Segons l’última visita</p>${hb([{ l: 'Actius (menys de 14 dies)', v: s2.active }, { l: 'En risc (14-30 dies)', v: s2.risk }, { l: 'Inactius (més de 30 dies)', v: s2.inactive }, { l: 'Encara sense visita', v: s2.never }], r => r.l, r => r.v, v => v + ' · ' + Math.round(v / tot * 100) + '%')}</div>
+    </div><p class="small">Només compta el que passa per l’app (comandes, punts i targetes). El que es cobra a la barra sense app no hi surt.</p>`;
+  }
   function vAutoPush(){
     const names = { jcc_thursday: ['⭐ Dijous x2 per als JCC', 'Dijous a les 19:00, només als membres JCC.'], offers_today: ['🎁 Ofertes d’avui', 'A les 19:00 dels dies amb ofertes de membre, a qui no hagi rebut ja el de JCC.'] };
     const wk = S.pushLog || [];
@@ -890,10 +930,10 @@ function startPanel(){
   })();
   function render(){
     const pend = { comandes: S.orders.filter(o => o.status === 'rebuda').length, premis: S.reqs.filter(q => q.status === 'pendent').length, reserves: S.res.filter(r => r.status === 'pendent').length };
-    const tabs = [['comandes', 'Comandes'], ['premis', 'Premis'], ['reserves', 'Reserves'], ['clients', 'Clients'], ['planol', 'Plànol'], ['carta', 'Carta i premis'], ['avisos', 'Avisos']];
-    const V = { comandes: vComandes, premis: vPremis, reserves: vReserves, clients: vClients, planol: vPlanol, carta: vCarta, avisos: vAvisos }[S.tab];
+    const tabs = [['comandes', 'Comandes'], ['premis', 'Premis'], ['reserves', 'Reserves'], ['clients', 'Clients'], ['planol', 'Plànol'], ['carta', 'Carta i premis'], ['avisos', 'Avisos'], ['stats', 'Estadístiques']];
+    const V = { comandes: vComandes, premis: vPremis, reserves: vReserves, clients: vClients, planol: vPlanol, carta: vCarta, avisos: vAvisos, stats: vStats }[S.tab];
     const focus = document.activeElement && document.activeElement.id;
-    $('#root').innerHTML = `<div class="pw"><div class="ptop"><h1>${esc(C.nom)} · Panell</h1><div class="row" style="margin:0"><button class="sbtn scanbtn" data-p="scan">📷 Escanejar targeta</button><a class="sbtn ghost" href="#qr" style="text-decoration:none;display:inline-flex;align-items:center">QR de taules</a><button class="sbtn ghost" data-p="logout">Sortir</button></div></div><div class="ptabs">${tabs.map(([k, l]) => `<button class="${S.tab === k ? 'on' : ''}" data-p="tab" data-v="${k}">${l}${pend[k] ? `<span class="n">${pend[k]}</span>` : ''}</button>`).join('')}</div>${S.msg ? `<div class="okmsg" role="status">${esc(S.msg)}</div>` : ''}${V()}</div>`;
+    $('#root').innerHTML = `<div class="pw"><div class="ptop"><h1 style="display:flex;align-items:center;gap:12px"><img src="/img/logo-ink.png" alt="${esc(C.nom)}" style="height:40px"> · Panell</h1><div class="row" style="margin:0"><button class="sbtn scanbtn" data-p="scan">📷 Escanejar targeta</button><a class="sbtn ghost" href="#qr" style="text-decoration:none;display:inline-flex;align-items:center">QR de taules</a><button class="sbtn ghost" data-p="logout">Sortir</button></div></div><div class="ptabs">${tabs.map(([k, l]) => `<button class="${S.tab === k ? 'on' : ''}" data-p="tab" data-v="${k}">${l}${pend[k] ? `<span class="n">${pend[k]}</span>` : ''}</button>`).join('')}</div>${S.msg ? `<div class="okmsg" role="status">${esc(S.msg)}</div>` : ''}${V()}</div>`;
     if (focus && document.getElementById(focus)) { const el = document.getElementById(focus); el.focus(); if (el.setSelectionRange && el.type === 'text') el.setSelectionRange(el.value.length, el.value.length); }
     if (S.recovery && window.QRCode && $('#recqr')) new QRCode($('#recqr'), { text: S.recovery.link, width: 180, height: 180 });
     if (S.tab === 'planol') bindDrag();
@@ -915,7 +955,7 @@ function startPanel(){
     const b = e.target.closest('[data-p]'); if (!b) return;
     const a = b.dataset.p, v = b.dataset.v, id = b.dataset.id;
     const run = async (p, okm) => { const { error } = await p; if (error) { flash('Error: ' + error.message); return; } if (okm) S.msg = okm; await load(); render(); };
-    if (a === 'tab') { S.tab = v; S.msg = ''; render(); }
+    if (a === 'tab') { S.tab = v; S.msg = ''; if (v === 'stats') S.stats = null; render(); }
     if (a === 'logout') { await sb.auth.signOut(); location.reload(); }
     if (a === 'ost') await run(sb.from('orders').update({ status: v }).eq('id', id));
     if (a === 'pay') { const { data, error } = await sb.rpc('pay_order', { p_id: Number(id) }); if (error) return flash('Error: ' + error.message); S.msg = data ? `Cobrada. +${data} punts sumats.` : 'Comanda cobrada.'; await load(); render(); }
@@ -941,6 +981,7 @@ function startPanel(){
         for (let i = 0; i < 8; i++) { await new Promise(res => setTimeout(res, 1500)); const q = await sb.from('notices').select('push_result').eq('id', data.id).single(); const pr = q.data && q.data.push_result; if (pr) { S.msg = pr.error ? 'Avís publicat, però la notificació ha fallat.' : `Avís publicat i enviat a ${pr.sent} mòbil${pr.sent === 1 ? '' : 's'}.`; render(); break; } }
       }
     }
+    if (a === 'statd') { S.statDays = Number(v); S.stats = null; render(); return; }
     if (a === 'scan') return PM.scan();
     if (a === 'fitxa') return PM.open(v);
     if (a === 'ocl') await run(sb.from('offer_claims').update({ status: v }).eq('id', id), v === 'entregat' ? 'Marcat com a portat' : 'Marcat com a no disponible');
@@ -981,7 +1022,7 @@ function startPanel(){
     if (el.dataset.t) { const val = el.type === 'checkbox' ? el.checked : el.type === 'number' ? Number(el.value) : el.value; const { error } = await sb.from(el.dataset.t).update({ [el.dataset.k]: val }).eq('id', el.dataset.id); flash(error ? 'Error: ' + error.message : 'Desat'); await load(); return; }
     if (S.tab === 'planol' && el.dataset.k && S.selTable) { const t = S.tables.find(x => x.id === S.selTable), k = el.dataset.k; t[k] = el.type === 'checkbox' ? el.checked : el.type === 'number' ? Number(el.value) : el.value; if (k === 'shape' && el.value === 'bar') t.bookable = false; S.dirty.add(t.id); render(); }
   });
-  function vLogin(err){ $('#root').innerHTML = `<div class="login"><h1 style="color:var(--acc);font-size:44px">${esc(C.nom)} · Panell</h1><p class="small">Només per al personal.</p><form id="login"><label class="f" for="le">Email</label><input id="le" type="email" required autocomplete="username"><label class="f" for="lp">Contrasenya</label><input id="lp" type="password" required autocomplete="current-password">${err ? `<div class="err">${esc(err)}</div>` : ''}<button class="btn pri" type="submit">Entrar</button></form></div>`; }
+  function vLogin(err){ $('#root').innerHTML = `<div class="login"><img src="/img/logo-ink.png" alt="${esc(C.nom)}" style="height:56px;margin-bottom:6px"><h1 style="color:var(--acc);font-size:30px">Panell</h1><p class="small">Només per al personal.</p><form id="login"><label class="f" for="le">Email</label><input id="le" type="email" required autocomplete="username"><label class="f" for="lp">Contrasenya</label><input id="lp" type="password" required autocomplete="current-password">${err ? `<div class="err">${esc(err)}</div>` : ''}<button class="btn pri" type="submit">Entrar</button></form></div>`; }
   document.addEventListener('submit', async e => { if (e.target.id !== 'login') return; e.preventDefault(); const { error } = await sb.auth.signInWithPassword({ email: $('#le').value, password: $('#lp').value }); if (error) return vLogin('Email o contrasenya incorrectes.'); start(); });
   let started = false;
   async function start(){ if (started) return; started = true; await load(); render(); sb.channel('panell').on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, refresh).on('postgres_changes', { event: '*', schema: 'public', table: 'offer_claims' }, refresh).on('postgres_changes', { event: '*', schema: 'public', table: 'reward_requests' }, refresh).on('postgres_changes', { event: '*', schema: 'public', table: 'reservations' }, refresh).subscribe(); setInterval(refresh, 20000); }
@@ -995,7 +1036,7 @@ function startPanel(){
 function startQR(){
   const base = location.origin + location.pathname;
   $('#root').innerHTML = `<div class="pw"><div class="noprint"><h1 style="color:var(--acc);font-size:40px">QR per a les taules</h1><p class="small">Cada QR obre la carta amb el número de taula. Imprimeix-los i posa’ls a cada taula.</p><label class="f" for="qn">Taules (separades per comes)</label><input id="qn" value="1,2,3,4,5,6,7,8,9,Barra,Terrassa"><div class="row"><button class="sbtn" id="qgo">Generar QR</button><button class="sbtn ghost" id="qpr">Imprimir</button><a class="sbtn ghost" href="#panel" style="text-decoration:none;display:inline-flex;align-items:center">Tornar al panell</a></div></div><div class="qcards" id="qcards"></div></div>`;
-  const gen = () => { const box = $('#qcards'); box.innerHTML = ''; $('#qn').value.split(',').map(s => s.trim()).filter(Boolean).forEach(t => { const d = document.createElement('div'); d.className = 'qc'; d.innerHTML = `<h2>${esc(C.nom)}</h2><div class="q"></div><p><b>${esc(/^\d+$/.test(t) ? 'Taula ' + t : t)}</b></p><p class="serif" style="font-size:20px">Escaneja, demana i suma punts</p>`; box.append(d); if (window.QRCode) new QRCode(d.querySelector('.q'), { text: base + '?mesa=' + encodeURIComponent(t), width: 160, height: 160, colorDark: '#2a0a10', colorLight: '#F7F0E6' }); }); };
+  const gen = () => { const box = $('#qcards'); box.innerHTML = ''; $('#qn').value.split(',').map(s => s.trim()).filter(Boolean).forEach(t => { const d = document.createElement('div'); d.className = 'qc'; d.innerHTML = `<img src="/img/logo-ink.png" alt="${esc(C.nom)}" style="height:54px"><div class="q"></div><p><b>${esc(/^\d+$/.test(t) ? 'Taula ' + t : t)}</b></p><p class="serif" style="font-size:20px">Escaneja, demana i suma punts</p>`; box.append(d); if (window.QRCode) new QRCode(d.querySelector('.q'), { text: base + '?mesa=' + encodeURIComponent(t), width: 160, height: 160, colorDark: '#2a0a10', colorLight: '#F7F0E6' }); }); };
   $('#qgo').onclick = gen; $('#qpr').onclick = () => window.print(); gen();
 }
 
