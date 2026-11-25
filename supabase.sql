@@ -648,3 +648,9 @@ end $$;
 --  · offer_claims + claim_offer(secret, offer_id, taula) + my_offers(secret)
 --  · notices.push: en publicar un avís, un trigger crida la funció Edge send-push
 -- =====================================================================
+
+-- =====================================================================
+-- OPCIONS DELS PRODUCTES (migració jaleo_menu_options)
+-- menu_items.options = {"label","mixLabel","choices":[{"name":"Gin","mix":["Tònica","Sprite"]}, {"name":"Tequila"}]}
+-- place_order accepta per línia {id, qty, choice, mix} i valida que la mescla existeixi.
+-- =====================================================================

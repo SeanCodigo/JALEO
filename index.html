@@ -197,6 +197,18 @@ textarea{min-height:80px}
 .sbtn.ghost{background:#fff;color:var(--acc2);border:1px solid #e3cfc0}
 .sbtn:disabled{opacity:.45;cursor:not-allowed}
 .line{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid var(--line)}
+.optline{padding:0 12px 10px;font-size:12px;color:var(--muted);line-height:1.3}
+.pickbg{position:fixed;inset:0;background:rgba(26,4,8,.55);z-index:50;animation:fadeIn .2s ease}
+.pick{position:fixed;left:0;right:0;bottom:0;z-index:51;background:var(--bg);border-radius:26px 26px 0 0;padding:10px 18px calc(22px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto;max-height:86svh;overflow:auto;box-shadow:0 -14px 40px rgba(0,0,0,.25);animation:sheetUp .32s cubic-bezier(.2,.9,.25,1)}
+.pgrab{width:44px;height:5px;border-radius:5px;background:#e3cfc0;margin:0 auto 10px}
+.phead{display:flex;align-items:center;gap:12px}.phead img{width:72px;height:50px;object-fit:cover;border-radius:12px}.phead b{display:block;font-size:20px}.phead span{color:var(--acc);font-weight:700}
+.px{margin-left:auto;width:40px;height:40px;border-radius:50%;border:0;background:#f1e4d8;font-size:24px;line-height:1;cursor:pointer;color:var(--acc2)}
+.pick h3{margin:16px 0 10px;font-size:18px}.pstep{margin-top:10px}.pback{border:0;background:none;color:var(--acc);font-weight:700;font-size:15px;cursor:pointer;padding:6px 0}
+.pchips{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pchip{border:1.5px solid #e3cfc0;background:#fff;border-radius:16px;min-height:58px;padding:10px 12px;font:inherit;font-weight:700;font-size:16px;color:var(--ink);cursor:pointer;text-align:left;transition:transform .12s,border-color .12s,background .12s}
+.pchip small{display:block;font-weight:500;font-size:12px;color:var(--muted);margin-top:2px}.pchip:active{transform:scale(.97);border-color:var(--acc);background:#fbeceb}
+@keyframes sheetUp{from{transform:translateY(100%)}to{transform:none}}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+body.noscroll{overflow:hidden}
 .qbtn{width:42px;height:42px;border-radius:12px;border:1px solid #e3cfc0;background:#fff;color:var(--acc2);font-weight:700;font-size:18px;cursor:pointer}
 .stepsO{display:flex;gap:6px;margin:16px 0}
 .stepsO span{flex:1;text-align:center;font-size:13px;padding:10px 4px;border-radius:12px;background:#efe1d4;color:var(--muted);transition:all .4s}
@@ -330,7 +342,7 @@ async function pushOff(){
 const STAR = (s, c) => `<svg width="${s}" height="${s}" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 2l6 24 24 6-24 6-6 24-6-24-24-6 24-6z" fill="${c}"/></svg>`;
 let tt; const toast = t => { $('#fx').insertAdjacentHTML('beforeend', `<div class="toast" role="status"><div class="ic">J</div><div><b>${esc(C.nom)}</b><div style="font-size:14px">${esc(t)}</div></div></div>`); clearTimeout(tt); tt = setTimeout(() => document.querySelectorAll('.toast').forEach(x => x.remove()), 4500); };
 const confetti = () => { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; const cols = ['#A3202F', '#D0394A', '#C9A55A', '#F2D9B0', '#7A1424']; let h = '<div class="confetti">'; for (let i = 0; i < 70; i++) h += `<i style="left:${Math.random() * 100}%;background:${cols[i % 5]};animation-duration:${2 + Math.random() * 2.5}s;animation-delay:${Math.random() * .6}s;transform:rotate(${Math.random() * 360}deg)"></i>`; $('#fx').insertAdjacentHTML('beforeend', h + '</div>'); setTimeout(() => document.querySelectorAll('.confetti').forEach(x => x.remove()), 5500); };
-const ERR = { OFFER_CLOSED: 'Aquesta oferta encara no està oberta.', ALREADY_CLAIMED: 'Ja l’has demanada avui.', JCC_ONLY: 'Només per a membres de la comunitat JCC.', BAD_JCC: 'Aquest enllaç JCC ja no és vàlid. Agafa el nou a la comunitat de WhatsApp.', NO_CARD: 'Primer fes-te la targeta.', EMAIL_EXISTS: 'Aquest email ja té una targeta amb un altre nom. Escriu el nom tal com el vas posar el primer cop, o demana a la barra que te la recuperin.', BAD_EMAIL: 'Revisa l’email.', BAD_NAME: 'Escriu el teu nom.', ADULT_REQUIRED: 'Has de ser major de 18 anys.', TOO_MANY: 'Massa peticions seguides. Espera uns minuts.', NOT_ENOUGH: 'Encara no tens prou punts.', ALREADY_PENDING: 'Ja tens un premi demanat. Espera que te’l portin.', TABLE_TAKEN: 'Aquesta taula ja està reservada aquest dia.', BAD_DAY: 'Tria un dia d’avui als propers 60 dies.', BAD_ITEM: 'Algun producte ja no està disponible.', NO_CARD: 'No trobem la teva targeta.' };
+const ERR = { BAD_OPTION: 'Alguna beguda no té la mescla triada. Torna-la a afegir.', OFFER_CLOSED: 'Aquesta oferta encara no està oberta.', ALREADY_CLAIMED: 'Ja l’has demanada avui.', JCC_ONLY: 'Només per a membres de la comunitat JCC.', BAD_JCC: 'Aquest enllaç JCC ja no és vàlid. Agafa el nou a la comunitat de WhatsApp.', NO_CARD: 'Primer fes-te la targeta.', EMAIL_EXISTS: 'Aquest email ja té una targeta amb un altre nom. Escriu el nom tal com el vas posar el primer cop, o demana a la barra que te la recuperin.', BAD_EMAIL: 'Revisa l’email.', BAD_NAME: 'Escriu el teu nom.', ADULT_REQUIRED: 'Has de ser major de 18 anys.', TOO_MANY: 'Massa peticions seguides. Espera uns minuts.', NOT_ENOUGH: 'Encara no tens prou punts.', ALREADY_PENDING: 'Ja tens un premi demanat. Espera que te’l portin.', TABLE_TAKEN: 'Aquesta taula ja està reservada aquest dia.', BAD_DAY: 'Tria un dia d’avui als propers 60 dies.', BAD_ITEM: 'Algun producte ja no està disponible.', NO_CARD: 'No trobem la teva targeta.' };
 const errMsg = e => { const m = (e && (e.message || e.details)) || ''; const k = Object.keys(ERR).find(k => m.includes(k)); return k ? ERR[k] : 'Hi ha hagut un error. Torna-ho a provar.'; };
 
 function pic(kind, col){
@@ -384,13 +396,29 @@ function startApp(){
     if (!ok || !S.secret) { S.mo = null; return; }
     const { data } = await sb.rpc('my_offers', { p_secret: S.secret }); S.mo = data || null;
   }
-  const price = id => (S.menu.find(x => x.id == id) || {}).price || 0;
+  const kid = k => Number(String(k).split('~')[0]);
+  const kopt = k => String(k).split('~').slice(1).filter(Boolean);
+  const price = k => (S.menu.find(x => x.id == kid(k)) || {}).price || 0;
+  const hasOpts = i => !!(i && i.options && (i.options.choices || []).length);
+  const inCart = id => Object.entries(S.cart).reduce((a, [k, q]) => a + (kid(k) === Number(id) ? q : 0), 0);
   const cartN = () => Object.values(S.cart).reduce((a, b) => a + b, 0);
   const cartT = () => Object.entries(S.cart).reduce((a, [k, q]) => a + price(k) * q, 0);
   const go = s => { S.screen = s; S.err = ''; S.msg = ''; render(); window.scrollTo({ top: 0 }); };
   const head = r => `<div class="brand"><a href="#" data-a="go" data-v="web">${esc(C.nom)}</a><span>${r}</span></div>`;
   const msgs = () => (S.err ? `<div class="err" role="alert">${esc(S.err)}</div>` : '') + (S.msg ? `<div class="okmsg" role="status">${esc(S.msg)}</div>` : '');
-  const itemCard = i => `<div class="item">${i.image ? `<div class="ph"><img src="${esc(i.image)}" alt="${esc(i.name)}" loading="lazy"></div>` : pic(i.icon, i.color)}<div class="meta"><span>${esc(i.name)}</span><strong>${eur(i.price)}</strong></div>${mesa ? `<button class="add ${S.cart[i.id] ? 'on' : ''} ${S.bumped == i.id ? 'pop' : ''}" data-a="add" data-v="${i.id}" aria-label="Afegir ${esc(i.name)}">${S.cart[i.id] ? S.cart[i.id] + ' a la comanda · +' : '+ Afegir'}</button>` : ''}</div>`;
+  const itemCard = i => { const n = inCart(i.id), o = hasOpts(i);
+    const btn = mesa ? `<button class="add ${n ? 'on' : ''} ${S.bumped == i.id ? 'pop' : ''}" data-a="${o ? 'pick' : 'add'}" data-v="${i.id}" aria-label="${o ? 'Triar' : 'Afegir'} ${esc(i.name)}">${n ? n + ' a la comanda · +' : o ? '+ Triar' : '+ Afegir'}</button>` : o ? `<button class="add" data-a="pick" data-v="${i.id}">Veure opcions</button>` : '';
+    return `<div class="item">${i.image ? `<div class="ph"><img src="${esc(i.image)}" alt="${esc(i.name)}" loading="lazy"></div>` : pic(i.icon, i.color)}<div class="meta"><span>${esc(i.name)}</span><strong>${eur(i.price)}</strong></div>${o ? `<div class="optline">${esc(i.options.choices.map(c => c.name).join(' · '))}</div>` : ''}${btn}</div>`; };
+  function vPick(){
+    const i = S.menu.find(x => x.id == S.pick.id); if (!i) return '';
+    const O = i.options, ch = S.pick.choice && O.choices.find(c => c.name === S.pick.choice), step2 = ch && (ch.mix || []).length;
+    const chips = step2 ? ch.mix.map(m => `<button class="pchip" data-a="pmx" data-v="${esc(m)}">${esc(m)}</button>`).join('')
+      : O.choices.map(c => `<button class="pchip" data-a="pch" data-v="${esc(c.name)}">${esc(c.name)}${c.mix && c.mix.length ? `<small>amb ${esc(c.mix.join(' o '))}</small>` : ''}</button>`).join('');
+    return `<div class="pickbg" data-a="pickx"></div><div class="pick" role="dialog" aria-modal="true" aria-label="${esc(i.name)}">
+      <div class="pgrab"></div><div class="phead">${i.image ? `<img src="${esc(i.image)}" alt="">` : ''}<div><b>${esc(i.name)}</b><span>${eur(i.price)}</span></div><button class="px" data-a="pickx" aria-label="Tancar">×</button></div>
+      ${step2 ? `<div class="pstep"><button class="pback" data-a="pback">‹ ${esc(ch.name)}</button></div><h3>${esc(O.mixLabel || 'Amb què?')}</h3>` : `<h3>${esc(O.label || 'Tria')}</h3>`}
+      <div class="pchips">${chips}</div>${mesa ? '' : '<p class="small" style="margin:12px 0 0">Per demanar, escaneja el QR de la teva taula.</p>'}</div>`;
+  }
 
   // ---------- la web (portada) ----------
   function vWeb(){
@@ -455,7 +483,7 @@ function startApp(){
   function vCistella(){
     const t = cartT(), r = S.card ? S.card.rules : null;
     return head(`Taula ${esc(mesa || '?')}`) + `<h2 style="font-size:34px">La teva comanda</h2>` +
-      (cartN() ? Object.entries(S.cart).map(([k, q]) => { const it = S.menu.find(x => x.id == k); return `<div class="line"><span>${esc(it.name)}<br><span class="small">${eur(it.price)}</span></span><span style="display:flex;align-items:center;gap:8px"><button class="qbtn" data-a="dec" data-v="${k}" aria-label="Treure ${esc(it.name)}">−</button><b>${q}</b><button class="qbtn" data-a="add" data-v="${k}" aria-label="Afegir ${esc(it.name)}">+</button></span></div>`; }).join('') : '<p class="small">La comanda és buida.</p>') +
+      (cartN() ? Object.entries(S.cart).map(([k, q]) => { const it = S.menu.find(x => x.id == kid(k)); if (!it) return ''; const op = kopt(k); return `<div class="line"><span>${esc(it.name)}${op.length ? `<br><b class="small" style="color:var(--acc)">${esc(op.join(' + '))}</b>` : ''}<br><span class="small">${eur(it.price)}</span></span><span style="display:flex;align-items:center;gap:8px"><button class="qbtn" data-a="dec" data-v="${k}" aria-label="Treure ${esc(it.name)}">−</button><b>${q}</b><button class="qbtn" data-a="add" data-v="${k}" aria-label="Afegir ${esc(it.name)}">+</button></span></div>`; }).join('') : '<p class="small">La comanda és buida.</p>') +
       `<div class="line" style="border:0"><b>Total</b><b class="big" style="font-size:30px">${eur(t)}</b></div>` +
       (S.card ? `<div class="sheet">Amb aquesta comanda sumaràs <b>${Math.min(r.max_points_visit, Math.floor(t))} punts</b> quan la paguis.</div>` : `<div class="sheet">Fes-te la targeta abans d’enviar i sumaràs punts amb aquesta comanda.<button class="btn sec2" data-a="go" data-v="registre">Fer-me la targeta</button></div>`) +
       `<p class="small">Pagues a la barra o al cambrer, com sempre.</p>` + msgs();
@@ -557,7 +585,8 @@ function startApp(){
   function render(){
     if (['targeta', 'convida', 'reserva', 'premi', 'hola'].includes(S.screen) && !S.card) S.screen = 'registre';
     const V = { web: vWeb, carta: vCarta, cistella: vCistella, comanda: vComanda, registre: vRegistre, hola: vHola, targeta: vTargeta, premi: vPremi, convida: vConvida, reserva: vReserva, avisos: vAvisos, ofertes: vOfertes }[S.screen] || vWeb;
-    $('#root').innerHTML = S.screen === 'web' ? V() : `<div class="app"><div class="screen">${V()}</div></div>`;
+    $('#root').innerHTML = (S.screen === 'web' ? V() : `<div class="app"><div class="screen">${V()}</div></div>`) + (S.pick ? vPick() : '');
+    document.body.classList.toggle('noscroll', !!S.pick);
     const bottom = $('#bottom');
     if (S.screen === 'web') { bottom.hidden = !(mesa || S.card); $('#bottomIn').innerHTML = mesa ? `<button class="btn pri" data-a="go" data-v="carta">Demanar des de la taula ${esc(mesa)}</button>` : S.card ? tabbar() : ''; }
     else {
@@ -618,11 +647,22 @@ function startApp(){
     if (a === 'pushon') { S.busy = true; render(); try { await pushOn(S.secret); S.push = 'on'; S.msg = 'Fet! Et sortiran els avisos al mòbil.'; S.err = ''; } catch(err) { S.push = await pushState(); S.msg = ''; S.err = S.push === 'denied' ? 'Has bloquejat les notificacions. Activa-les a la configuració del mòbil.' : 'No s’han pogut activar les notificacions. Torna-ho a provar.'; } S.busy = false; render(); }
     if (a === 'pushoff') { e.preventDefault(); try { await pushOff(); } catch(_) {} S.push = await pushState(); S.msg = 'Notificacions desactivades.'; render(); }
     if (a === 'cat') { S.cat = v; const y = scrollY; render(); scrollTo(0, y); }
-    if (a === 'add') { S.cart[v] = (S.cart[v] || 0) + 1; S.bumped = v; const y = scrollY; render(); scrollTo(0, y); }
+    if (a === 'add') { S.cart[v] = (S.cart[v] || 0) + 1; S.bumped = kid(v); const y = scrollY; render(); scrollTo(0, y); }
+    if (a === 'pick') { S.pick = { id: Number(v), choice: null }; const y = scrollY; render(); scrollTo(0, y); }
+    if (a === 'pickx') { S.pick = null; const y = scrollY; render(); scrollTo(0, y); }
+    if (a === 'pback') { S.pick.choice = null; const y = scrollY; render(); scrollTo(0, y); }
+    if (a === 'pch' || a === 'pmx') {
+      const i = S.menu.find(x => x.id == S.pick.id), y = scrollY;
+      if (a === 'pch') { S.pick.choice = v; const c = i.options.choices.find(c => c.name === v); if (c && (c.mix || []).length) { render(); scrollTo(0, y); return; } }
+      if (!mesa) { S.pick = null; render(); scrollTo(0, y); return toast('Escaneja el QR de la teva taula per demanar.'); }
+      const key = [i.id, S.pick.choice, a === 'pmx' ? v : ''].join('~');
+      S.cart[key] = (S.cart[key] || 0) + 1; S.bumped = i.id;
+      toast(`Afegit: ${i.name} · ${S.pick.choice}${a === 'pmx' ? ' + ' + v : ''}`); S.pick = null; render(); scrollTo(0, y);
+    }
     if (a === 'dec') { S.cart[v]--; if (S.cart[v] <= 0) delete S.cart[v]; render(); }
     if (a === 'send') {
       S.busy = true; render();
-      const items = Object.entries(S.cart).map(([id, qty]) => ({ id: Number(id), qty }));
+      const items = Object.entries(S.cart).map(([k, qty]) => { const [choice, mix] = kopt(k).length ? String(k).split('~').slice(1) : []; return { id: kid(k), qty, ...(choice ? { choice } : {}), ...(mix ? { mix } : {}) }; });
       const { data, error } = await sb.rpc('place_order', { p_table: mesa, p_items: items, p_secret: S.secret || null });
       S.busy = false; if (error) { S.err = errMsg(error); render(); return; }
       S.cart = {}; S.lastOrder = { id: data, table: mesa }; store.set('jaleo_last_order', JSON.stringify(S.lastOrder)); S.order = null; go('comanda'); toast('Comanda enviada a la barra!'); pollOrder();
@@ -715,8 +755,8 @@ function startPanel(){
     <div class="box mini">${t ? `<b>${esc(t.name)}</b><label class="f" for="tn">Nom</label><input id="tn" data-k="name" value="${esc(t.name)}"><div class="f2"><div><label class="f" for="ts">Places</label><input id="ts" data-k="seats" type="number" min="0" max="40" value="${t.seats}"></div><div><label class="f" for="tsh">Forma</label><select id="tsh" data-k="shape">${[['round', 'Rodona'], ['rect', 'Rectangular'], ['sofa', 'Sofà'], ['bar', 'Barra / no reservable']].map(([v, l]) => `<option value="${v}" ${t.shape === v ? 'selected' : ''}>${l}</option>`).join('')}</select></div><div><label class="f" for="tw">Amplada %</label><input id="tw" data-k="w" type="number" min="3" max="60" value="${t.w}"></div><div><label class="f" for="th">Alçada %</label><input id="th" data-k="h" type="number" min="3" max="90" value="${t.h}"></div></div><label class="chk"><input type="checkbox" id="tbk" data-k="bookable" ${t.bookable ? 'checked' : ''}>Es pot reservar</label><div class="row"><button class="sbtn ghost" data-p="deltable">Esborrar taula</button></div>` : '<p class="small">Toca una taula per editar-la.</p>'}</div></div>`;
   }
   function vCarta(){
-    const row = (i, k) => `<tr>${k === 'menu_items' ? `<td><div style="display:flex;gap:8px;align-items:center">${i.image ? `<img class="thumb" src="${esc(i.image)}" alt="">` : '<span class="thumb"></span>'}<label class="sbtn ghost" style="display:inline-flex;align-items:center;cursor:pointer;white-space:nowrap">${S.uploading == i.id ? 'Pujant…' : 'Canviar foto'}<input type="file" accept="image/*" data-up="${i.id}" hidden></label></div></td>` : ''}<td><input data-t="${k}" data-id="${i.id}" data-k="${k === 'offers' ? 'title' : 'name'}" value="${esc(k === 'offers' ? i.title : i.name)}"></td>${k === 'menu_items' ? `<td><input data-t="${k}" data-id="${i.id}" data-k="category" value="${esc(i.category)}"></td><td><input data-t="${k}" data-id="${i.id}" data-k="price" type="number" step="0.1" min="0" value="${i.price}" style="max-width:100px"></td>` : k === 'rewards' ? `<td><input data-t="${k}" data-id="${i.id}" data-k="cost" type="number" min="1" value="${i.cost}" style="max-width:100px"></td>` : `<td><input data-t="${k}" data-id="${i.id}" data-k="body" value="${esc(i.body)}"></td>`}<td><label class="chk" style="margin:0"><input type="checkbox" data-t="${k}" data-id="${i.id}" data-k="active" ${i.active ? 'checked' : ''}>Visible</label></td></tr>`;
-    return `<p class="small">Els canvis es desen sols en sortir de cada camp. Per posar una foto real, toca «Canviar foto» i tria-la de la galeria (es redueix sola).</p><h3 style="margin:16px 0 8px;font-size:22px">Carta</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Foto</th><th>Producte</th><th>Categoria</th><th>Preu €</th><th>Visible</th></tr></thead><tbody>${S.menu.map(i => row(i, 'menu_items')).join('')}</tbody></table></div>
+    const row = (i, k) => `<tr>${k === 'menu_items' ? `<td><div style="display:flex;gap:8px;align-items:center">${i.image ? `<img class="thumb" src="${esc(i.image)}" alt="">` : '<span class="thumb"></span>'}<label class="sbtn ghost" style="display:inline-flex;align-items:center;cursor:pointer;white-space:nowrap">${S.uploading == i.id ? 'Pujant…' : 'Canviar foto'}<input type="file" accept="image/*" data-up="${i.id}" hidden></label></div></td>` : ''}<td><input data-t="${k}" data-id="${i.id}" data-k="${k === 'offers' ? 'title' : 'name'}" value="${esc(k === 'offers' ? i.title : i.name)}"></td>${k === 'menu_items' ? `<td><input data-t="${k}" data-id="${i.id}" data-k="category" value="${esc(i.category)}"></td><td><input data-t="${k}" data-id="${i.id}" data-k="price" type="number" step="0.1" min="0" value="${i.price}" style="max-width:100px"></td><td><textarea data-opt="${i.id}" rows="${Math.max(2, ((i.options && i.options.choices) || []).length)}" style="min-width:220px;font-size:13px" placeholder="Sense opcions">${esc(((i.options && i.options.choices) || []).map(c => c.name + (c.mix && c.mix.length ? ': ' + c.mix.join(', ') : '')).join('\n'))}</textarea></td>` : k === 'rewards' ? `<td><input data-t="${k}" data-id="${i.id}" data-k="cost" type="number" min="1" value="${i.cost}" style="max-width:100px"></td>` : `<td><input data-t="${k}" data-id="${i.id}" data-k="body" value="${esc(i.body)}"></td>`}<td><label class="chk" style="margin:0"><input type="checkbox" data-t="${k}" data-id="${i.id}" data-k="active" ${i.active ? 'checked' : ''}>Visible</label></td></tr>`;
+    return `<p class="small">Els canvis es desen sols en sortir de cada camp. Per posar una foto real, toca «Canviar foto» i tria-la de la galeria (es redueix sola).</p><h3 style="margin:16px 0 8px;font-size:22px">Carta</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Foto</th><th>Producte</th><th>Categoria</th><th>Preu €</th><th>Opcions</th><th>Visible</th></tr></thead><tbody>${S.menu.map(i => row(i, 'menu_items')).join('')}</tbody></table></div><p class="small"><b>Opcions:</b> una línia per opció. Per als combinats posa l’alcohol, dos punts i els refrescos separats per comes (ex: <i>Gin: Tònica, Sprite</i>). Per als xupitos o refrescos, només el nom (ex: <i>Tequila de mango</i>). Buit = sense opcions.</p>
     <div class="row mini"><input id="nn" placeholder="Nou producte" style="max-width:200px"><input id="nc" placeholder="Categoria" style="max-width:160px"><input id="np" type="number" step="0.1" placeholder="Preu" style="max-width:100px"><select id="ni" style="max-width:150px">${['glass', 'cocktail', 'beer', 'bucket', 'shot', 'hookah', 'soda', 'food'].map(x => `<option>${x}</option>`).join('')}</select><button class="sbtn" data-p="additem">Afegir</button></div>
     <h3 style="margin:22px 0 8px;font-size:22px">Recompenses</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Premi</th><th>Punts</th><th>Visible</th></tr></thead><tbody>${S.rewards.map(i => row(i, 'rewards')).join('')}</tbody></table></div><div class="row mini"><input id="rwn" placeholder="Nou premi" style="max-width:240px"><input id="rwc" type="number" min="1" placeholder="Punts" style="max-width:110px"><button class="sbtn" data-p="addrw">Afegir</button></div>
     <h3 style="margin:22px 0 8px;font-size:22px">Ofertes de membres</h3><p class="small">Dies: marca quan s’obre cada oferta. «Es demana» = el client la pot demanar des del mòbil i et surt a Premis. «Només JCC» = només per a la comunitat.</p>
@@ -799,6 +839,13 @@ function startPanel(){
         S.uploading = null; await load(); flash('Foto actualitzada');
       } catch (err) { S.uploading = null; flash('No s’ha pogut pujar la foto: ' + (err.message || err)); }
       return;
+    }
+    if (el.dataset.opt) {
+      const id = el.dataset.opt, it = S.menu.find(x => x.id == id) || {}, lines = el.value.split('\n').map(l => l.trim()).filter(Boolean);
+      const choices = lines.map(l => { const [n, m] = l.split(':'); const mix = (m || '').split(',').map(x => x.trim()).filter(Boolean); return mix.length ? { name: n.trim(), mix } : { name: n.trim() }; }).filter(c => c.name);
+      const anyMix = choices.some(c => c.mix), old = it.options || {};
+      const options = choices.length ? { label: old.label || (anyMix ? 'Tria l’alcohol' : 'Tria’n un'), ...(anyMix ? { mixLabel: old.mixLabel || 'Amb què el vols?' } : {}), choices } : null;
+      const { error } = await sb.from('menu_items').update({ options }).eq('id', id); flash(error ? 'Error: ' + error.message : 'Opcions desades'); await load(); return;
     }
     if (el.dataset.ofday) { const id = el.dataset.ofday, days = [...document.querySelectorAll(`[data-ofday="${id}"]:checked`)].map(x => Number(x.value)).sort(); const { error } = await sb.from('offers').update({ days }).eq('id', id); flash(error ? 'Error: ' + error.message : 'Desat'); await load(); return; }
     if (el.dataset.t) { const val = el.type === 'checkbox' ? el.checked : el.type === 'number' ? Number(el.value) : el.value; const { error } = await sb.from(el.dataset.t).update({ [el.dataset.k]: val }).eq('id', el.dataset.id); flash(error ? 'Error: ' + error.message : 'Desat'); await load(); return; }
