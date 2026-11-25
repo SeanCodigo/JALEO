@@ -659,3 +659,8 @@ end $$;
 -- FITXA DEL CLIENT DES DEL PANELL (migració jaleo_staff_profile_scan)
 -- staff_profile(codi) i adjust_points(codi, ±punts, motiu): només personal.
 -- =====================================================================
+
+-- =====================================================================
+-- GOOGLE WALLET (migració jaleo_google_wallet_v2)
+-- customers.gwallet + trigger customers_gwallet: quan canvien punts/JCC/nom crida la funció Edge google-wallet (sync).
+-- =====================================================================

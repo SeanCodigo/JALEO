@@ -222,6 +222,7 @@ body.noscroll{overflow:hidden}
 .pmbox{background:#fff;border-radius:16px;padding:12px 14px;margin-top:10px}.pmbox .row{margin-top:8px}
 .pmlog{margin-top:6px}.pmlog>div{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--line);font-size:14px}
 .scanbtn{background:var(--acc);color:#fff}
+.walletb{display:flex;align-items:center;justify-content:center;gap:10px;background:#1f1f1f;color:#fff;margin-top:10px}.walletb.ios{background:#fff;color:var(--acc2);border:1.5px solid var(--line)}
 .qbtn{width:42px;height:42px;border-radius:12px;border:1px solid #e3cfc0;background:#fff;color:var(--acc2);font-weight:700;font-size:18px;cursor:pointer}
 .stepsO{display:flex;gap:6px;margin:16px 0}
 .stepsO span{flex:1;text-align:center;font-size:13px;padding:10px 4px;border-radius:12px;background:#efe1d4;color:var(--muted);transition:all .4s}
@@ -562,6 +563,7 @@ function startApp(){
     const c = S.card, nx = S.rewards.find(r => r.cost > c.points), pct = nx ? Math.min(100, c.points / nx.cost * 100) : 100, pend = c.requests.find(q => q.status === 'pendent');
     return head('Club') + `<div class="mcard"><div class="row"><div><div style="font-size:13px;color:#fde9e4">Membre</div><div style="font-family:Anton,sans-serif;font-size:28px">${esc(c.name)}</div></div><div style="text-align:right"><div class="big">${c.points}</div><div style="font-size:13px;color:#fde9e4">punts</div></div></div><div class="qrbox" id="qr" aria-label="Codi QR de la targeta ${esc(c.code)}"></div><div style="text-align:center;font-size:14px;position:relative">${esc(c.code)} · ensenya-ho a la barra quan paguis</div>${c.jcc ? '<div style="text-align:center;margin-top:6px;position:relative"><span class="otag" style="position:static">⭐ JCC · x2 els dijous</span></div>' : ''}</div>
     <button class="btn pri" style="margin-top:12px" data-a="go" data-v="ofertes">🎁 Ofertes per a membres${S.mo && S.mo.open && S.mo.open.length ? ` · ${S.mo.open.length} ${S.mo.open.length === 1 ? 'oberta' : 'obertes'} ara` : ''}</button>
+    ${isIOS ? `<button class="btn walletb ios" data-a="saveqr">📲 Desar el meu QR al mòbil</button>` : `<button class="btn walletb" data-a="gwallet" ${S.busy ? 'disabled' : ''}><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3" fill="#4285F4"/><rect x="2" y="8" width="20" height="11" rx="3" fill="#34A853"/><rect x="2" y="11" width="20" height="8" rx="3" fill="#FBBC04"/><rect x="2" y="14" width="20" height="5" rx="2.5" fill="#EA4335"/></svg>Afegir a Google Wallet</button>`}
     <div class="sec">${nx ? `Et falten ${nx.cost - c.points} punts` : 'Pots demanar qualsevol premi!'}</div>${nx ? `<div class="bar"><i style="width:${pct}%"></i></div><p class="small" style="margin:0">Següent premi: <b style="color:var(--ink)">${esc(nx.name)}</b></p>` : ''}
     <div class="sec">Recompenses</div>${S.rewards.map(r => `<div class="rw"><span>${esc(r.name)}<br><span class="small">${r.cost} punts</span></span>${pend && pend.reward_id === r.id ? '<span class="chip c-wait">Demanat · t’ho portem</span>' : c.points >= r.cost ? `<button class="sbtn" data-a="req" data-v="${r.id}" ${pend ? 'disabled' : ''}>Demanar</button>` : `<b class="small">Et falten ${r.cost - c.points}</b>`}</div>`).join('')}
     ${msgs()}${S.push === 'off' || S.push === 'ios' ? `<button class="btn sec2" data-a="go" data-v="avisos">🔔 Rebre els avisos al mòbil</button>` : ''}<button class="btn sec2" data-a="go" data-v="convida">Convidar amics i guanyar punts</button>`;
@@ -656,6 +658,34 @@ function startApp(){
       const { error } = await sb.rpc('claim_offer', { p_secret: S.secret, p_offer_id: Number(v), p_table: tab });
       S.busy = false; if (error) { S.err = errMsg(error); S.msg = ''; } else { S.err = ''; S.msg = 'Fet! La barra ja ho té. ' + (tab ? 'T’ho portem a la taula ' + tab + '.' : 'Digues el teu nom a la barra.'); confetti(); }
       await loadMO(); const y = scrollY; render(); scrollTo(0, y);
+    }
+    if (a === 'gwallet') {
+      S.busy = true; render();
+      try {
+        const r = await fetch(C.supabaseUrl + '/functions/v1/google-wallet', { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: C.supabaseAnonKey, Authorization: 'Bearer ' + C.supabaseAnonKey }, body: JSON.stringify({ action: 'save', secret: S.secret }) });
+        const j = await r.json().catch(() => ({}));
+        S.busy = false;
+        if (j.url) { location.href = j.url; return; }
+        toast(j.error === 'NOT_CONFIGURED' ? 'Google Wallet aviat estarà disponible.' : 'No s’ha pogut obrir Google Wallet. Torna-ho a provar.');
+      } catch(_) { S.busy = false; toast('Sense connexió. Torna-ho a provar.'); }
+      render();
+    }
+    if (a === 'saveqr') {
+      const src = $('#qr canvas') || $('#qr img'); if (!src) return toast('Espera un segon que es carregui el QR.');
+      const W = 1080, H = 1350, cv = document.createElement('canvas'), x = cv.getContext('2d'); cv.width = W; cv.height = H;
+      const g = x.createLinearGradient(0, 0, W, H); g.addColorStop(0, '#D0394A'); g.addColorStop(1, '#7A1424'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+      x.fillStyle = '#F7F0E6'; x.textAlign = 'center'; x.font = '700 120px Anton, Impact, sans-serif'; x.fillText(C.nom, W / 2, 200);
+      x.font = 'italic 56px Georgia, serif'; x.fillStyle = '#FFE3A6'; x.fillText('Club', W / 2, 275);
+      x.fillStyle = '#F7F0E6'; const q = 640, qx = (W - q) / 2, qy = 340; x.beginPath(); x.roundRect ? x.roundRect(qx - 40, qy - 40, q + 80, q + 80, 40) : x.rect(qx - 40, qy - 40, q + 80, q + 80); x.fill();
+      x.imageSmoothingEnabled = false; x.drawImage(src, qx, qy, q, q);
+      x.fillStyle = '#fff'; x.font = '700 64px system-ui, sans-serif'; x.fillText(S.card.name, W / 2, 1150);
+      x.font = '500 42px system-ui, sans-serif'; x.fillStyle = '#fde9e4'; x.fillText(S.card.code + ' · ensenya-ho a la barra', W / 2, 1220);
+      cv.toBlob(async b => {
+        const f = new File([b], 'JALEO-targeta-' + S.card.code + '.png', { type: 'image/png' });
+        try { if (navigator.canShare && navigator.canShare({ files: [f] })) { await navigator.share({ files: [f], title: C.nom + ' Club' }); return; } } catch(_) { return; }
+        const u = URL.createObjectURL(b), l = document.createElement('a'); l.href = u; l.download = f.name; document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000);
+        toast('Imatge desada. Guarda-la a Fotos per tenir-la sempre a mà.');
+      }, 'image/png');
     }
     if (a === 'pushon') { S.busy = true; render(); try { await pushOn(S.secret); S.push = 'on'; S.msg = 'Fet! Et sortiran els avisos al mòbil.'; S.err = ''; } catch(err) { S.push = await pushState(); S.msg = ''; S.err = S.push === 'denied' ? 'Has bloquejat les notificacions. Activa-les a la configuració del mòbil.' : 'No s’han pogut activar les notificacions. Torna-ho a provar.'; } S.busy = false; render(); }
     if (a === 'pushoff') { e.preventDefault(); try { await pushOff(); } catch(_) {} S.push = await pushState(); S.msg = 'Notificacions desactivades.'; render(); }
