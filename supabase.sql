@@ -664,3 +664,10 @@ end $$;
 -- GOOGLE WALLET (migració jaleo_google_wallet_v2)
 -- customers.gwallet + trigger customers_gwallet: quan canvien punts/JCC/nom crida la funció Edge google-wallet (sync).
 -- =====================================================================
+
+-- =====================================================================
+-- AVISOS AUTOMÀTICS PERSONALITZATS (migracions jaleo_auto_push i jaleo_auto_push_schedule)
+-- auto_push_rules (textos editables al panell) · push_log (1 per persona i dia)
+-- auto_push_batch() prepara la tanda a les 19 h de Reus · funció Edge auto-push l'envia
+-- pg_cron 'jaleo-auto-push' cada dia a les 17:02 i 18:02 UTC (només actua quan a Reus són les 19 h)
+-- =====================================================================
