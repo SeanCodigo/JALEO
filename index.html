@@ -25,6 +25,10 @@ window.JALEO = {
   instagram: "jaleoreus",   // sense @
   whatsapp: "https://chat.whatsapp.com/KkpSgTEjIj0FrZcAy5UCFQ", // comunitat JCC
   resenyes: "https://search.google.com/local/writereview?placeid=ChIJSdaZfABRoRIRM03yxEB0p1c", // fitxa de Google «JALEO REUS»
+  // ⚠️ Dades legals per a la política de privacitat: omple-les
+  titular: "[Nom o raó social]",
+  nif: "[NIF / CIF]",
+  emailContacte: "[email de contacte]",
   telefon: "616 562 597",
   mapa: "https://maps.google.com/?q=Pla%C3%A7a+Catalunya+6+Reus",
   nits: [
@@ -391,7 +395,7 @@ function startApp(){
   if (params.get('jcc')) store.set('jaleo_jcc', params.get('jcc').slice(0, 20));
   if ([...params.keys()].length) history.replaceState(null, '', location.pathname + location.hash);
   let mesa = null; try { mesa = sessionStorage.getItem('jaleo_mesa'); } catch(_) {}
-  const S = { push: null, mo: null, screen: params.get('v') === 'avisos' ? 'avisos' : params.get('v') === 'ofertes' ? 'ofertes' : !store.get('jaleo_secret') ? 'registre' : mesa ? 'carta' : 'web', menu: [], rewards: [], offers: [], notices: [], tables: [], card: null, secret: store.get('jaleo_secret'), cart: {}, msg: '', err: '', taken: [], resDay: null, resTable: null, resForm: { h: '22:00', p: 4, n: '' }, busy: false, cat: null,
+  const S = { push: null, mo: null, screen: params.get('v') === 'avisos' ? 'avisos' : params.get('v') === 'ofertes' ? 'ofertes' : params.get('v') === 'privacitat' ? 'privacitat' : !store.get('jaleo_secret') ? 'registre' : mesa ? 'carta' : 'web', menu: [], rewards: [], offers: [], notices: [], tables: [], card: null, secret: store.get('jaleo_secret'), cart: {}, msg: '', err: '', taken: [], resDay: null, resTable: null, resForm: { h: '22:00', p: 4, n: '' }, busy: false, cat: null,
     lastOrder: JSON.parse(store.get('jaleo_last_order') || 'null'), order: null, bumped: null };
 
   async function loadPublic(){
@@ -486,7 +490,7 @@ function startApp(){
         <div class="btns" style="opacity:1;animation:none"><a class="b dark" href="#" data-a="go" data-v="reserva">Reserva taula al plànol</a><a class="b cream" style="border:1px solid #e3cfc0" href="${esc(C.mapa)}" target="_blank" rel="noopener">Com arribar</a></div></div>
       <div class="vbox reveal"><img src="/img/logo-ink.png" alt="${esc(C.nom)}" style="height:44px;margin-bottom:6px"><p>${esc(C.adreca)}</p>${C.nits.map(n => `<p><b>${esc(n.dia)}</b> · ${esc(n.nom)} · des de les ${esc(n.hora)}</p>`).join('')}<p>Instagram: <a href="https://instagram.com/${esc(C.instagram)}" target="_blank" rel="noopener">@${esc(C.instagram)}</a></p><p><a href="${esc(C.resenyes)}" target="_blank" rel="noopener">★ Deixa’ns una ressenya a Google</a></p><p>Telèfon i WhatsApp: ${esc(C.telefon)}</p><p class="small">Només majors de 18 anys. Consum responsable.</p></div>
     </div></section>
-    <footer><img src="/img/logo-light.png" alt="${esc(C.nom)}" style="height:46px"><p class="serif" style="font-size:22px;margin:4px 0 0">Aquí comença la nit.</p></footer>`;
+    <footer><img src="/img/logo-light.png" alt="${esc(C.nom)}" style="height:46px"><p class="serif" style="font-size:22px;margin:4px 0 0">Aquí comença la nit.</p><p style="margin:10px 0 0;font-size:13px"><a href="#" data-a="go" data-v="privacitat" style="color:inherit">Política de privacitat</a></p></footer>`;
   }
 
   // ---------- pantalles de l'app ----------
@@ -532,8 +536,8 @@ function startApp(){
     ${store.get('jaleo_jcc') ? `<div class="sheet">⭐ <b>Vens de la comunitat JCC.</b> Fes-te la targeta i quedarà marcada: els dijous sumes punts x2.</div>` : ''}
     ${ref ? `<div class="sheet">T’ha convidat un amic: quan gastis els primers euros us endureu punts tots dos.</div>` : ''}
     <form id="reg"><label class="f" for="rn">Nom</label><input id="rn" required maxlength="60" autocomplete="given-name" value="${esc(store.get('jaleo_name') || '')}"><label class="f" for="re">Email</label><input id="re" type="email" required maxlength="120" autocomplete="email" value="${esc(store.get('jaleo_email') || '')}">
-    <label class="chk"><input type="checkbox" id="r18" required>Confirmo que soc major de 18 anys.</label><label class="chk"><input type="checkbox" id="rmk">Vull rebre ofertes i avisos de ${esc(C.nom)}. Me’n puc donar de baixa quan vulgui.</label>
-    <p class="small">Fem servir el teu nom i email només per al programa de punts i, si ho acceptes, per enviar-te ofertes. Pots demanar que els esborrem a la barra o per Instagram @${esc(C.instagram)}.</p>${msgs()}
+    <label class="chk"><input type="checkbox" id="r18" required>Confirmo que soc major de 18 anys.</label><label class="chk"><input type="checkbox" id="rpv" required>He llegit i accepto la <a href="/?v=privacitat" target="_blank" rel="noopener">política de privacitat</a>.</label><label class="chk"><input type="checkbox" id="rmk">Vull rebre ofertes i avisos de ${esc(C.nom)}. Me’n puc donar de baixa quan vulgui.</label>
+    <p class="small">Fem servir el teu nom i email només per al programa de punts i, si ho acceptes, per enviar-te ofertes. Pots esborrar-los quan vulguis des de la teva targeta. <a href="/?v=privacitat" target="_blank" rel="noopener">Política de privacitat</a>.</p>${msgs()}
     <button class="btn pri" type="submit" ${S.busy || !ok ? 'disabled' : ''}>Crear la meva targeta</button></form>
     ${liveOffers().length ? `<div class="sec">El que desbloqueges</div>${liveOffers().slice(0, 4).map(offerCard).join('')}<button class="btn sec2" data-a="go" data-v="ofertes">Veure totes les ofertes (${liveOffers().length})</button>` : ''}
     <p style="text-align:center;margin:14px 0 4px"><a href="#" class="small" data-a="go" data-v="${mesa ? 'carta' : 'web'}">Ara no, només vull mirar</a></p>`;
@@ -574,12 +578,31 @@ function startApp(){
     ${S.card && !mesa ? `<label class="f" for="ctab">Número de taula (per portar-t’ho)</label><input id="ctab" inputmode="numeric" maxlength="10" placeholder="Ex: 7" value="${esc(S.ctab || '')}">` : ''}
     ${msgs()}${L.map(offerCard).join('') || '<p class="small">Aviat hi haurà ofertes noves.</p>'}<p class="small">Les ofertes s’obren a l’hora indicada els dies marcats. Una vegada per oferta i nit.</p>`;
   }
+
+  function vPrivacitat(){
+    const T = (h, b) => `<h3 style="margin:22px 0 6px;font-size:19px">${h}</h3>${b}`;
+    return head('Privacitat') + `<h2 style="font-size:34px">Política de privacidad</h2><p class="small">Última actualización: 26 de noviembre de 2026</p>
+    ${T('1. Quién es el responsable', `<p><b>${esc(C.titular)}</b> · ${esc(C.nif)}<br>${esc(C.nom)} · ${esc(C.adreca)}<br>Contacto: ${esc(C.emailContacte)} · Instagram @${esc(C.instagram)}</p>`)}
+    ${T('2. Qué datos tratamos', `<ul><li>Nombre y email que pones al hacerte la tarjeta.</li><li>Tu código de tarjeta, puntos y movimientos, premios y ofertas que pides.</li><li>Los pedidos que haces desde la app (mesa, productos e importe) y tus reservas.</li><li>Si eres miembro de la comunidad JCC.</li><li>Si activas las notificaciones, un identificador técnico de tu navegador para poder enviártelas.</li><li>La confirmación de que eres mayor de 18 años.</li></ul><p>No recogemos tu ubicación ni datos de pago.</p>`)}
+    ${T('3. Para qué y con qué base legal', `<ul><li><b>Gestionar tu tarjeta de puntos, pedidos, reservas y ofertas</b>: es necesario para darte el servicio que pides (art. 6.1.b RGPD).</li><li><b>Enviarte ofertas por email y notificaciones</b>: solo si lo aceptas (art. 6.1.a RGPD). Puedes retirar el consentimiento cuando quieras.</li><li><b>Estadísticas internas del local</b>, siempre agregadas, y evitar usos fraudulentos de los puntos: interés legítimo (art. 6.1.f RGPD).</li></ul>`)}
+    ${T('4. Cuánto tiempo los guardamos', '<p>Mientras mantengas la tarjeta o hasta que nos pidas borrarla. Si la borras, eliminamos tus datos personales; las ventas quedan solo de forma anónima para las cuentas del local.</p>')}
+    ${T('5. Con quién los compartimos', '<p>No vendemos ni cedemos tus datos. Para que la app funcione usamos proveedores que los tratan por cuenta nuestra: <b>Supabase</b> (base de datos, servidores en la Unión Europea), <b>Vercel</b> (alojamiento de la web) y los servicios de notificaciones de Apple, Google o Mozilla (solo reciben el identificador técnico y el texto del aviso). Si añades la tarjeta a Google Wallet, Google trata esos datos según su propia política. Algunos de estos proveedores son de EE. UU. y aplican las garantías previstas por el RGPD para las transferencias internacionales.</p>')}
+    ${T('6. Tus derechos', `<p>Puedes acceder, rectificar, suprimir, oponerte, limitar el tratamiento y pedir la portabilidad de tus datos escribiendo a ${esc(C.emailContacte)} o pidiéndolo en la barra. Puedes <b>borrar tu tarjeta y todos tus datos tú mismo</b> desde la app, en «Targeta». Si crees que no hemos tratado bien tus datos, puedes reclamar ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es" target="_blank" rel="noopener">aepd.es</a>).</p>`)}
+    ${T('7. Menores', '<p>La tarjeta es solo para mayores de 18 años.</p>')}
+    ${T('8. Lo que se guarda en tu móvil', '<p>La app guarda en tu navegador tu identificador de tarjeta, nombre y email para que no tengas que volver a entrar. No usamos cookies de publicidad ni de analítica. Las tipografías y algunas librerías se cargan desde Google Fonts, jsDelivr y cdnjs, que reciben la dirección IP técnica de la conexión.</p>')}
+    ${S.card ? '<button class="btn sec2" data-a="go" data-v="esborrar" style="margin-top:18px">Borrar mi tarjeta y mis datos</button>' : ''}`;
+  }
+  function vEsborrar(){
+    if (!S.card) return head('Esborrar') + '<p>No tens cap targeta en aquest mòbil.</p>';
+    return head('Esborrar') + `<h2 style="font-size:34px">Esborrar la teva targeta</h2><div class="err" style="margin:10px 0">S’esborraran la targeta <b>${esc(S.card.code)}</b>, els teus <b>${S.card.points} punts</b>, les reserves i totes les teves dades. No es pot desfer.</div>${msgs()}<button class="btn pri" data-a="delcard" ${S.busy ? 'disabled' : ''}>Sí, esborra-ho tot</button><button class="btn sec2" data-a="go" data-v="targeta">No, torna</button>`;
+  }
   function vTargeta(){
     const c = S.card, nx = S.rewards.find(r => r.cost > c.points), pct = nx ? Math.min(100, c.points / nx.cost * 100) : 100, pend = c.requests.find(q => q.status === 'pendent');
     return head('Club') + `<div class="mcard"><div class="row"><div><div style="font-size:13px;color:#fde9e4">Membre</div><div style="font-family:Anton,sans-serif;font-size:28px">${esc(c.name)}</div></div><div style="text-align:right"><div class="big">${c.points}</div><div style="font-size:13px;color:#fde9e4">punts</div></div></div><div class="qrbox" id="qr" aria-label="Codi QR de la targeta ${esc(c.code)}"></div><div style="text-align:center;font-size:14px;position:relative">${esc(c.code)} · ensenya-ho a la barra quan paguis</div>${c.jcc ? '<div style="text-align:center;margin-top:6px;position:relative"><span class="otag" style="position:static">⭐ JCC · x2 els dijous</span></div>' : ''}</div>
     <button class="btn pri" style="margin-top:12px" data-a="go" data-v="ofertes">🎁 Ofertes per a membres${S.mo && S.mo.open && S.mo.open.length ? ` · ${S.mo.open.length} ${S.mo.open.length === 1 ? 'oberta' : 'obertes'} ara` : ''}</button>
     ${isIOS ? `<button class="btn walletb ios" data-a="saveqr">📲 Desar el meu QR al mòbil</button>` : `<button class="btn walletb" data-a="gwallet" ${S.busy ? 'disabled' : ''}><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="3" fill="#4285F4"/><rect x="2" y="8" width="20" height="11" rx="3" fill="#34A853"/><rect x="2" y="11" width="20" height="8" rx="3" fill="#FBBC04"/><rect x="2" y="14" width="20" height="5" rx="2.5" fill="#EA4335"/></svg>Afegir a Google Wallet</button>`}
     <a class="btn reviewb" href="${esc(C.resenyes)}" target="_blank" rel="noopener"><span class="stars">★★★★★</span>T’ha agradat? Deixa’ns una ressenya a Google</a>
+    <p style="text-align:center;margin:18px 0 0"><a href="#" class="small" data-a="go" data-v="privacitat">Privacitat</a> · <a href="#" class="small" data-a="go" data-v="esborrar">Esborrar la meva targeta</a></p>
     <div class="sec">${nx ? `Et falten ${nx.cost - c.points} punts` : 'Pots demanar qualsevol premi!'}</div>${nx ? `<div class="bar"><i style="width:${pct}%"></i></div><p class="small" style="margin:0">Següent premi: <b style="color:var(--ink)">${esc(nx.name)}</b></p>` : ''}
     <div class="sec">Recompenses</div>${S.rewards.map(r => `<div class="rw"><span>${esc(r.name)}<br><span class="small">${r.cost} punts</span></span>${pend && pend.reward_id === r.id ? '<span class="chip c-wait">Demanat · t’ho portem</span>' : c.points >= r.cost ? `<button class="sbtn" data-a="req" data-v="${r.id}" ${pend ? 'disabled' : ''}>Demanar</button>` : `<b class="small">Et falten ${r.cost - c.points}</b>`}</div>`).join('')}
     ${msgs()}${S.push === 'off' || S.push === 'ios' ? `<button class="btn sec2" data-a="go" data-v="avisos">🔔 Rebre els avisos al mòbil</button>` : ''}<button class="btn sec2" data-a="go" data-v="convida">Convidar amics i guanyar punts</button>`;
@@ -615,7 +638,7 @@ function startApp(){
   let io;
   function render(){
     if (['targeta', 'convida', 'reserva', 'premi', 'hola'].includes(S.screen) && !S.card) S.screen = 'registre';
-    const V = { web: vWeb, carta: vCarta, cistella: vCistella, comanda: vComanda, registre: vRegistre, hola: vHola, targeta: vTargeta, premi: vPremi, convida: vConvida, reserva: vReserva, avisos: vAvisos, ofertes: vOfertes }[S.screen] || vWeb;
+    const V = { web: vWeb, carta: vCarta, cistella: vCistella, comanda: vComanda, registre: vRegistre, hola: vHola, targeta: vTargeta, premi: vPremi, convida: vConvida, reserva: vReserva, avisos: vAvisos, ofertes: vOfertes, privacitat: vPrivacitat, esborrar: vEsborrar }[S.screen] || vWeb;
     $('#root').innerHTML = (S.screen === 'web' ? V() : `<div class="app"><div class="screen">${V()}</div></div>`) + (S.pick ? vPick() : '');
     document.body.classList.toggle('noscroll', !!S.pick);
     const bottom = $('#bottom');
@@ -674,6 +697,15 @@ function startApp(){
       const { error } = await sb.rpc('claim_offer', { p_secret: S.secret, p_offer_id: Number(v), p_table: tab });
       S.busy = false; if (error) { S.err = errMsg(error); S.msg = ''; } else { S.err = ''; S.msg = 'Fet! La barra ja ho té. ' + (tab ? 'T’ho portem a la taula ' + tab + '.' : 'Digues el teu nom a la barra.'); confetti(); }
       await loadMO(); const y = scrollY; render(); scrollTo(0, y);
+    }
+    if (a === 'delcard') {
+      S.busy = true; render();
+      const { error } = await sb.rpc('delete_my_card', { p_secret: S.secret }); S.busy = false;
+      if (error) { S.err = errMsg(error); return render(); }
+      ['jaleo_secret', 'jaleo_name', 'jaleo_email', 'jaleo_ref', 'jaleo_jcc'].forEach(k => store.set(k, null));
+      try { await pushOff(); } catch(_) {}
+      S.secret = null; S.card = null; S.mo = null; S.cart = {}; go('web'); toast('Hem esborrat la teva targeta i les teves dades.');
+      return;
     }
     if (a === 'gwallet') {
       S.busy = true; render();
@@ -904,7 +936,7 @@ function startPanel(){
         <form class="pmbox" data-f="ajust"><b>Punts a mà</b><span class="small"> · regal, correcció o premi</span><div class="row mini">${[5, 10, 20].map(n => `<button type="button" class="sbtn ghost" data-m="quick" data-v="${n}">+${n}</button>`).join('')}<button type="button" class="sbtn ghost" data-m="quick" data-v="-10">−10</button></div><div class="row mini"><input name="d" type="number" step="1" placeholder="+/− punts" style="max-width:120px" required><input name="r" maxlength="60" placeholder="Motiu (opcional)" style="max-width:220px"><button class="sbtn" ${busy ? 'disabled' : ''}>Aplicar</button></div></form>
         <div class="pmbox"><b>Moviments</b>${(p.log || []).length ? `<div class="pmlog">${p.log.map(l => `<div><span>${esc(l.reason || '')}</span><span class="small">${dd(l.at)}</span><b style="color:${l.delta < 0 ? '#9a1c2a' : '#1f6b3a'}">${l.delta > 0 ? '+' : ''}${l.delta}</b></div>`).join('')}</div>` : '<p class="small">Encara cap moviment.</p>'}
         ${(p.rewards || []).length ? `<div class="small" style="margin-top:8px">Premis: ${p.rewards.map(r => esc(r.name) + ' (' + esc(r.status) + ')').join(' · ')}</div>` : ''}</div>
-        <div class="row"><button class="sbtn" data-m="scan">📷 Escanejar un altre</button><button class="sbtn ghost" data-m="close">Tancar</button></div>`);
+        <div class="row"><button class="sbtn" data-m="scan">📷 Escanejar un altre</button><button class="sbtn ghost" data-m="close">Tancar</button><button class="sbtn ghost" data-m="del" style="margin-left:auto;color:#9a1c2a">Esborrar client (RGPD)</button></div>`);
     }
     async function refresh(msg){ const { data } = await sb.rpc('staff_profile', { p_code: code }); if (data) prof = data; draw(msg); load().then(render); }
     async function adjust(d, r){
@@ -924,6 +956,7 @@ function startPanel(){
       if (m === 'close') close();
       if (m === 'scan') { stop(); scan(); }
       if (m === 'quick') adjust(Number(t.dataset.v), '');
+      if (m === 'del') { if (!confirm(`Esborrar ${prof.name} (${prof.code}) i totes les seves dades? No es pot desfer.`)) return; sb.rpc('staff_delete_customer', { p_code: code }).then(({ error }) => { if (error) return draw('Error: ' + esc(error.message)); close(); flash('Client esborrat'); load().then(render); }); }
     }
     document.addEventListener('keydown', e => { if (e.key === 'Escape' && box && box.innerHTML) close(); });
     return { scan, open };
