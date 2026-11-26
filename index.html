@@ -203,6 +203,8 @@ textarea{min-height:80px}
 .sbtn.ghost{background:#fff;color:var(--acc2);border:1px solid #e3cfc0}
 .sbtn:disabled{opacity:.45;cursor:not-allowed}
 .line{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 0;border-bottom:1px solid var(--line)}
+.promo{margin:0 12px 10px;border-radius:10px;padding:6px 8px;font-size:12px;font-weight:700;line-height:1.3}.promo.on{background:#FFE3A6;color:#7A1424;animation:pulse 1.6s infinite}.promo.off{background:#f3e8dc;color:var(--muted);font-weight:600}
+.item strong.pr-on{color:#D0394A;display:flex;flex-direction:column;align-items:flex-end;line-height:1.15}.item strong.pr-on s{color:var(--muted);font-weight:500;font-size:12px}
 .optline{padding:0 12px 10px;font-size:12px;color:var(--muted);line-height:1.3}
 .pickbg{position:fixed;inset:0;background:rgba(26,4,8,.55);z-index:50;animation:fadeIn .2s ease}
 .pick{position:fixed;left:0;right:0;bottom:0;z-index:51;background:var(--bg);border-radius:26px 26px 0 0;padding:10px 18px calc(22px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto;max-height:86svh;overflow:auto;box-shadow:0 -14px 40px rgba(0,0,0,.25);animation:sheetUp .32s cubic-bezier(.2,.9,.25,1)}
@@ -564,6 +566,8 @@ const tr = t => {
   if ((m = t.match(/^(\d+) a la comanda · \+$/))) return es ? `${m[1]} en el pedido · +` : `${m[1]} in order · +`;
   if ((m = t.match(/^(Afegir|Triar|Treure) (.+)$/))) return ({ Afegir: es ? 'Añadir' : 'Add', Triar: es ? 'Elegir' : 'Choose', Treure: es ? 'Quitar' : 'Remove' })[m[1]] + ' ' + tr(m[2]);
   if ((m = t.match(/^‹ (.+)$/))) return '‹ ' + tr(m[1]);
+  if ((m = t.match(/^⚡ (.+) · fins a les (\S+)$/))) return `⚡ ${m[1]} · ${es ? 'hasta las' : 'until'} ${m[2]}`;
+  if ((m = t.match(/^🔒 (.+): (.+) de (\S+) a (\S+) · (.+?)( · membres)?$/))) return `🔒 ${m[1]}: ${m[2].split(' i ').map(dd).join(es ? ' y ' : ' & ')} ${es ? 'de' : 'from'} ${m[3]} ${es ? 'a' : 'to'} ${m[4]} · ${m[5]}${m[6] ? (es ? ' · miembros' : ' · members') : ''}`;
   if ((m = t.match(/^Afegit: (.+)$/))) return (es ? 'Añadido: ' : 'Added: ') + tr(m[1]);
   if ((m = t.match(/^Veure la comanda · (.+)$/))) return (es ? 'Ver el pedido · ' : 'View order · ') + m[1];
   if ((m = t.match(/^Veure totes les ofertes \((\d+)\)$/))) return es ? `Ver todas las ofertas (${m[1]})` : `See all offers (${m[1]})`;
@@ -626,6 +630,7 @@ function startApp(){
     }
     const [m, r, o, n, t] = await Promise.all([sb.from('menu_items').select('*').order('sort').order('id'), sb.from('rewards').select('*').order('cost'), sb.from('offers').select('*').order('id'), sb.from('notices').select('*').order('created_at', { ascending: false }).limit(10), sb.from('dining_tables').select('*').order('id')]);
     S.menu = m.data || []; S.rewards = r.data || []; S.offers = o.data || []; S.notices = n.data || []; S.tables = t.data || [];
+    const pr = await sb.from('menu_promos').select('*').eq('active', true); S.promos = pr.data || [];
   }
   async function loadCard(){
     if (!ok || !S.secret) { S.card = null; return; }
@@ -648,7 +653,26 @@ function startApp(){
   }
   const kid = k => Number(String(k).split('~')[0]);
   const kopt = k => String(k).split('~').slice(1).filter(Boolean);
-  const price = k => (S.menu.find(x => x.id == kid(k)) || {}).price || 0;
+  /* ---------- Preus de promoció per horari (hora de Reus; la nit acaba a les 6 h) ---------- */
+  function nowMadrid(){
+    const f = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Madrid', weekday: 'short', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date());
+    const g = t => (f.find(x => x.type === t) || {}).value, wd = { Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6, Sun: 7 }[g('weekday')], h = +g('hour'), mi = +g('minute');
+    return { t: h * 60 + mi, sd: h < 6 ? (wd === 1 ? 7 : wd - 1) : wd };
+  }
+  const tmin = x => { const [h, m] = String(x || '0:0').split(':'); return (+h) * 60 + (+m); };
+  function promoOn(p){
+    if (!p.active) return false; const n = nowMadrid(), f = tmin(p.from_time), to = tmin(p.to_time);
+    if (!(p.days || []).includes(n.sd)) return false;
+    return to > f ? (n.t >= f && n.t < to) : ((n.t >= f && n.t >= 360) || n.t < to);
+  }
+  function promoOf(i){
+    const L = (S.promos || []).filter(p => p.item_id === i.id), ok = L.filter(p => !p.members_only || S.card);
+    const on = ok.filter(promoOn).sort((a, b) => a.price - b.price)[0];
+    return { on, next: on ? null : L[0] };
+  }
+  const effPrice = i => { const p = promoOf(i).on; return p ? Number(p.price) : Number(i.price); };
+  const promoSig = () => (S.promos || []).filter(promoOn).map(p => p.id).join(',');
+  const price = k => { const it = S.menu.find(x => x.id == kid(k)); return it ? effPrice(it) : 0; };
   const hasOpts = i => !!(i && i.options && (i.options.choices || []).length);
   const inCart = id => Object.entries(S.cart).reduce((a, [k, q]) => a + (kid(k) === Number(id) ? q : 0), 0);
   const cartN = () => Object.values(S.cart).reduce((a, b) => a + b, 0);
@@ -658,14 +682,20 @@ function startApp(){
   const msgs = () => (S.err ? `<div class="err" role="alert">${esc(S.err)}</div>` : '') + (S.msg ? `<div class="okmsg" role="status">${esc(S.msg)}</div>` : '');
   const itemCard = i => { const n = inCart(i.id), o = hasOpts(i);
     const btn = mesa ? `<button class="add ${n ? 'on' : ''} ${S.bumped == i.id ? 'pop' : ''}" data-a="${o ? 'pick' : 'add'}" data-v="${i.id}" aria-label="${o ? 'Triar' : 'Afegir'} ${esc(i.name)}">${n ? n + ' a la comanda · +' : o ? '+ Triar' : '+ Afegir'}</button>` : o ? `<button class="add" data-a="pick" data-v="${i.id}">Veure opcions</button>` : '';
-    return `<div class="item">${i.image ? `<div class="ph"><img src="${esc(i.image)}" alt="${esc(i.name)}" loading="lazy"></div>` : pic(i.icon, i.color)}<div class="meta"><span>${esc(i.name)}</span><strong>${eur(i.price)}</strong></div>${o ? `<div class="optline">${esc(i.options.choices.map(c => c.name).join(' · '))}</div>` : ''}${btn}</div>`; };
+    return `<div class="item">${i.image ? `<div class="ph"><img src="${esc(i.image)}" alt="${esc(i.name)}" loading="lazy"></div>` : pic(i.icon, i.color)}<div class="meta"><span>${esc(i.name)}</span>${promoTag(i).price}</div>${promoTag(i).line}${o ? `<div class="optline">${esc(i.options.choices.map(c => c.name).join(' · '))}</div>` : ''}${btn}</div>`; };
+  function promoTag(i){
+    const P = promoOf(i), hm = x => String(x).slice(0, 5);
+    if (P.on) return { price: `<strong class="pr-on"><s>${eur(i.price)}</s> ${eur(P.on.price)}</strong>`, line: `<div class="promo on">⚡ ${esc(P.on.label)} · fins a les ${hm(P.on.to_time)}</div>` };
+    if (P.next) return { price: `<strong>${eur(i.price)}</strong>`, line: `<div class="promo off">🔒 ${esc(P.next.label)}: ${(P.next.days || []).map(d => DAYL[d]).join(' i ')} de ${hm(P.next.from_time)} a ${hm(P.next.to_time)} · ${eur(P.next.price)}${P.next.members_only ? ' · membres' : ''}</div>` };
+    return { price: `<strong>${eur(i.price)}</strong>`, line: '' };
+  }
   function vPick(){
     const i = S.menu.find(x => x.id == S.pick.id); if (!i) return '';
     const O = i.options, ch = S.pick.choice && O.choices.find(c => c.name === S.pick.choice), step2 = ch && (ch.mix || []).length;
     const chips = step2 ? ch.mix.map(m => `<button class="pchip" data-a="pmx" data-v="${esc(m)}">${esc(m)}</button>`).join('')
       : O.choices.map(c => `<button class="pchip" data-a="pch" data-v="${esc(c.name)}">${esc(c.name)}${c.mix && c.mix.length ? `<small>amb ${esc(c.mix.join(' o '))}</small>` : ''}</button>`).join('');
     return `<div class="pickbg" data-a="pickx"></div><div class="pick" role="dialog" aria-modal="true" aria-label="${esc(i.name)}">
-      <div class="pgrab"></div><div class="phead">${i.image ? `<img src="${esc(i.image)}" alt="">` : ''}<div><b>${esc(i.name)}</b><span>${eur(i.price)}</span></div><button class="px" data-a="pickx" aria-label="Tancar">×</button></div>
+      <div class="pgrab"></div><div class="phead">${i.image ? `<img src="${esc(i.image)}" alt="">` : ''}<div><b>${esc(i.name)}</b><span>${eur(effPrice(i))}</span></div><button class="px" data-a="pickx" aria-label="Tancar">×</button></div>
       ${step2 ? `<div class="pstep"><button class="pback" data-a="pback">‹ ${esc(ch.name)}</button></div><h3>${esc(O.mixLabel || 'Amb què?')}</h3>` : `<h3>${esc(O.label || 'Tria')}</h3>`}
       <div class="pchips">${chips}</div>${mesa ? '' : '<p class="small" style="margin:12px 0 0">Per demanar, escaneja el QR de la teva taula.</p>'}</div>`;
   }
@@ -733,9 +763,9 @@ function startApp(){
   function vCistella(){
     const t = cartT(), r = S.card ? S.card.rules : null;
     return head(`Taula ${esc(mesa || '?')}`) + `<h2 style="font-size:34px">La teva comanda</h2>` +
-      (cartN() ? Object.entries(S.cart).map(([k, q]) => { const it = S.menu.find(x => x.id == kid(k)); if (!it) return ''; const op = kopt(k); return `<div class="line"><span>${esc(it.name)}${op.length ? `<br><b class="small" style="color:var(--acc)">${esc(op.join(' + '))}</b>` : ''}<br><span class="small">${eur(it.price)}</span></span><span style="display:flex;align-items:center;gap:8px"><button class="qbtn" data-a="dec" data-v="${k}" aria-label="Treure ${esc(it.name)}">−</button><b>${q}</b><button class="qbtn" data-a="add" data-v="${k}" aria-label="Afegir ${esc(it.name)}">+</button></span></div>`; }).join('') : '<p class="small">La comanda és buida.</p>') +
+      (cartN() ? Object.entries(S.cart).map(([k, q]) => { const it = S.menu.find(x => x.id == kid(k)); if (!it) return ''; const op = kopt(k); return `<div class="line"><span>${esc(it.name)}${op.length ? `<br><b class="small" style="color:var(--acc)">${esc(op.join(' + '))}</b>` : ''}<br><span class="small">${eur(effPrice(it))}${promoOf(it).on ? ` · <b style="color:var(--acc)">${esc(promoOf(it).on.label)}</b>` : ''}</span></span><span style="display:flex;align-items:center;gap:8px"><button class="qbtn" data-a="dec" data-v="${k}" aria-label="Treure ${esc(it.name)}">−</button><b>${q}</b><button class="qbtn" data-a="add" data-v="${k}" aria-label="Afegir ${esc(it.name)}">+</button></span></div>`; }).join('') : '<p class="small">La comanda és buida.</p>') +
       `<div class="line" style="border:0"><b>Total</b><b class="big" style="font-size:30px">${eur(t)}</b></div>` +
-      (S.card ? `<div class="sheet">Amb aquesta comanda sumaràs <b>${Math.min(r.max_points_visit, Math.floor(t))} punts</b> quan la paguis.</div>` : `<div class="sheet">Fes-te la targeta abans d’enviar i sumaràs punts amb aquesta comanda.<button class="btn sec2" data-a="go" data-v="registre">Fer-me la targeta</button></div>`) +
+      (S.card ? `<div class="sheet">Amb aquesta comanda sumaràs <b>${Math.min(r.max_points_visit ?? 9999, Math.floor(t))} punts</b> quan la paguis.</div>` : `<div class="sheet">Fes-te la targeta abans d’enviar i sumaràs punts amb aquesta comanda.<button class="btn sec2" data-a="go" data-v="registre">Fer-me la targeta</button></div>`) +
       `<p class="small">Pagues a la barra o al cambrer, com sempre.</p>` + msgs();
   }
   function vComanda(){
@@ -1009,7 +1039,8 @@ function startApp(){
       await loadTaken(p.p_day); render();
     }
   });
-  (async () => { await Promise.all([loadPublic(), loadCard(), pushState().then(p => S.push = p)]); await loadMO(); if (S.lastOrder && mesa && S.lastOrder.table === mesa) await pollOrder(); render(); })();
+  (async () => { await Promise.all([loadPublic(), loadCard(), pushState().then(p => S.push = p)]); await loadMO();
+    let lastSig = promoSig(); setInterval(() => { const sg = promoSig(); if (sg !== lastSig) { lastSig = sg; if (!S.pick && !S.busy) { const y = scrollY; render(); scrollTo(0, y); } } }, 30000); if (S.lastOrder && mesa && S.lastOrder.table === mesa) await pollOrder(); render(); })();
 }
 
 /* =====================================================================
@@ -1032,7 +1063,7 @@ function startPanel(){
     if (S.loaded && nw) beep();
     (o.data || []).forEach(x => S.seen.add('o' + x.id)); (q.data || []).forEach(x => S.seen.add('q' + x.id));
     S.orders = o.data || []; S.reqs = q.data || []; S.res = r.data || []; S.customers = c.data || []; if (!S.dirty.size) S.tables = t.data || [];
-    S.menu = m.data || []; S.rewards = w.data || []; S.offers = of.data || []; S.notices = n.data || []; S.loaded = true;
+    S.menu = m.data || []; S.rewards = w.data || []; S.offers = of.data || []; S.notices = n.data || []; const pm = await sb.from('menu_promos').select('*').order('id'); S.promos = pm.data || []; S.loaded = true;
     const pc = await sb.from('push_subs').select('id', { count: 'exact', head: true }); S.pushN = pc.count || 0;
     const oc = await sb.from('offer_claims').select('*').gte('created_at', since).order('created_at', { ascending: false }); S.claims = oc.data || [];
     if (!S.jcc) { const jc = await sb.rpc('jcc_code'); S.jcc = jc.data || ''; }
@@ -1072,7 +1103,10 @@ function startPanel(){
     <h3 style="margin:22px 0 8px;font-size:22px">Recompenses</h3><div class="scroll mini"><table class="stack"><thead><tr><th>Premi</th><th>Punts</th><th>Visible</th></tr></thead><tbody>${S.rewards.map(i => row(i, 'rewards')).join('')}</tbody></table></div><div class="row mini"><input id="rwn" placeholder="Nou premi" style="max-width:240px"><input id="rwc" type="number" min="1" placeholder="Punts" style="max-width:110px"><button class="sbtn" data-p="addrw">Afegir</button></div>
     <h3 style="margin:22px 0 8px;font-size:22px">Ofertes de membres</h3><p class="small">Dies: marca quan s’obre cada oferta. «Es demana» = el client la pot demanar des del mòbil i et surt a Premis. «Només JCC» = només per a la comunitat.</p>
     ${S.offers.slice().sort((a, b) => (a.sort ?? 100) - (b.sort ?? 100) || a.id - b.id).map(o => `<div class="box mini" style="margin-top:10px"><div class="row"><input data-t="offers" data-id="${o.id}" data-k="emoji" value="${esc(o.emoji || '🎁')}" style="max-width:64px;text-align:center"><input data-t="offers" data-id="${o.id}" data-k="title" value="${esc(o.title)}" placeholder="Títol" style="max-width:260px"><input data-t="offers" data-id="${o.id}" data-k="perk" value="${esc(o.perk || '')}" placeholder="Què s’emporta (curt)" style="max-width:240px"></div><textarea data-t="offers" data-id="${o.id}" data-k="body" maxlength="300" placeholder="Descripció">${esc(o.body)}</textarea><div class="row" style="align-items:center">${[4, 5, 6, 7, 1, 2, 3].map(d => `<label class="chk" style="margin:0"><input type="checkbox" data-ofday="${o.id}" value="${d}" ${(o.days || []).includes(d) ? 'checked' : ''}>${['', 'Dl', 'Dt', 'Dc', 'Dj', 'Dv', 'Ds', 'Dg'][d]}</label>`).join('')}<label class="small">des de <input type="time" data-t="offers" data-id="${o.id}" data-k="from_time" value="${String(o.from_time || '19:00').slice(0, 5)}" style="max-width:120px"></label></div><div class="row" style="align-items:center"><label class="chk" style="margin:0"><input type="checkbox" data-t="offers" data-id="${o.id}" data-k="claimable" ${o.claimable ? 'checked' : ''}>Es demana</label><label class="chk" style="margin:0"><input type="checkbox" data-t="offers" data-id="${o.id}" data-k="jcc_only" ${o.jcc_only ? 'checked' : ''}>Només JCC</label><label class="chk" style="margin:0"><input type="checkbox" data-t="offers" data-id="${o.id}" data-k="active" ${o.active ? 'checked' : ''}>Visible</label><label class="small">ordre <input type="number" data-t="offers" data-id="${o.id}" data-k="sort" value="${o.sort ?? 100}" style="max-width:80px"></label><button class="sbtn ghost" data-p="delof" data-id="${o.id}">Esborrar</button></div></div>`).join('')}
-    <div class="row mini" style="margin-top:10px"><input id="ofn" placeholder="Títol de l’oferta nova" style="max-width:240px"><input id="ofp" placeholder="Què s’emporta" style="max-width:220px"><input id="ofb" placeholder="Descripció" style="max-width:300px"><button class="sbtn" data-p="addof">Afegir</button></div>`;
+    <div class="row mini" style="margin-top:10px"><input id="ofn" placeholder="Títol de l’oferta nova" style="max-width:240px"><input id="ofp" placeholder="Què s’emporta" style="max-width:220px"><input id="ofb" placeholder="Descripció" style="max-width:300px"><button class="sbtn" data-p="addof">Afegir</button></div>
+    <h3 style="margin:22px 0 8px;font-size:22px">Preus d’oferta (Happy Hour)</h3><p class="small">Durant l’horari marcat, el producte surt a la carta web amb aquest preu i es cobra així. Fora d’horari surt bloquejat 🔒 amb el dia i l’hora. Si l’hora final és més petita que la d’inici (ex: 23:00 → 02:00) compta fins a la matinada.</p>
+    ${(S.promos || []).map(p => `<div class="box mini" style="margin-top:10px"><div class="row" style="align-items:center"><select data-t="menu_promos" data-id="${p.id}" data-k="item_id" style="max-width:200px">${S.menu.map(i => `<option value="${i.id}" ${i.id == p.item_id ? 'selected' : ''}>${esc(i.name)} (${eur(i.price)})</option>`).join('')}</select><input data-t="menu_promos" data-id="${p.id}" data-k="label" value="${esc(p.label || '')}" placeholder="Nom (Happy Hour)" style="max-width:180px"><label class="small">Preu € <input data-t="menu_promos" data-id="${p.id}" data-k="price" type="number" step="0.1" min="0" value="${p.price}" style="max-width:90px"></label></div><div class="row" style="align-items:center">${[4, 5, 6, 7, 1, 2, 3].map(d => `<label class="chk" style="margin:0"><input type="checkbox" data-prday="${p.id}" value="${d}" ${(p.days || []).includes(d) ? 'checked' : ''}>${['', 'Dl', 'Dt', 'Dc', 'Dj', 'Dv', 'Ds', 'Dg'][d]}</label>`).join('')}<label class="small">de <input type="time" data-t="menu_promos" data-id="${p.id}" data-k="from_time" value="${String(p.from_time || '20:00').slice(0, 5)}" style="max-width:110px"></label><label class="small">a <input type="time" data-t="menu_promos" data-id="${p.id}" data-k="to_time" value="${String(p.to_time || '00:00').slice(0, 5)}" style="max-width:110px"></label></div><div class="row" style="align-items:center"><label class="chk" style="margin:0"><input type="checkbox" data-t="menu_promos" data-id="${p.id}" data-k="members_only" ${p.members_only ? 'checked' : ''}>Només amb targeta</label><label class="chk" style="margin:0"><input type="checkbox" data-t="menu_promos" data-id="${p.id}" data-k="active" ${p.active ? 'checked' : ''}>Activa</label><button class="sbtn ghost" data-p="delpr" data-id="${p.id}">Esborrar</button></div></div>`).join('') || '<p class="small">Encara no hi ha cap preu d’oferta.</p>'}
+    <div class="row mini" style="margin-top:10px"><select id="prI" style="max-width:220px">${S.menu.map(i => `<option value="${i.id}">${esc(i.name)} (${eur(i.price)})</option>`).join('')}</select><input id="prP" type="number" step="0.1" min="0" placeholder="Preu oferta" style="max-width:120px"><button class="sbtn" data-p="addpr">Afegir preu d’oferta</button></div>`;
   }
   /* ---------- Estadístiques ---------- */
   async function loadStats(){ const { data, error } = await sb.rpc('staff_stats', { p_days: S.statDays || 30 }); S.stats = error ? { error: error.message } : data; }
@@ -1236,6 +1270,8 @@ function startPanel(){
     if (a === 'scan') return PM.scan();
     if (a === 'fitxa') return PM.open(v);
     if (a === 'ocl') await run(sb.from('offer_claims').update({ status: v }).eq('id', id), v === 'entregat' ? 'Marcat com a portat' : 'Marcat com a no disponible');
+    if (a === 'addpr') { const price = Number($('#prP').value); if (!(price > 0)) return flash('Posa el preu d’oferta.'); await run(sb.from('menu_promos').insert({ item_id: Number($('#prI').value), price, label: 'Happy Hour', days: [4], from_time: '20:00', to_time: '00:00', active: true }), 'Preu d’oferta afegit (dijous 20–00, canvia-ho a sota)'); }
+    if (a === 'delpr') { if (!confirm('Esborrar aquest preu d’oferta?')) return; await run(sb.from('menu_promos').delete().eq('id', id), 'Esborrat'); }
     if (a === 'delof') { if (!confirm('Esborrar aquesta oferta?')) return; await run(sb.from('offers').delete().eq('id', id), 'Oferta esborrada'); }
     if (a === 'jcccopy') { try { await navigator.clipboard.writeText($('#jccl').value); flash('Enllaç copiat'); } catch(_) { $('#jccl').select(); flash('Copia l’enllaç seleccionat'); } }
     if (a === 'jccnew') { const { data, error } = await sb.rpc('new_jcc_code'); if (error) return flash('Error: ' + error.message); S.jcc = data; flash('Codi nou. Recorda canviar l’enllaç a la comunitat.'); }
@@ -1269,6 +1305,7 @@ function startPanel(){
       const options = choices.length ? { label: old.label || (anyMix ? 'Tria l’alcohol' : 'Tria’n un'), ...(anyMix ? { mixLabel: old.mixLabel || 'Amb què el vols?' } : {}), choices } : null;
       const { error } = await sb.from('menu_items').update({ options }).eq('id', id); flash(error ? 'Error: ' + error.message : 'Opcions desades'); await load(); return;
     }
+    if (el.dataset.prday) { const id = el.dataset.prday, days = [...document.querySelectorAll(`[data-prday="${id}"]:checked`)].map(x => Number(x.value)).sort(); const { error } = await sb.from('menu_promos').update({ days }).eq('id', id); flash(error ? 'Error: ' + error.message : 'Desat'); await load(); return; }
     if (el.dataset.ofday) { const id = el.dataset.ofday, days = [...document.querySelectorAll(`[data-ofday="${id}"]:checked`)].map(x => Number(x.value)).sort(); const { error } = await sb.from('offers').update({ days }).eq('id', id); flash(error ? 'Error: ' + error.message : 'Desat'); await load(); return; }
     if (el.dataset.t) { const val = el.type === 'checkbox' ? el.checked : el.type === 'number' ? Number(el.value) : el.value; const { error } = await sb.from(el.dataset.t).update({ [el.dataset.k]: val }).eq('id', el.dataset.id); flash(error ? 'Error: ' + error.message : 'Desat'); await load(); return; }
     if (S.tab === 'planol' && el.dataset.k && S.selTable) { const t = S.tables.find(x => x.id === S.selTable), k = el.dataset.k; t[k] = el.type === 'checkbox' ? el.checked : el.type === 'number' ? Number(el.value) : el.value; if (k === 'shape' && el.value === 'bar') t.bookable = false; S.dirty.add(t.id); render(); }
