@@ -681,3 +681,5 @@ end $$;
 -- note (text curt a la carta), min_spend (regal a 0 € que exigeix X € a la resta de la comanda, màx. 1).
 -- options.kind = 'pack' amb parts [{type:'one',label,choices}|{type:'count',label,n,choices}];
 -- place_order valida la tria (suma exacta de n) i desa la descripció al nom de la línia.
+
+-- jaleo_pack_max_kinds: parts[].max_kinds (Pack Jaleo / Pack Taula: refrescos de com a màxim 2 tipus); place_order -> MAX_KINDS.
