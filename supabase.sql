@@ -676,3 +676,8 @@ end $$;
 -- ESTADÍSTIQUES I DRETS RGPD (migracions jaleo_staff_stats i jaleo_delete_my_data)
 -- staff_stats(dies) · delete_my_card(secret) · staff_delete_customer(codi) · erase_customer(id)
 -- =====================================================================
+
+-- jaleo_packs_and_daily_offers: menu_items.only_day (null = sempre; data = només aquella nit de servei),
+-- note (text curt a la carta), min_spend (regal a 0 € que exigeix X € a la resta de la comanda, màx. 1).
+-- options.kind = 'pack' amb parts [{type:'one',label,choices}|{type:'count',label,n,choices}];
+-- place_order valida la tria (suma exacta de n) i desa la descripció al nom de la línia.
