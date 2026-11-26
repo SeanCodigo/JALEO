@@ -242,6 +242,9 @@ body.noscroll{overflow:hidden}
 .shr span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.shr div{height:14px;background:var(--line);border-radius:4px;overflow:hidden}.shr i{display:block;height:100%;background:var(--acc);border-radius:0 4px 4px 0}.shr b{font-size:13px;min-width:34px;text-align:right}
 [data-tip]:hover:after,[data-tip]:focus:after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);background:var(--ink);color:#fff;font-size:12px;font-weight:600;padding:5px 9px;border-radius:8px;white-space:nowrap;z-index:5;pointer-events:none}
 .scol:hover i,.scol:focus i,.shr:hover i,.shr:focus i{background:var(--acc2)}
+.langp{display:inline-flex;background:rgba(0,0,0,.06);border-radius:999px;padding:3px;gap:2px;flex:none}.langp button{border:0;background:none;font:inherit;font-size:12px;font-weight:700;letter-spacing:.04em;padding:5px 8px;border-radius:999px;color:var(--muted);cursor:pointer;min-height:30px}.langp button.on{background:var(--acc);color:#fff}
+.nav .langp{background:rgba(255,255,255,.14)}.nav .langp button{color:#fff}.nav.solid .langp{background:rgba(0,0,0,.06)}.nav.solid .langp button{color:var(--muted)}.nav .langp button.on,.nav.solid .langp button.on{background:var(--acc);color:#fff}
+.brand{align-items:center}
 .qbtn{width:42px;height:42px;border-radius:12px;border:1px solid #e3cfc0;background:#fff;color:var(--acc2);font-weight:700;font-size:18px;cursor:pointer}
 .stepsO{display:flex;gap:6px;margin:16px 0}
 .stepsO span{flex:1;text-align:center;font-size:13px;padding:10px 4px;border-radius:12px;background:#efe1d4;color:var(--muted);transition:all .4s}
@@ -387,7 +390,221 @@ function pic(kind, col){
 /* =====================================================================
    1 · WEB + APP DEL CLIENT
    ===================================================================== */
+/* ================= IDIOMES (CA original · ES · EN) =================
+   La web s'escriu en català; aquí hi ha les traduccions. Els textos que no surten aquí es queden com estan
+   (per exemple, els avisos que escriguis al panell). */
+const I18N_RAW = [
+  // --- navegació i portada
+  ['Les nits', 'Las noches', 'The nights'], ['Carta', 'Carta', 'Menu'], ['La carta', 'La carta', 'The menu'], ['On som', 'Dónde estamos', 'Find us'],
+  ['La meva targeta', 'Mi tarjeta', 'My card'], ['Fes-te la targeta', 'Hazte la tarjeta', 'Get your card'], ['Fes-te la targeta gratis', 'Hazte la tarjeta gratis', 'Get your free card'],
+  ['Aquí comença la nit.', 'Aquí empieza la noche.', 'This is where the night begins.'], ['AQUÍ COMENÇA LA NIT', 'AQUÍ EMPIEZA LA NOCHE', 'THE NIGHT STARTS HERE'],
+  ['Copes, cachimbes i la millor previa de Reus. Fes-te la targeta de JALEO Club, suma punts cada vegada que vens i desbloqueja ofertes només per a membres.', 'Copas, cachimbas y la mejor previa de Reus. Hazte la tarjeta de JALEO Club, suma puntos cada vez que vengas y desbloquea ofertas solo para miembros.', 'Drinks, hookahs and the best pre-party in Reus. Get your JALEO Club card, earn points every time you come and unlock members-only offers.'],
+  ['Reserva taula', 'Reserva mesa', 'Book a table'], ['Reserva taula al plànol', 'Reserva mesa en el plano', 'Book a table on the map'], ['Com arribar', 'Cómo llegar', 'Directions'],
+  ['punts', 'puntos', 'points'], ['JALEO CLUB · MEMBRE', 'JALEO CLUB · MIEMBRO', 'JALEO CLUB · MEMBER'], ['Cada setmana', 'Cada semana', 'Every week'],
+  ['Tres nits,', 'Tres noches,', 'Three nights,'], ['tres maneres', 'tres maneras', 'three ways'], ['de liar-la', 'de liarla', 'to party'],
+  ['Dijous', 'Jueves', 'Thursday'], ['Divendres', 'Viernes', 'Friday'], ['Dissabte', 'Sábado', 'Saturday'],
+  ['La previa dels universitaris. Doble punts per als membres JCC.', 'La previa de los universitarios. Puntos dobles para los miembros JCC.', 'The student pre-party. Double points for JCC members.'],
+  ['La nit gran de la setmana.', 'La gran noche de la semana.', 'The big night of the week.'], ['Copes amb la colla, cachimbes i bona música.', 'Copas con los amigos, cachimbas y buena música.', 'Drinks with friends, hookahs and good music.'],
+  ['La targeta que', 'La tarjeta que', 'The card that'], ['et fa tornar', 'te hace volver', 'brings you back'],
+  ['Sense descarregar cap app. La tens al mòbil amb el nostre logo i cada euro que gastes es converteix en punts.', 'Sin descargar ninguna app. La tienes en el móvil con nuestro logo y cada euro que gastas se convierte en puntos.', 'No app to download. It lives on your phone with our logo, and every euro you spend turns into points.'],
+  ['Escaneja el QR', 'Escanea el QR', 'Scan the QR'], ['De la teva taula: veus la carta amb preus i pots demanar des del mòbil.', 'De tu mesa: ves la carta con precios y puedes pedir desde el móvil.', 'At your table: see the menu with prices and order from your phone.'],
+  ['Nom i email. Al moment desbloqueges les ofertes i t’emportes punts de regal.', 'Nombre y email. Al momento desbloqueas las ofertas y te llevas puntos de regalo.', 'Name and email. You instantly unlock the offers and get free points.'],
+  ['Suma punts', 'Suma puntos', 'Earn points'], ['1 punt per cada euro. Demana el premi des de la targeta quan hi arribis.', '1 punto por cada euro. Pide el premio desde la tarjeta cuando llegues.', '1 point per euro. Claim your reward from the card when you get there.'],
+  ['Porta la colla', 'Trae a tu gente', 'Bring your crew'], ['Convida amics amb el teu enllaç: quan gastin els primers euros, punts per a tots dos.', 'Invita a amigos con tu enlace: cuando gasten los primeros euros, puntos para los dos.', 'Invite friends with your link: once they spend their first euros, you both get points.'],
+  ['Veure la meva targeta', 'Ver mi tarjeta', 'See my card'], ['Vull la meva targeta', 'Quiero mi tarjeta', 'I want my card'],
+  ['Què et', '¿Qué te', 'What are you'], ['vens a prendre?', 'vienes a tomar?', 'having tonight?'],
+  ['Per demanar des de la taula, escaneja el QR que hi ha a cada taula.', 'Para pedir desde la mesa, escanea el QR que hay en cada mesa.', 'To order from your table, scan the QR code on it.'],
+  ['La carta apareixerà aquí quan connectis la base de dades.', 'La carta aparecerá aquí cuando conectes la base de datos.', 'The menu will appear here once the database is connected.'],
+  ['Ens veiem', 'Nos vemos', 'See you'], ['a la plaça', 'en la plaza', 'at the square'], ['Instagram:', 'Instagram:', 'Instagram:'],
+  ['★ Deixa’ns una ressenya a Google', '★ Déjanos una reseña en Google', '★ Leave us a Google review'], ['Només majors de 18 anys. Consum responsable.', 'Solo mayores de 18 años. Consumo responsable.', 'Over 18s only. Please drink responsibly.'],
+  ['Política de privacitat', 'Política de privacidad', 'Privacy policy'], ['política de privacitat', 'política de privacidad', 'privacy policy'], ['Privacitat', 'Privacidad', 'Privacy'],
+  // --- pestanyes i capçaleres
+  ['Targeta', 'Tarjeta', 'Card'], ['Ofertes', 'Ofertas', 'Offers'], ['Reservar', 'Reservar', 'Book'], ['Avisos', 'Avisos', 'Alerts'], ['Reserves', 'Reservas', 'Bookings'],
+  ['Convida', 'Invita', 'Invite'], ['Esborrar', 'Borrar', 'Delete'], ['Tornar', 'Volver', 'Back'], ['Tancar', 'Cerrar', 'Close'],
+  // --- carta i comanda
+  ['+ Afegir', '+ Añadir', '+ Add'], ['+ Triar', '+ Elegir', '+ Choose'], ['Veure opcions', 'Ver opciones', 'See options'], ['Tria', 'Elige', 'Choose'],
+  ['La teva comanda', 'Tu pedido', 'Your order'], ['La comanda és buida.', 'El pedido está vacío.', 'Your order is empty.'], ['Total', 'Total', 'Total'],
+  ['Enviar la comanda a la barra', 'Enviar el pedido a la barra', 'Send order to the bar'], ['Seguir mirant la carta', 'Seguir mirando la carta', 'Keep browsing the menu'],
+  ['Pagues a la barra o al cambrer, com sempre.', 'Pagas en la barra o al camarero, como siempre.', 'Pay at the bar or to the waiter, as usual.'],
+  ['Amb aquesta comanda sumaràs', 'Con este pedido sumarás', 'With this order you’ll earn'], ['quan la paguis.', 'cuando lo pagues.', 'once you pay.'],
+  ['Fes-te la targeta abans d’enviar i sumaràs punts amb aquesta comanda.', 'Hazte la tarjeta antes de enviar y sumarás puntos con este pedido.', 'Get your card before sending and you’ll earn points with this order.'],
+  ['Fer-me la targeta', 'Hacerme la tarjeta', 'Get my card'], ['Comanda enviada a la barra!', '¡Pedido enviado a la barra!', 'Order sent to the bar!'],
+  ['Rebuda', 'Recibido', 'Received'], ['Preparant', 'Preparando', 'Preparing'], ['Servida', 'Servido', 'Served'], ['Pagada', 'Pagado', 'Paid'],
+  ['Aquesta comanda s’ha cancel·lat. Parla amb el cambrer.', 'Este pedido se ha cancelado. Habla con el camarero.', 'This order was cancelled. Please talk to the waiter.'],
+  ['Els punts se sumen quan es cobra la comanda.', 'Los puntos se suman cuando se cobra el pedido.', 'Points are added when the order is paid.'], ['sumats a la teva targeta.', 'sumados a tu tarjeta.', 'added to your card.'],
+  ['Carregant la comanda…', 'Cargando el pedido…', 'Loading your order…'], ['Estem preparant la teva comanda.', 'Estamos preparando tu pedido.', 'We’re preparing your order.'],
+  ['Comanda servida. Salut!', 'Pedido servido. ¡Salud!', 'Order served. Cheers!'], ['Comanda pagada. Gràcies!', 'Pedido pagado. ¡Gracias!', 'Order paid. Thank you!'],
+  ['T’ha agradat la nit? Deixa’ns una ressenya', '¿Te ha gustado la noche? Déjanos una reseña', 'Enjoyed the night? Leave us a review'],
+  ['T’ha agradat? Deixa’ns una ressenya a Google', '¿Te ha gustado? Déjanos una reseña en Google', 'Enjoyed it? Leave us a Google review'],
+  ['Amb què?', '¿Con qué?', 'With what?'], ['Per demanar, escaneja el QR de la teva taula.', 'Para pedir, escanea el QR de tu mesa.', 'To order, scan the QR code on your table.'],
+  ['Per demanar, escaneja el codi QR de la teva taula.', 'Para pedir, escanea el código QR de tu mesa.', 'To order, scan the QR code on your table.'],
+  ['Escaneja el QR de la teva taula per demanar.', 'Escanea el QR de tu mesa para pedir.', 'Scan the QR code on your table to order.'],
+  ['Mira què et sumem avui a la taula', 'Mira qué te sumamos hoy a la mesa', 'See what we’re adding to your table today'], ['🔒 Fes-te la targeta per desbloquejar-les', '🔒 Hazte la tarjeta para desbloquearlas', '🔒 Get your card to unlock them'],
+  // --- productes, categories i opcions (de la base de dades)
+  ['Combinats', 'Combinados', 'Mixed drinks'], ['Combinat', 'Combinado', 'Mixed drink'], ['Combinat premium', 'Combinado premium', 'Premium mixed drink'],
+  ['Còctels', 'Cócteles', 'Cocktails'], ['Copes', 'Copas', 'Drinks'], ['Cervesa', 'Cerveza', 'Beer'], ['Xupitos', 'Chupitos', 'Shots'], ['Cachimbes', 'Cachimbas', 'Hookahs'], ['Sense alcohol', 'Sin alcohol', 'Alcohol-free'],
+  ['Mojito de maduixa', 'Mojito de fresa', 'Strawberry mojito'], ['Canya', 'Caña', 'Small beer'], ['Mitjana', 'Mediana', 'Medium beer'],
+  ['Galleda 6 quintos', 'Cubo de 6 quintos', 'Bucket of 6 beers'], ['Galleda 10 quintos', 'Cubo de 10 quintos', 'Bucket of 10 beers'],
+  ['Xupito', 'Chupito', 'Shot'], ['Cachimba', 'Cachimba', 'Hookah'], ['Cachimba premium', 'Cachimba premium', 'Premium hookah'], ['Refresc', 'Refresco', 'Soft drink'], ['Aigua', 'Agua', 'Water'],
+  ['Cubata', 'Cubata', 'Mixed drink'], ['Cubata premium', 'Cubata premium', 'Premium mixed drink'],
+  ['Tria l’alcohol', 'Elige el alcohol', 'Choose your spirit'], ['Amb què el vols?', '¿Con qué lo quieres?', 'What would you like with it?'], ['Quin xupito vols?', '¿Qué chupito quieres?', 'Which shot?'], ['Quin refresc?', '¿Qué refresco?', 'Which soft drink?'], ['Tria’n un', 'Elige uno', 'Pick one'],
+  ['Rom', 'Ron', 'Rum'], ['Tònica', 'Tónica', 'Tonic'], ['Fanta Llimona', 'Fanta Limón', 'Fanta Lemon'], ['Fanta Taronja', 'Fanta Naranja', 'Fanta Orange'], ['Puerto Llimona', 'Puerto Limón', 'Puerto Lemon'],
+  ['Licor d’arròs', 'Licor de arroz', 'Rice liqueur'], ['Tequila de maduixa', 'Tequila de fresa', 'Strawberry tequila'], ['Tequila de mango', 'Tequila de mango', 'Mango tequila'],
+  ['Nestea de maracujà', 'Nestea de maracuyá', 'Passion fruit Nestea'], ['Aquarius Llimona', 'Aquarius Limón', 'Aquarius Lemon'], ['Aquarius Taronja', 'Aquarius Naranja', 'Aquarius Orange'],
+  ['Refresc o xupito', 'Refresco o chupito', 'Soft drink or shot'], ['Cubata de regal', 'Cubata de regalo', 'Free mixed drink'], ['Cachimba Gratis', 'Cachimba gratis', 'Free hookah'], ['Cachimba sense nicotina de regal', 'Cachimba sin nicotina de regalo', 'Free nicotine-free hookah'],
+  ['Barra', 'Barra', 'Bar'], ['Cachimbas', 'Cachimbas', 'Hookahs'],
+  // --- ofertes (de la base de dades)
+  ['Ofertes per a membres', 'Ofertas para miembros', 'Members’ offers'], ['🎁 Ofertes per a membres', '🎁 Ofertas para miembros', '🎁 Members’ offers'],
+  ['No són descomptes: et sumem coses a la taula.', 'No son descuentos: te sumamos cosas a la mesa.', 'Not discounts: we add extras to your table.'],
+  ['🔒 Estan bloquejades.', '🔒 Están bloqueadas.', '🔒 They’re locked.'], ['Fes-te la targeta gratis i s’obren al moment.', 'Hazte la tarjeta gratis y se abren al momento.', 'Get your free card and they unlock instantly.'],
+  ['Fes-te la targeta i desbloqueja-les', 'Hazte la tarjeta y desbloquéalas', 'Get your card and unlock them'], ['Només per a membres', 'Solo para miembros', 'Members only'],
+  ['Demanar a la meva taula', 'Pedir a mi mesa', 'Order to my table'], ['✓ Activa ara', '✓ Activa ahora', '✓ Active now'],
+  ['Demanat · t’ho portem', 'Pedido · te lo llevamos', 'Ordered · on its way'], ['Demanat · t’ho portem a la taula', 'Pedido · te lo llevamos a la mesa', 'Ordered · we’ll bring it to your table'], ['Gaudit avui ✓', 'Disfrutado hoy ✓', 'Enjoyed today ✓'],
+  ['No s’ha pogut avui · pregunta a la barra', 'Hoy no ha sido posible · pregunta en la barra', 'Not possible today · ask at the bar'],
+  ['Uneix-te a la comunitat JCC', 'Únete a la comunidad JCC', 'Join the JCC community'], ['Entrar a la comunitat JCC →', 'Entrar en la comunidad JCC →', 'Join the JCC community →'],
+  ['⭐ Els membres de la', '⭐ Los miembros de la', '⭐ Members of the'], ['comunitat JCC', 'comunidad JCC', 'JCC community'],
+  ['de WhatsApp sumen punts x2 els dijous. Entra a la comunitat i toca l’enllaç de la descripció.', 'de WhatsApp suman puntos x2 los jueves. Entra en la comunidad y toca el enlace de la descripción.', 'on WhatsApp earn x2 points on Thursdays. Join the community and tap the link in the description.'],
+  ['Ets JCC.', 'Eres JCC.', 'You’re JCC.'], ['Els dijous sumes punts x2.', 'Los jueves sumas puntos x2.', 'You earn x2 points on Thursdays.'], ['⭐ JCC · x2 els dijous', '⭐ JCC · x2 los jueves', '⭐ JCC · x2 on Thursdays'],
+  ['Número de taula (per portar-t’ho)', 'Número de mesa (para llevártelo)', 'Table number (so we can bring it)'], ['Ex: 7', 'Ej.: 7', 'E.g. 7'],
+  ['Les ofertes s’obren a l’hora indicada els dies marcats. Una vegada per oferta i nit.', 'Las ofertas se abren a la hora indicada los días marcados. Una vez por oferta y noche.', 'Offers open at the time shown on the marked days. Once per offer per night.'],
+  ['Aviat hi haurà ofertes noves.', 'Pronto habrá ofertas nuevas.', 'New offers coming soon.'], ['El que desbloqueges', 'Lo que desbloqueas', 'What you unlock'],
+  ['Punts dobles JCC', 'Puntos dobles JCC', 'JCC double points'], ['x2 punts tota la nit', 'x2 puntos toda la noche', 'x2 points all night'],
+  ['Si ets de la comunitat JCC de WhatsApp, els dijous tot el que gastis suma el doble de punts. Es posa sol, no cal demanar res.', 'Si eres de la comunidad JCC de WhatsApp, los jueves todo lo que gastes suma el doble de puntos. Se aplica solo, no hace falta pedir nada.', 'If you’re in the JCC WhatsApp community, everything you spend on Thursdays earns double points. It’s automatic, no need to ask.'],
+  ['Happy Hour universitària', 'Happy Hour universitaria', 'Student Happy Hour'], ['Cubata a 6 €', 'Cubata a 6 €', 'Mixed drink for €6'],
+  ['Dijous de Jaleo Universitari, de 20:00 a 00:00 el cubata està a 6 €. Demana-ho a la barra o des de la carta de la taula.', 'Jueves de Jaleo Universitari, de 20:00 a 00:00 el cubata está a 6 €. Pídelo en la barra o desde la carta de la mesa.', 'Jaleo Universitari Thursdays, from 20:00 to 00:00 mixed drinks are €6. Order at the bar or from the table menu.'],
+  ['4 cubates = cachimba de regal', '4 cubatas = cachimba de regalo', '4 mixed drinks = free hookah'], ['Cachimba per a la taula', 'Cachimba para la mesa', 'Hookah for the table'],
+  ['Quan la teva taula arribi a la 4a copa, la cachimba és de regal. Demana-la aquí i la barra comprova les copes.', 'Cuando tu mesa llegue a la 4.ª copa, la cachimba es de regalo. Pídela aquí y la barra comprueba las copas.', 'When your table reaches its 4th drink, the hookah is on us. Order it here and the bar will check the drinks.'],
+  ['Picoteo JCC', 'Picoteo JCC', 'JCC snacks'], ['Bol de nachos o crispetes', 'Bol de nachos o palomitas', 'Bowl of nachos or popcorn'],
+  ['Membres JCC: amb la primera ronda us portem un bol de nachos o crispetes per compartir a la taula.', 'Miembros JCC: con la primera ronda os traemos un bol de nachos o palomitas para compartir en la mesa.', 'JCC members: with your first round we bring a bowl of nachos or popcorn to share.'],
+  ['Galleda + refrescos', 'Cubo + refrescos', 'Bucket + soft drinks'], ['Ronda de refrescos o aigua', 'Ronda de refrescos o agua', 'Round of soft drinks or water'],
+  ['Divendres de Jaleo Fridays: amb cada galleda de quintos, una ronda de refrescos o aigua per a tota la taula.', 'Viernes de Jaleo Fridays: con cada cubo de quintos, una ronda de refrescos o agua para toda la mesa.', 'Jaleo Fridays: with every bucket of beers, a round of soft drinks or water for the whole table.'],
+  ['Cassoleta renovada', 'Cazoleta renovada', 'Fresh bowl'], ['Canvi de cassoleta gratis', 'Cambio de cazoleta gratis', 'Free bowl change'],
+  ['Dissabte de Bendito Jaleo: a mitja sessió et renovem la cassoleta de la cachimba sense cost.', 'Sábado de Bendito Jaleo: a mitad de sesión te renovamos la cazoleta de la cachimba sin coste.', 'Bendito Jaleo Saturdays: halfway through we refresh your hookah bowl for free.'],
+  ['Aniversari a JALEO', 'Cumpleaños en JALEO', 'Birthday at JALEO'], ['Bengala i foto a la taula', 'Bengala y foto en la mesa', 'Sparkler and photo at your table'],
+  ['Si és el teu aniversari, avisa des d’aquí: et portem una bengala a la taula i et fem la foto per a Instagram.', 'Si es tu cumpleaños, avisa desde aquí: te llevamos una bengala a la mesa y te hacemos la foto para Instagram.', 'If it’s your birthday, let us know here: we bring a sparkler to your table and take a photo for Instagram.'],
+  ['Tu poses la cançó', 'Tú pones la canción', 'You pick the song'], ['1 petició musical prioritària', '1 petición musical prioritaria', '1 priority song request'],
+  ['Una cançó per taula i nit passa davant de la cua. Demana-la i digues quina vols al cambrer.', 'Una canción por mesa y noche pasa delante de la cola. Pídela y dile al camarero cuál quieres.', 'One song per table per night jumps the queue. Request it and tell the waiter which one.'],
+  ['Taula reservada amb el teu nom', 'Mesa reservada con tu nombre', 'Table reserved in your name'], ['Taula preparada amb cartell', 'Mesa preparada con cartel', 'Table ready with a sign'],
+  ['Reserva des de la targeta i et tindrem la taula preparada amb el teu nom quan arribis.', 'Reserva desde la tarjeta y tendremos la mesa preparada con tu nombre cuando llegues.', 'Book from your card and your table will be ready with your name when you arrive.'],
+  // --- registre
+  ['Ja tens targeta?', '¿Ya tienes tarjeta?', 'Already have a card?'], ['Posa el mateix nom i email que la primera vegada i la recuperaràs amb tots els punts.', 'Pon el mismo nombre y email que la primera vez y la recuperarás con todos los puntos.', 'Use the same name and email as the first time and you’ll get it back with all your points.'],
+  ['Desbloqueja les ofertes', 'Desbloquea las ofertas', 'Unlock the offers'], ['i t’emportes punts de regal.', 'y te llevas puntos de regalo.', 'and get free points.'], ['Nom', 'Nombre', 'Name'], ['Email', 'Email', 'Email'],
+  ['Confirmo que soc major de 18 anys.', 'Confirmo que soy mayor de 18 años.', 'I confirm I’m over 18.'], ['He llegit i accepto la', 'He leído y acepto la', 'I have read and accept the'],
+  ['Vull rebre ofertes i avisos de JALEO. Me’n puc donar de baixa quan vulgui.', 'Quiero recibir ofertas y avisos de JALEO. Puedo darme de baja cuando quiera.', 'I want to receive offers and alerts from JALEO. I can unsubscribe at any time.'],
+  ['Fem servir el teu nom i email només per al programa de punts i, si ho acceptes, per enviar-te ofertes. Pots esborrar-los quan vulguis des de la teva targeta.', 'Usamos tu nombre y email solo para el programa de puntos y, si lo aceptas, para enviarte ofertas. Puedes borrarlos cuando quieras desde tu tarjeta.', 'We only use your name and email for the points programme and, if you agree, to send you offers. You can delete them any time from your card.'],
+  ['Crear la meva targeta', 'Crear mi tarjeta', 'Create my card'], ['Ara no, només vull mirar', 'Ahora no, solo quiero mirar', 'Not now, just browsing'],
+  ['Vens de la comunitat JCC.', 'Vienes de la comunidad JCC.', 'You’re coming from the JCC community.'], ['Fes-te la targeta i quedarà marcada: els dijous sumes punts x2.', 'Hazte la tarjeta y quedará marcada: los jueves sumas puntos x2.', 'Get your card and it will be marked: you earn x2 points on Thursdays.'],
+  ['T’ha convidat un amic: quan gastis els primers euros us endureu punts tots dos.', 'Te ha invitado un amigo: cuando gastes los primeros euros os llevaréis puntos los dos.', 'A friend invited you: once you spend your first euros you’ll both get points.'],
+  ['punts de benvinguda', 'puntos de bienvenida', 'welcome points'], ['Les ofertes de membres ja estan desbloquejades.', 'Las ofertas de miembros ya están desbloqueadas.', 'Members’ offers are now unlocked.'],
+  ['Guarda-la a la pantalla d’inici', 'Guárdala en la pantalla de inicio', 'Save it to your home screen'], ['iPhone (Safari): Compartir → «Afegir a la pantalla d’inici».', 'iPhone (Safari): Compartir → «Añadir a pantalla de inicio».', 'iPhone (Safari): Share → “Add to Home Screen”.'],
+  ['Android (Chrome): menú ⋮ → «Afegir a la pantalla d’inici».', 'Android (Chrome): menú ⋮ → «Añadir a pantalla de inicio».', 'Android (Chrome): menu ⋮ → “Add to Home screen”.'],
+  // --- targeta
+  ['Membre', 'Miembro', 'Member'], ['Recompenses', 'Recompensas', 'Rewards'], ['Següent premi:', 'Siguiente premio:', 'Next reward:'], ['Demanar', 'Pedir', 'Claim'], ['Pots demanar qualsevol premi!', '¡Puedes pedir cualquier premio!', 'You can claim any reward!'],
+  ['Convidar amics i guanyar punts', 'Invitar amigos y ganar puntos', 'Invite friends and earn points'], ['🔔 Rebre els avisos al mòbil', '🔔 Recibir los avisos en el móvil', '🔔 Get alerts on your phone'],
+  ['Afegir a Google Wallet', 'Añadir a Google Wallet', 'Add to Google Wallet'], ['📲 Desar el meu QR al mòbil', '📲 Guardar mi QR en el móvil', '📲 Save my QR to my phone'],
+  ['Esborrar la meva targeta', 'Borrar mi tarjeta', 'Delete my card'], ['pendent', 'pendiente', 'pending'], ['confirmada', 'confirmada', 'confirmed'], ['rebutjada', 'rechazada', 'declined'], ['entregat', 'entregado', 'delivered'],
+  ['El teu premi', 'Tu premio', 'Your reward'], ['ÉS GRATIS', 'ES GRATIS', 'IT’S FREE'], ['Gaudeix-lo!', '¡Disfrútalo!', 'Enjoy it!'],
+  ['Premi demanat. Te’l portem a la taula.', 'Premio pedido. Te lo llevamos a la mesa.', 'Reward claimed. We’ll bring it to your table.'], ['No s’ha pogut entregar el premi. Parla amb el cambrer.', 'No se ha podido entregar el premio. Habla con el camarero.', 'We couldn’t deliver the reward. Please talk to the waiter.'],
+  // --- convida
+  ['Compartir l’enllaç', 'Compartir el enlace', 'Share the link'], ['Copiar l’enllaç', 'Copiar el enlace', 'Copy the link'], ['Enllaç copiat!', '¡Enlace copiado!', 'Link copied!'], ['Copia l’enllaç de dalt.', 'Copia el enlace de arriba.', 'Copy the link above.'],
+  // --- reserves
+  ['Reserva la teva taula', 'Reserva tu mesa', 'Book your table'], ['Dia', 'Día', 'Day'], ['Tria la taula', 'Elige la mesa', 'Choose a table'], ['Lliure', 'Libre', 'Free'], ['La teva', 'La tuya', 'Yours'], ['Reservada', 'Reservada', 'Booked'],
+  ['Toca una taula lliure del plànol.', 'Toca una mesa libre del plano.', 'Tap a free table on the map.'], ['Has triat:', 'Has elegido:', 'You chose:'], ['Hora', 'Hora', 'Time'], ['Persones', 'Personas', 'People'],
+  ['Comentari (opcional)', 'Comentario (opcional)', 'Comment (optional)'], ['Aniversari, previa…', 'Cumpleaños, previa…', 'Birthday, pre-party…'], ['Enviar reserva', 'Enviar reserva', 'Send booking'], ['Les meves reserves', 'Mis reservas', 'My bookings'],
+  ['Reserva enviada! Te la confirmarem aviat.', '¡Reserva enviada! Te la confirmaremos pronto.', 'Booking sent! We’ll confirm it soon.'],
+  // --- avisos i notificacions
+  ['Encara no hi ha avisos.', 'Todavía no hay avisos.', 'No alerts yet.'], ['🔔 Vols que t’avisem al mòbil?', '🔔 ¿Quieres que te avisemos en el móvil?', '🔔 Want alerts on your phone?'],
+  ['Ofertes, festes i novetats de JALEO directament a la pantalla. Màxim 1 o 2 per setmana.', 'Ofertas, fiestas y novedades de JALEO directamente en la pantalla. Máximo 1 o 2 por semana.', 'Offers, parties and JALEO news straight to your screen. 1 or 2 a week at most.'],
+  ['Activar notificacions', 'Activar notificaciones', 'Turn on notifications'], ['🔔 Notificacions activades', '🔔 Notificaciones activadas', '🔔 Notifications on'], ['T’avisarem al mòbil quan hi hagi novetats.', 'Te avisaremos en el móvil cuando haya novedades.', 'We’ll let you know on your phone when there’s news.'],
+  ['Desactivar', 'Desactivar', 'Turn off'], ['🔔 Avisos a l’iPhone', '🔔 Avisos en el iPhone', '🔔 Alerts on iPhone'], ['1. Obre aquesta web amb', '1. Abre esta web con', '1. Open this site in'],
+  ['2. Toca el botó', '2. Toca el botón', '2. Tap the'], ['Compartir', 'Compartir', 'Share'], ['(el quadrat amb la fletxa ⬆️).', '(el cuadrado con la flecha ⬆️).', 'button (the square with the arrow ⬆️).'], ['3. Tria', '3. Elige', '3. Choose'],
+  ['«Afegir a pantalla d’inici»', '«Añadir a pantalla de inicio»', '“Add to Home Screen”'], ['🔕 Notificacions bloquejades', '🔕 Notificaciones bloqueadas', '🔕 Notifications blocked'],
+  ['Les pots tornar a activar a la configuració del mòbil o del navegador, dins dels permisos d’aquesta web.', 'Puedes volver a activarlas en los ajustes del móvil o del navegador, en los permisos de esta web.', 'You can turn them back on in your phone or browser settings, under this site’s permissions.'],
+  ['Fet! Et sortiran els avisos al mòbil.', '¡Hecho! Te llegarán los avisos al móvil.', 'Done! You’ll get alerts on your phone.'], ['Notificacions desactivades.', 'Notificaciones desactivadas.', 'Notifications turned off.'],
+  ['Has bloquejat les notificacions. Activa-les a la configuració del mòbil.', 'Has bloqueado las notificaciones. Actívalas en los ajustes del móvil.', 'You’ve blocked notifications. Turn them on in your phone settings.'],
+  ['No s’han pogut activar les notificacions. Torna-ho a provar.', 'No se han podido activar las notificaciones. Inténtalo de nuevo.', 'Couldn’t turn on notifications. Please try again.'],
+  // --- esborrar
+  ['Esborrar la teva targeta', 'Borrar tu tarjeta', 'Delete your card'], ['Sí, esborra-ho tot', 'Sí, bórralo todo', 'Yes, delete everything'], ['No, torna', 'No, volver', 'No, go back'],
+  ['No tens cap targeta en aquest mòbil.', 'No tienes ninguna tarjeta en este móvil.', 'There’s no card on this phone.'], ['S’esborraran la targeta', 'Se borrarán la tarjeta', 'This will delete card'],
+  [', els teus', ', tus', ', your'], [', les reserves i totes les teves dades. No es pot desfer.', ', las reservas y todos tus datos. No se puede deshacer.', ', your bookings and all your data. This can’t be undone.'],
+  ['Hem esborrat la teva targeta i les teves dades.', 'Hemos borrado tu tarjeta y tus datos.', 'We’ve deleted your card and your data.'],
+  // --- missatges i errors
+  ['Fet! La barra ja ho té. Digues el teu nom a la barra.', '¡Hecho! La barra ya lo tiene. Di tu nombre en la barra.', 'Done! The bar has it. Give your name at the bar.'],
+  ['Ja ets JCC! Els dijous sumes punts x2 ⭐', '¡Ya eres JCC! Los jueves sumas puntos x2 ⭐', 'You’re JCC now! You earn x2 points on Thursdays ⭐'],
+  ['Google Wallet aviat estarà disponible.', 'Google Wallet estará disponible pronto.', 'Google Wallet coming soon.'], ['No s’ha pogut obrir Google Wallet. Torna-ho a provar.', 'No se ha podido abrir Google Wallet. Inténtalo de nuevo.', 'Couldn’t open Google Wallet. Please try again.'],
+  ['Sense connexió. Torna-ho a provar.', 'Sin conexión. Inténtalo de nuevo.', 'No connection. Please try again.'], ['Espera un segon que es carregui el QR.', 'Espera un segundo a que se cargue el QR.', 'Wait a second for the QR to load.'],
+  ['Imatge desada. Guarda-la a Fotos per tenir-la sempre a mà.', 'Imagen guardada. Guárdala en Fotos para tenerla siempre a mano.', 'Image saved. Keep it in Photos so it’s always handy.'],
+  ['Vista prèvia: connecta la base de dades per activar targetes, comandes i reserves.', 'Vista previa: conecta la base de datos para activar tarjetas, pedidos y reservas.', 'Preview: connect the database to enable cards, orders and bookings.'],
+  ['Alguna beguda no té la mescla triada. Torna-la a afegir.', 'Alguna bebida no tiene la mezcla elegida. Vuelve a añadirla.', 'A drink is missing its mixer. Please add it again.'], ['Aquesta oferta encara no està oberta.', 'Esta oferta todavía no está abierta.', 'This offer isn’t open yet.'],
+  ['Ja l’has demanada avui.', 'Ya la has pedido hoy.', 'You’ve already claimed it today.'], ['Només per a membres de la comunitat JCC.', 'Solo para miembros de la comunidad JCC.', 'Only for JCC community members.'],
+  ['Aquest enllaç JCC ja no és vàlid. Agafa el nou a la comunitat de WhatsApp.', 'Este enlace JCC ya no es válido. Coge el nuevo en la comunidad de WhatsApp.', 'This JCC link is no longer valid. Get the new one in the WhatsApp community.'],
+  ['Primer fes-te la targeta.', 'Primero hazte la tarjeta.', 'Get your card first.'], ['No trobem la teva targeta.', 'No encontramos tu tarjeta.', 'We can’t find your card.'],
+  ['Aquest email ja té una targeta amb un altre nom. Escriu el nom tal com el vas posar el primer cop, o demana a la barra que te la recuperin.', 'Este email ya tiene una tarjeta con otro nombre. Escribe el nombre tal como lo pusiste la primera vez, o pide en la barra que te la recuperen.', 'This email already has a card under a different name. Type the name exactly as the first time, or ask at the bar to recover it.'],
+  ['Revisa l’email.', 'Revisa el email.', 'Please check your email.'], ['Escriu el teu nom.', 'Escribe tu nombre.', 'Please enter your name.'], ['Has de ser major de 18 anys.', 'Tienes que ser mayor de 18 años.', 'You must be over 18.'],
+  ['Massa peticions seguides. Espera uns minuts.', 'Demasiadas peticiones seguidas. Espera unos minutos.', 'Too many requests. Please wait a few minutes.'], ['Encara no tens prou punts.', 'Todavía no tienes suficientes puntos.', 'You don’t have enough points yet.'],
+  ['Ja tens un premi demanat. Espera que te’l portin.', 'Ya tienes un premio pedido. Espera a que te lo traigan.', 'You already have a reward pending. Wait for it to arrive.'], ['Aquesta taula ja està reservada aquest dia.', 'Esta mesa ya está reservada ese día.', 'That table is already booked that day.'],
+  ['Tria un dia d’avui als propers 60 dies.', 'Elige un día de hoy a los próximos 60 días.', 'Choose a day within the next 60 days.'], ['Algun producte ja no està disponible.', 'Algún producto ya no está disponible.', 'An item is no longer available.'],
+];
+const I18N = { es: {}, en: {} };
+I18N_RAW.forEach(([ca, es, en]) => { I18N.es[ca] = es; I18N.en[ca] = en; });
+const DAYS_I18N = { es: { Dl: 'Lu', Dt: 'Ma', Dc: 'Mi', Dj: 'Ju', Dv: 'Vi', Ds: 'Sá', Dg: 'Do', dilluns: 'lunes', dimarts: 'martes', dimecres: 'miércoles', dijous: 'jueves', divendres: 'viernes', dissabte: 'sábado', diumenge: 'domingo' },
+  en: { Dl: 'Mon', Dt: 'Tue', Dc: 'Wed', Dj: 'Thu', Dv: 'Fri', Ds: 'Sat', Dg: 'Sun', dilluns: 'Monday', dimarts: 'Tuesday', dimecres: 'Wednesday', dijous: 'Thursday', divendres: 'Friday', dissabte: 'Saturday', diumenge: 'Sunday' } };
+let LANG = 'ca';
+const tr = t => {
+  if (LANG === 'ca' || !t) return t;
+  const D = I18N[LANG], dd = x => DAYS_I18N[LANG][x] || x, es = LANG === 'es';
+  if (D[t] != null) return D[t];
+  let m;
+  if ((m = t.match(/^Taula (\S+)$/))) return (es ? 'Mesa ' : 'Table ') + m[1];
+  if ((m = t.match(/^Taula (\S+), (\d+) persones(, reservada)?$/))) return (es ? `Mesa ${m[1]}, ${m[2]} personas` : `Table ${m[1]}, ${m[2]} people`) + (m[3] ? (es ? ', reservada' : ', booked') : '');
+  if ((m = t.match(/^(\d+) pers\.$/))) return m[1] + (es ? ' pers.' : ' ppl');
+  if ((m = t.match(/^\+?(\d+) punts?$/))) return t.replace(/punts?$/, es ? (m[1] === '1' ? 'punto' : 'puntos') : (m[1] === '1' ? 'point' : 'points'));
+  if ((m = t.match(/^\+(\d+)$/))) return t;
+  if ((m = t.match(/^Et falten (\d+)( punts)?$/))) return es ? `Te faltan ${m[1]}${m[2] ? ' puntos' : ''}` : `${m[1]}${m[2] ? ' points' : ''} to go`;
+  if ((m = t.match(/^(\d+) a la comanda · \+$/))) return es ? `${m[1]} en el pedido · +` : `${m[1]} in order · +`;
+  if ((m = t.match(/^(Afegir|Triar|Treure) (.+)$/))) return ({ Afegir: es ? 'Añadir' : 'Add', Triar: es ? 'Elegir' : 'Choose', Treure: es ? 'Quitar' : 'Remove' })[m[1]] + ' ' + tr(m[2]);
+  if ((m = t.match(/^‹ (.+)$/))) return '‹ ' + tr(m[1]);
+  if ((m = t.match(/^Afegit: (.+)$/))) return (es ? 'Añadido: ' : 'Added: ') + tr(m[1]);
+  if ((m = t.match(/^Veure la comanda · (.+)$/))) return (es ? 'Ver el pedido · ' : 'View order · ') + m[1];
+  if ((m = t.match(/^Veure totes les ofertes \((\d+)\)$/))) return es ? `Ver todas las ofertas (${m[1]})` : `See all offers (${m[1]})`;
+  if ((m = t.match(/^Comanda #(\d+)$/))) return (es ? 'Pedido #' : 'Order #') + m[1];
+  if ((m = t.match(/^(\d+) × (.+)$/))) return m[1] + ' × ' + tr(m[2]);
+  if ((m = t.match(/^Codi QR de la targeta (\S+)$/))) return (es ? 'Código QR de la tarjeta ' : 'Card QR code ') + m[1];
+  if ((m = t.match(/^(\S+) · ensenya-ho a la barra quan paguis$/))) return m[1] + (es ? ' · enséñalo en la barra al pagar' : ' · show it at the bar when you pay');
+  if ((m = t.match(/^🎁 Ofertes per a membres · (\d+) (oberta|obertes) ara$/))) return es ? `🎁 Ofertas para miembros · ${m[1]} ${m[1] === '1' ? 'abierta' : 'abiertas'} ahora` : `🎁 Members’ offers · ${m[1]} open now`;
+  if ((m = t.match(/^Avisos · (\d+)$/))) return (es ? 'Avisos · ' : 'Alerts · ') + m[1];
+  if ((m = t.match(/^Telèfon i WhatsApp: (.+)$/))) return (es ? 'Teléfono y WhatsApp: ' : 'Phone & WhatsApp: ') + m[1];
+  if ((m = t.match(/^S’obre (avui|demà|el (\S+)) a les (\S+)$/))) return es ? `Se abre ${m[1] === 'avui' ? 'hoy' : m[1] === 'demà' ? 'mañana' : 'el ' + dd(m[2])} a las ${m[3]}` : `Opens ${m[1] === 'avui' ? 'today' : m[1] === 'demà' ? 'tomorrow' : 'on ' + dd(m[2])} at ${m[3]}`;
+  if ((m = t.match(/^((?:D[ltcjvsg] · )*D[ltcjvsg]) · des de les (\S+)$/))) return m[1].split(' · ').map(dd).join(' · ') + (es ? ' · desde las ' : ' · from ') + m[2];
+  if ((m = t.match(/^· (.+) · des de les (\S+)$/))) return `· ${m[1]} · ` + (es ? 'desde las ' : 'from ') + m[2];
+  if ((m = t.match(/^amb (.+) o (.+)$/))) return (es ? 'con ' : 'with ') + tr(m[1]) + (es ? ' o ' : ' or ') + tr(m[2]);
+  if ((m = t.match(/^Benvingut\/da, (.+)$/))) return (es ? 'Bienvenido/a, ' : 'Welcome, ') + m[1];
+  if ((m = t.match(/^Benvingut\/da de nou, (.+)! Hem recuperat la teva targeta\.$/))) return es ? `¡Bienvenido/a de nuevo, ${m[1]}! Hemos recuperado tu tarjeta.` : `Welcome back, ${m[1]}! We’ve recovered your card.`;
+  if ((m = t.match(/^Fet! La barra ja ho té\. T’ho portem a la taula (.+)\.$/))) return es ? `¡Hecho! La barra ya lo tiene. Te lo llevamos a la mesa ${m[1]}.` : `Done! The bar has it. We’ll bring it to table ${m[1]}.`;
+  if ((m = t.match(/^Quan el teu amic es faci la targeta amb el teu enllaç i gasti els primers (\d+) €,$/))) return es ? `Cuando tu amigo se haga la tarjeta con tu enlace y gaste los primeros ${m[1]} €,` : `When your friend gets a card with your link and spends their first €${m[1]},`;
+  if ((m = t.match(/^us endueu (\d+) punts cadascú$/))) return es ? `os lleváis ${m[1]} puntos cada uno` : `you each get ${m[1]} points`;
+  for (const sep of [' · ', ' + ']) if (t.includes(sep)) { const p = t.split(sep), q = p.map(tr); if (q.some((x, i) => x !== p[i])) return q.join(sep); }
+  return t;
+};
+function translateTree(root){
+  if (LANG === 'ca' || !root) return;
+  if (root.nodeType === 3) { const raw = root.nodeValue, t = raw.trim(); if (t) { const x = tr(t); if (x !== t) root.nodeValue = raw.replace(t, x); } return; }
+  if (root.nodeType !== 1 || root.tagName === 'SCRIPT' || root.tagName === 'STYLE' || root.closest('[data-notr]')) return;
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let n;
+  while ((n = w.nextNode())) { if (n.parentElement && n.parentElement.closest('script,style,[data-notr]')) continue; const raw = n.nodeValue, t = raw.trim(); if (t) { const x = tr(t); if (x !== t) n.nodeValue = raw.replace(t, x); } }
+  [root, ...root.querySelectorAll('[placeholder],[aria-label],[title],img[alt]')].forEach(e => ['placeholder', 'aria-label', 'title', 'alt'].forEach(a => { const v = e.getAttribute && e.getAttribute(a); if (v) { const x = tr(v.trim()); if (x !== v.trim()) e.setAttribute(a, x); } }));
+}
+function initLang(){
+  let l = null; try { l = localStorage.getItem('jaleo_lang'); } catch(_) {}
+  const nav = (navigator.language || 'ca').toLowerCase();
+  LANG = ['ca', 'es', 'en'].includes(l) ? l : nav.startsWith('ca') ? 'ca' : /^(es|gl|eu)/.test(nav) ? 'es' : 'en';
+  document.documentElement.lang = LANG;
+  new MutationObserver(ms => { if (LANG === 'ca') return; ms.forEach(m => m.addedNodes.forEach(translateTree)); }).observe(document.body, { childList: true, subtree: true });
+}
+const langPill = () => `<span class="langp" data-notr role="group" aria-label="Idioma">${['ca', 'es', 'en'].map(l => `<button class="${LANG === l ? 'on' : ''}" data-a="lang" data-v="${l}" aria-pressed="${LANG === l}">${l.toUpperCase()}</button>`).join('')}</span>`;
+
 function startApp(){
+  initLang();
   const params = new URLSearchParams(location.search);
   if (params.get('mesa')) { try { sessionStorage.setItem('jaleo_mesa', params.get('mesa').slice(0, 10)); } catch(_) {} }
   if (params.get('ref')) store.set('jaleo_ref', params.get('ref').slice(0, 12));
@@ -437,7 +654,7 @@ function startApp(){
   const cartN = () => Object.values(S.cart).reduce((a, b) => a + b, 0);
   const cartT = () => Object.entries(S.cart).reduce((a, [k, q]) => a + price(k) * q, 0);
   const go = s => { S.screen = s; S.err = ''; S.msg = ''; render(); window.scrollTo({ top: 0 }); };
-  const head = r => `<div class="brand"><a href="#" data-a="go" data-v="web" aria-label="${esc(C.nom)}"><img src="/img/logo-ink.png" alt="${esc(C.nom)}" style="height:34px;display:block"></a><span>${r}</span></div>`;
+  const head = r => `<div class="brand"><a href="#" data-a="go" data-v="web" aria-label="${esc(C.nom)}"><img src="/img/logo-ink.png" alt="${esc(C.nom)}" style="height:34px;display:block"></a>${langPill()}<span>${r}</span></div>`;
   const msgs = () => (S.err ? `<div class="err" role="alert">${esc(S.err)}</div>` : '') + (S.msg ? `<div class="okmsg" role="status">${esc(S.msg)}</div>` : '');
   const itemCard = i => { const n = inCart(i.id), o = hasOpts(i);
     const btn = mesa ? `<button class="add ${n ? 'on' : ''} ${S.bumped == i.id ? 'pop' : ''}" data-a="${o ? 'pick' : 'add'}" data-v="${i.id}" aria-label="${o ? 'Triar' : 'Afegir'} ${esc(i.name)}">${n ? n + ' a la comanda · +' : o ? '+ Triar' : '+ Afegir'}</button>` : o ? `<button class="add" data-a="pick" data-v="${i.id}">Veure opcions</button>` : '';
@@ -459,7 +676,7 @@ function startApp(){
     const stars = Array.from({ length: 40 }, (_, i) => `<span style="left:${(i * 37) % 100}%;top:${(i * 53) % 100}%;animation-delay:${(i % 7) * .4}s"></span>`).join('');
     const icons = [`<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM18 18h3v3h-3z"/></svg>`, `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>`, `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 2l3 7 7 .6-5.3 4.6L18 21l-6-3.7L6 21l1.3-6.8L2 9.6 9 9z"/></svg>`, `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M14 20c.3-2.4 1.8-4.5 4-4.5s3 1.5 3 4.5"/></svg>`];
     return `
-    <header class="nav" id="nav"><div class="wrap"><a class="logo" href="#top" aria-label="${esc(C.nom)}"><img class="lg-l" src="/img/logo-light.png" alt="${esc(C.nom)}"><img class="lg-d" src="/img/logo-ink.png" alt=""></a><nav class="links"><a href="#nits">Les nits</a><a href="#club">JALEO Club</a><a href="#carta">Carta</a><a href="#visita">On som</a><a class="cta" href="#" data-a="go" data-v="${S.card ? 'targeta' : 'registre'}">${S.card ? 'La meva targeta' : 'Fes-te la targeta'}</a></nav></div></header>
+    <header class="nav" id="nav"><div class="wrap"><a class="logo" href="#top" aria-label="${esc(C.nom)}"><img class="lg-l" src="/img/logo-light.png" alt="${esc(C.nom)}"><img class="lg-d" src="/img/logo-ink.png" alt=""></a><nav class="links"><a href="#nits">Les nits</a><a href="#club">JALEO Club</a><a href="#carta">Carta</a><a href="#visita">On som</a>${langPill()}<a class="cta" href="#" data-a="go" data-v="${S.card ? 'targeta' : 'registre'}">${S.card ? 'La meva targeta' : 'Fes-te la targeta'}</a></nav></div></header>
     <section class="hero" id="top"><div class="stars" aria-hidden="true">${stars}</div><div class="glow" style="background:#D0394A;left:-120px;top:10%"></div><div class="glow" style="background:#C9A55A;right:-160px;bottom:-10%;animation-delay:-6s;opacity:.25"></div>
       <div class="wrap"><div>
         <span class="kick"><i></i>${esc(C.adreca)}</span>
@@ -698,6 +915,7 @@ function startApp(){
       S.busy = false; if (error) { S.err = errMsg(error); S.msg = ''; } else { S.err = ''; S.msg = 'Fet! La barra ja ho té. ' + (tab ? 'T’ho portem a la taula ' + tab + '.' : 'Digues el teu nom a la barra.'); confetti(); }
       await loadMO(); const y = scrollY; render(); scrollTo(0, y);
     }
+    if (a === 'lang') { LANG = v; try { localStorage.setItem('jaleo_lang', v); } catch(_) {} document.documentElement.lang = v; const y = scrollY; render(); scrollTo(0, y); return; }
     if (a === 'delcard') {
       S.busy = true; render();
       const { error } = await sb.rpc('delete_my_card', { p_secret: S.secret }); S.busy = false;

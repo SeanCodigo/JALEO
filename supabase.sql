@@ -671,3 +671,8 @@ end $$;
 -- auto_push_batch() prepara la tanda a les 19 h de Reus · funció Edge auto-push l'envia
 -- pg_cron 'jaleo-auto-push' cada dia a les 17:02 i 18:02 UTC (només actua quan a Reus són les 19 h)
 -- =====================================================================
+
+-- =====================================================================
+-- ESTADÍSTIQUES I DRETS RGPD (migracions jaleo_staff_stats i jaleo_delete_my_data)
+-- staff_stats(dies) · delete_my_card(secret) · staff_delete_customer(codi) · erase_customer(id)
+-- =====================================================================
